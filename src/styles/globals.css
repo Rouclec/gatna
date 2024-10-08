@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #1d1b27;
+  --foreground: #ffffff;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1D1B27;
+    --foreground: #ededed;
+  }
+} */
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+@layer utilities {
+  .border-gradient {
+    border: 2px solid;
+    /* border-image-source: linear-gradient(
+      254.39deg,
+      #8150ed -3.62%,
+      #ffffff 93.14%
+    ); */
+  }
+
+  .border-gradient-2 {
+    border: 2px solid;
+    border-image-source: linear-gradient(90deg, #8150ed 0%, #0c6cf2 100%);
+  }
+
+  .shadow-gradient {
+    box-shadow: 0px 8px 16px 0px #462fcf42;
+  }
+
+  .bg-gradient {
+    background: linear-gradient(265.68deg, #8250ed 4.25%, #452ece 94.86%);
+  }
+
+  .icon-gradient {
+    background: linear-gradient(234.8deg, #8250ed 4.27%, #452ece 96.76%);
+  }
+}
+
+.checkbox-custom {
+  --checkbox-size: 32px; /* Set the desired size of the checkbox */
+  --checkbox-tick-width: 8px; /* Set the desired thickness of the checkbox tick */
+  appearance: none;
+  -webkit-appearance: none;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  border: 2px solid #cfb4f133;
+  border-radius: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+  background-color: #d9d9d91a;
+}
+
+.checkbox-custom:checked {
+  background-color: #d9d9d91a;
+}
+
+.checkbox-custom:checked::before {
+  content: "";
+  width: 32%;
+  height: 70%;
+  border-bottom: var(--checkbox-tick-width) solid #cfb4f133;
+  border-right: var(--checkbox-tick-width) solid #cfb4f133;
+  border-width: 2px;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+  margin-bottom: 4px;
+}
+
+.circle-background,
+.circle-progress {
+  fill: none;
+}
+
+.circle-background {
+  stroke: #ddd;
+}
+
+.circle-dashes {
+  stroke: #00ff00;
+  fill: none;
+  border-width: 0;
+}
+
+.circle-progress {
+  stroke: #f99123;
+}
