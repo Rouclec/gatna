@@ -1,10 +1,13 @@
 import MainNav from "@/src/components/MainNav";
 import Sidebar from "@/src/components/Sidebar";
-import { gilroyBold, gilroyRegular } from "..";
+import { gilroyBold, gilroyMedium, gilroyRegular } from "..";
 import CourseCard from "@/src/components/CourseCard";
 import { Course } from "@/src/interfaces";
 import { useState } from "react";
 import Pagination from "@/src/components/Pagination";
+import Facebook from '@/public/assets/icons/facebook.svg'
+import Instagram from '@/public/assets/icons/instagram.svg'
+import WhatsApp from '@/public/assets/icons/whatsapp.svg'
 
 const courses: Course[] = [
   {
@@ -42,7 +45,7 @@ function Home() {
     <Sidebar>
       <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
         <MainNav />
-        <div className="mt-8 flex flex-col gap-7">
+        <main className="mt-40 pb-20 flex flex-col gap-7">
           <div>
             <p className={`${gilroyBold.className} text-4xl`}>Welcome back!</p>
             <p className={`${gilroyRegular.className} text-grey-60`}>
@@ -85,8 +88,25 @@ function Home() {
           <div className="grid grid-cols-[350px_1fr] gap-10">
             <Pagination totalPages={10} onPageChange={handlePageChange} />
           </div>
+        </main>
+      </div>
+      <footer className="h-[75px] border-t-[0.5px] border-neutral-1A flex items-center justify-between pl-[52px] pr-[294px]">
+        <p className={`${gilroyMedium.className} text-base text-white`}>
+          <span className={`${gilroyBold.className}`}>Copyright 2024</span> | <span>All rights reserved</span> |{" "}
+          <span>Made with love by</span> | <span className={`text-primary-400`}>Briluce services</span>
+        </p>
+      <div className="flex items-center gap-3">
+        <div className="h-10 w-10 rounded-full bg-grey-bg flex items-center justify-center">
+          <Facebook className="w-6 h-6"  stroke="#ffffff" />
+        </div>
+        <div className="h-10 w-10 rounded-full bg-grey-bg flex items-center justify-center">
+          <WhatsApp className="w-6 h-6"  stroke="#ffffff" />
+        </div>
+        <div className="h-10 w-10 rounded-full bg-grey-bg flex items-center justify-center">
+          <Instagram className="w-6 h-6"  stroke="#ffffff" />
         </div>
       </div>
+      </footer>
     </Sidebar>
   );
 }

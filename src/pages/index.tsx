@@ -301,7 +301,7 @@ export default function Home() {
                 <div className="h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between">
                   <div className="flex gap-[6px] items-center">
                     <div className="w-[44px] h-[44px] rounded-xl bg-neutral-10 items-center justify-center flex">
-                      <WhatsApp className="w-6 h-6"/>
+                      <WhatsApp className="w-6 h-6" stroke="#14A42B" />
                     </div>
                     <div>
                       <p className={`${gilroyBold.className} text-base`}>

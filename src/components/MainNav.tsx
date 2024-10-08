@@ -12,7 +12,7 @@ import moment from "moment";
 
 const MainNav = () => {
   return (
-    <div className="h-[120px] pb-6 border-b-[1px] border-neutral-1A items-end flex">
+    <div className="fixed h-[120px] pb-6 border-b-[1px] left-[148px] right-[117px] border-neutral-1A items-end flex z-50 bg-background">
       <div className="flex items-center gap-[10px]">
         <div className="w-[60px] h-[60px] rounded-full bg-grey-9333 items-center justify-center flex">
           <Image
