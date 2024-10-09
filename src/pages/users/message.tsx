@@ -12,7 +12,17 @@ import Telegram from "@/public/assets/icons/telegram-white.svg";
 import { Call, Location, Message as MessageIcon, Send } from "react-iconly";
 import Link from "next/link";
 
+import {
+  getCountries,
+  getCountryCallingCode,
+} from "react-phone-number-input/input";
+
+import { useState } from "react";
+
 function Message() {
+  const countries = getCountries();
+  const [country, setCountry] = useState<string>("Cameroon");
+
   return (
     <Sidebar>
       <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
@@ -140,9 +150,30 @@ function Message() {
                       >
                         Telephone
                       </p>
-                      <input
-                        className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
-                      />
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={country}
+                          onChange={(event) => {
+                            console.log(event.target.value);
+                            setCountry(event.target.value);
+                          }}
+                          className={`w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                        >
+                          <option value="">+{getCountryCallingCode("CM")}</option>
+                          {countries.map((countryCode) => (
+                            <option
+                              key={countryCode}
+                              value={`+${getCountryCallingCode(countryCode)}`}
+                            >
+                              +{getCountryCallingCode(countryCode)}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                          placeholder="54 100 0003"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
