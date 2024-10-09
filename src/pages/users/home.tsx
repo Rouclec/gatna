@@ -1,13 +1,12 @@
 import MainNav from "@/src/components/MainNav";
 import Sidebar from "@/src/components/Sidebar";
-import { gilroyBold, gilroyMedium, gilroyRegular } from "..";
+import { gilroyBold, gilroyRegular } from "..";
 import CourseCard from "@/src/components/CourseCard";
 import { Course } from "@/src/interfaces";
 import { useState } from "react";
 import Pagination from "@/src/components/Pagination";
-import Facebook from '@/public/assets/icons/facebook.svg'
-import Instagram from '@/public/assets/icons/instagram.svg'
-import WhatsApp from '@/public/assets/icons/whatsapp.svg'
+import Footer from "@/src/components/Footer";
+
 
 const courses: Course[] = [
   {
@@ -90,23 +89,7 @@ function Home() {
           </div>
         </main>
       </div>
-      <footer className="h-[75px] border-t-[0.5px] border-neutral-1A flex items-center justify-between pl-[52px] pr-[294px]">
-        <p className={`${gilroyMedium.className} text-base text-white`}>
-          <span className={`${gilroyBold.className}`}>Copyright 2024</span> | <span>All rights reserved</span> |{" "}
-          <span>Made with love by</span> | <span className={`text-primary-400`}>Briluce services</span>
-        </p>
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-grey-bg flex items-center justify-center">
-          <Facebook className="w-6 h-6"  stroke="#ffffff" />
-        </div>
-        <div className="h-10 w-10 rounded-full bg-grey-bg flex items-center justify-center">
-          <WhatsApp className="w-6 h-6"  stroke="#ffffff" />
-        </div>
-        <div className="h-10 w-10 rounded-full bg-grey-bg flex items-center justify-center">
-          <Instagram className="w-6 h-6"  stroke="#ffffff" />
-        </div>
-      </div>
-      </footer>
+     <Footer />
     </Sidebar>
   );
 }

@@ -6,7 +6,7 @@ import profile4 from "@/public/assets/images/profile4.png";
 import Plus from "@/public/assets/icons/plus.svg";
 import SpiralArrow from "@/public/assets/icons/spiral-arrow.svg";
 import WhatsApp from '@/public/assets/icons/whatsapp.svg';
-import Telegram from '@/public/assets/icons/telelgram.svg'
+import Telegram from '@/public/assets/icons/telegram-blue.svg'
 import landingimage from "@/public/assets/images/landing-page-image.png";
 import { CourseDetails, Navbar } from "../components";
 
@@ -285,7 +285,7 @@ export default function Home() {
                 <div className="h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between">
                   <div className="flex gap-[6px] items-center">
                     <div className="w-[44px] h-[44px] rounded-xl bg-neutral-10 items-center justify-center flex">
-                      <Telegram className="w-6 h-6"/>
+                      <Telegram className="w-6 h-6" />
                     </div>
                     <div>
                       <p className={`${gilroyBold.className} text-base`}>

@@ -30,7 +30,7 @@ const Sidebar: FC<Props> = ({ children }) => {
       },
       {
         name: "Message",
-        route: "/users/home",
+        route: "/users/message",
         logoActive: <Email className="w-6 h-6" />,
         logo: <Email className="w-8 h-8" />,
       },
@@ -79,7 +79,7 @@ const Sidebar: FC<Props> = ({ children }) => {
                     >
                       <div
                         className="flex flex-col gap-[2px] items-center justify-center cursor-pointer"
-                        onClick={() => setActive(item)}
+                        onClick={() => router.push(item.route)}
                       >
                         <div
                           className={`${

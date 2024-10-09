@@ -48,6 +48,8 @@ const config: Config = {
           "60": "#D9D9D9",
           "9333": "#93939333",
           "text": "#D4DFE9",
+          "D933": "#D9D9D933",
+          "920D": "#929EB10D"
         },
         telegram: "#0C6CF2",
         whatsapp: "#14A42B",
