@@ -24,6 +24,8 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   const circumference = 2 * Math.PI * normalizedRadius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
+
+
   return (
     <div style={{ position: 'relative', width: `${radius * 2}px`, height: `${radius * 2}px` }}>
       <svg

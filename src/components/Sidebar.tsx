@@ -44,12 +44,12 @@ const Sidebar: FC<Props> = ({ children }) => {
     []
   );
 
-  const settings = {
+  const settings = useMemo(() => ({
     name: "Settings",
-    route: "/users/home",
+    route: "/users/settings",
     logoActive: <Settings className="w-6 h-6" />,
     logo: <Settings className="w-8 h-8" />,
-  };
+  }), []);
 
   const [active, setActive] = useState<{
     name: string;
@@ -58,8 +58,12 @@ const Sidebar: FC<Props> = ({ children }) => {
   }>();
 
   useEffect(() => {
-    setActive(navItems.find((item) => item.route === pathname));
-  }, [navItems, pathname]);
+    if (pathname === settings.route) {
+      setActive(settings)
+    } else {
+      setActive(navItems.find((item) => item.route === pathname));
+    }
+  }, [navItems, pathname, settings]);
 
   return (
     <div className="flex">
@@ -113,7 +117,10 @@ const Sidebar: FC<Props> = ({ children }) => {
                 <div className="w-[14px] border-[2px] opacity-20 bg-neutral-21 rounded-sm" />
                 <div
                   className="flex flex-col gap-[2px] items-center justify-center cursor-pointer"
-                  onClick={() => setActive(settings)}
+                  onClick={() => {
+                    router.push(settings.route);
+                    setActive(settings);
+                  }}
                 >
                   <div
                     className={`${
