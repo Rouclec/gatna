@@ -3,9 +3,12 @@ import { gilroyBold, gilroyRegular } from ".";
 import { Navbar } from "../components";
 import { Hide, Lock, Login, Message, Show } from "react-iconly";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 function Signin() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  
   return (
     <div className="grid">
       <Navbar />
@@ -58,14 +61,24 @@ function Signin() {
               </div>
             </div>
             <div className="flex items-center justify-end gap-1">
-              <p className={`${gilroyRegular.className} text-neutral-B2`}>Forgort passowrd</p>
+              <p className={`${gilroyRegular.className} text-neutral-B2`}>
+                Forgort passowrd
+              </p>
               <p className={`${gilroyRegular.className} text-neutral-B2`}>?</p>
-              <Link href={"/"} className={`${gilroyBold.className} text-primary-450`}>Reset here</Link>
+              <Link
+                href={"/"}
+                className={`${gilroyBold.className} text-primary-450`}
+              >
+                Reset here
+              </Link>
             </div>
           </div>
-          <div className="bg-gradient px-8 py-4 flex items-center justify-center gap-3 rounded-[10px] cursor-pointer">
+          <div
+            className="bg-gradient px-8 py-4 flex items-center justify-center gap-3 rounded-[10px] cursor-pointer"
+            onClick={() => router.replace("/users/home")}
+          >
             <p className={`${gilroyBold.className} text-lg`}>Login</p>
-            <Login primaryColor="#FFFFFF66"/>
+            <Login primaryColor="#FFFFFF66" />
           </div>
         </div>
       </div>
