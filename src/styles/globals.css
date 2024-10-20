@@ -100,3 +100,9 @@ body {
 .circle-progress {
   stroke: #f99123;
 }
+
+@layer components{
+  .button-primary {
+    @apply bg-gradient-to-r from-[#8250ED] to-[#452ECE] items-center flex cursor-pointer rounded-[10px]
+  }
+}

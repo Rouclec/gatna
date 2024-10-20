@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -11,45 +11,72 @@ import Logout from "@/public/assets/icons/logout.svg";
 import Settings from "@/public/assets/icons/settings.svg";
 import ArrowCircle from "@/public/assets/icons/arrow-circle.svg";
 import { gilroyBold, gilroyRegular } from "../pages";
+import MainNav from "./MainNav";
+import AdminNav from "./AdminNav";
+import Footer from "./Footer";
 
 type Props = {
   children: React.ReactNode;
 };
 
+const NAV_ITEMS = [
+  {
+    name: "Videos",
+    route: "/users/home",
+    logoActive: <Reels className="w-6 h-6" />,
+    logo: <Reels className="w-8 h-8" />,
+  },
+  {
+    name: "Message",
+    route: "/users/message",
+    logoActive: <Email className="w-6 h-6" />,
+    logo: <Email className="w-8 h-8" />,
+  },
+  {
+    name: "gatna.io",
+    route: "/",
+    logoActive: <ArrowCircle className="w-6 h-6" />,
+    logo: <ArrowCircle className="w-8 h-8" />,
+  },
+];
+
+const ADMIN_NAV_ITEMS = [
+  {
+    name: "Videos",
+    route: "/admin",
+    logoActive: <Reels className="w-6 h-6" />,
+    logo: <Reels className="w-8 h-8" />,
+  },
+  {
+    name: "Message",
+    route: "/admin/message",
+    logoActive: <Email className="w-6 h-6" />,
+    logo: <Email className="w-8 h-8" />,
+  },
+  {
+    name: "Gateway",
+    route: "/gateway",
+    logoActive: <ArrowCircle className="w-6 h-6" />,
+    logo: <ArrowCircle className="w-8 h-8" />,
+  },
+  {
+    name: "gatna.io",
+    route: "/",
+    logoActive: <ArrowCircle className="w-6 h-6" />,
+    logo: <ArrowCircle className="w-8 h-8" />,
+  },
+];
+const SETTINGS = {
+  name: "Settings",
+  route: "/users/settings",
+  logoActive: <Settings className="w-6 h-6" />,
+  logo: <Settings className="w-8 h-8" />,
+};
+
 const Sidebar: FC<Props> = ({ children }) => {
   const router = useRouter();
   const { pathname } = router;
-
-  const navItems = useMemo(
-    () => [
-      {
-        name: "Videos",
-        route: "/users/home",
-        logoActive: <Reels className="w-6 h-6" />,
-        logo: <Reels className="w-8 h-8" />,
-      },
-      {
-        name: "Message",
-        route: "/users/message",
-        logoActive: <Email className="w-6 h-6" />,
-        logo: <Email className="w-8 h-8" />,
-      },
-      {
-        name: "gatna.io",
-        route: "/",
-        logoActive: <ArrowCircle className="w-6 h-6" />,
-        logo: <ArrowCircle className="w-8 h-8" />,
-      },
-    ],
-    []
-  );
-
-  const settings = useMemo(() => ({
-    name: "Settings",
-    route: "/users/settings",
-    logoActive: <Settings className="w-6 h-6" />,
-    logo: <Settings className="w-8 h-8" />,
-  }), []);
+  const [activeNav, setActiveNav] = useState(NAV_ITEMS);
 
   const [active, setActive] = useState<{
     name: string;
@@ -58,12 +85,16 @@ const Sidebar: FC<Props> = ({ children }) => {
   }>();
 
   useEffect(() => {
-    if (pathname === settings.route) {
-      setActive(settings)
-    } else {
-      setActive(navItems.find((item) => item.route === pathname));
+    if (pathname.split("/")[1] === "admin") {
+      setActiveNav(ADMIN_NAV_ITEMS);
     }
-  }, [navItems, pathname, settings]);
+
+    if (pathname === SETTINGS.route) {
+      setActive(SETTINGS);
+    } else {
+      setActive(activeNav.find((item) => item.route === pathname));
+    }
+  }, [pathname, activeNav]);
 
   return (
     <div className="flex">
@@ -75,7 +106,7 @@ const Sidebar: FC<Props> = ({ children }) => {
           <div className="h-full px-6 mt-8 self-center flex flex-col items-center justify-between">
             <div>
               <div className="grid w-full gap-6">
-                {navItems.map((item, index) => {
+                {activeNav.map((item, index) => {
                   return (
                     <div
                       key={item.route}
@@ -106,7 +137,7 @@ const Sidebar: FC<Props> = ({ children }) => {
                           {item.name}
                         </p>
                       </div>
-                      {index + 1 !== navItems.length && (
+                      {index + 1 !== activeNav.length && (
                         <div className="w-[14px] border-[2px] opacity-20 bg-neutral-21 rounded-sm" />
                       )}
                     </div>
@@ -118,29 +149,29 @@ const Sidebar: FC<Props> = ({ children }) => {
                 <div
                   className="flex flex-col gap-[2px] items-center justify-center cursor-pointer"
                   onClick={() => {
-                    router.push(settings.route);
-                    setActive(settings);
+                    router.push(SETTINGS.route);
+                    setActive(SETTINGS);
                   }}
                 >
                   <div
                     className={`${
-                      settings.name === active?.name
+                      SETTINGS.name === active?.name
                         ? "w-[54px] h-[54px] icon-gradient"
                         : "w-8 h-8"
                     } rounded-[10px] flex items-center justify-center`}
                   >
-                    {settings.name === active?.name
-                      ? settings.logoActive
-                      : settings.logo}
+                    {SETTINGS.name === active?.name
+                      ? SETTINGS.logoActive
+                      : SETTINGS.logo}
                   </div>
                   <p
                     className={`${
-                      settings.name === active?.name
+                      SETTINGS.name === active?.name
                         ? gilroyBold.className
                         : gilroyRegular.className
                     } text-sm text-grey-60`}
                   >
-                    {settings.name}
+                    {SETTINGS.name}
                   </p>
                 </div>
               </div>
@@ -151,8 +182,10 @@ const Sidebar: FC<Props> = ({ children }) => {
           </div>
         </aside>
       </div>
-      <main className="w-screen ml-[108px] min-h-screen">
-        <div className="">{children}</div>
+      <main className="w-screen min-h-screen">
+        {activeNav === ADMIN_NAV_ITEMS ? <AdminNav /> : <MainNav />}
+        <div className="my-40 ml-[108px]">{children}</div>
+        <Footer />
       </main>
     </div>
   );

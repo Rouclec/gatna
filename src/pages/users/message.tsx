@@ -1,6 +1,4 @@
-import MainNav from "@/src/components/MainNav";
 import Sidebar from "@/src/components/Sidebar";
-import Footer from "@/src/components/Footer";
 import { gilroyBold, gilroyRegular } from "..";
 import { MapProvider } from "@/src/providers/map-provider";
 import { MapComponent } from "@/src/components/Map";
@@ -26,8 +24,7 @@ function Message() {
   return (
     <Sidebar>
       <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
-        <MainNav />
-        <main className="mt-48 ml-3 pb-20 grid grid-cols-2 gap-10">
+        <main className="mt-8 ml-3 pb-20 grid grid-cols-2 gap-10">
           <div className="w-full flex flex-col gap-7">
             <div className="pb-5 border-b-[1px] border-neutral-1A">
               <p className={`${gilroyBold.className} text-[40px] leading-10`}>
@@ -198,7 +195,6 @@ function Message() {
           </div>
         </main>
       </div>
-      <Footer />
     </Sidebar>
   );
 }

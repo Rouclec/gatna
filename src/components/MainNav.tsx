@@ -9,8 +9,11 @@ import Crypto from "@/public/assets/icons/crypto.svg";
 import { gilroyBold, gilroyMedium, gilroySemiBold } from "@/src/pages/index";
 import { Calendar } from "react-iconly";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 const MainNav = () => {
+  const router = useRouter();
+  
   return (
     <div className="fixed h-[120px] pb-6 border-b-[1px] left-[148px] right-[117px] border-neutral-1A items-end flex z-50 bg-background">
       <div className="flex items-center gap-[10px]">
@@ -54,7 +57,10 @@ const MainNav = () => {
                 </p>
               </div>
             </div>
-            <div className="flex gap-1 items-center px-[10px] py-[6px] rounded-full bg-dark-14 border-2 border-green">
+            <div
+              className="flex gap-1 items-center px-[10px] py-[6px] rounded-full bg-dark-14 border-2 border-green cursor-pointer"
+              onClick={() => router.push("/users/withdraw")}
+            >
               <Crypto className="w-[14px] h-[14px]" />
               <p className={`${gilroyBold.className} text-xs text-green`}>
                 $10 USDT

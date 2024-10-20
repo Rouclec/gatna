@@ -1,6 +1,4 @@
-import MainNav from "@/src/components/MainNav";
 import Sidebar from "@/src/components/Sidebar";
-import Footer from "@/src/components/Footer";
 import { gilroyBold, gilroyRegular, gilroySemiBold } from "..";
 
 import { Hide, Send, Show } from "react-iconly";
@@ -46,8 +44,7 @@ function Settings() {
   return (
     <Sidebar>
       <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
-        <MainNav />
-        <main className="mt-48 ml-3 pb-20 flex gap-5">
+        <main className="mt-8 ml-3 pb-20 flex gap-5">
           <div className="p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] w-[545px] h-[598px] justify-between">
             <div className="flex flex-col gap-4">
               <div>
@@ -344,7 +341,6 @@ function Settings() {
           </div>
         </main>
       </div>
-      <Footer />
     </Sidebar>
   );
 }

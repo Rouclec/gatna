@@ -31,7 +31,9 @@ const config: Config = {
           "1A": "#FFFFFF1A",
           "1A40": "#FFFFFF0A",
           B2: "#FFFFFFB2",
-          "CC": "#FFFFFFCC"
+          "CC": "#FFFFFFCC",
+          "C4": "#C4C4C4",
+          "CF": "#CFD0D3",
         },
         dark: {
           "00": "#00000000",
@@ -56,7 +58,9 @@ const config: Config = {
         outline: "#CFB4F133",
         error: "#E03A31",
         green: "#77E8C9",
+        success: "#3FA247",
         blue: "#452ECE",
+        info: "#0590DE",
         blue14: "#462FCF14"
       },
       screens: {

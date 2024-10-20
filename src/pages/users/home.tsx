@@ -1,11 +1,9 @@
-import MainNav from "@/src/components/MainNav";
 import Sidebar from "@/src/components/Sidebar";
 import { gilroyBold, gilroyRegular } from "..";
 import CourseCard from "@/src/components/CourseCard";
 import { Course } from "@/src/interfaces";
 import { useState } from "react";
 import Pagination from "@/src/components/Pagination";
-import Footer from "@/src/components/Footer";
 
 
 const courses: Course[] = [
@@ -43,8 +41,7 @@ function Home() {
   return (
     <Sidebar>
       <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
-        <MainNav />
-        <main className="mt-40 pb-20 flex flex-col gap-7">
+        <main className="pb-20 flex flex-col gap-7">
           <div>
             <p className={`${gilroyBold.className} text-4xl`}>Welcome back!</p>
             <p className={`${gilroyRegular.className} text-grey-60`}>
@@ -89,7 +86,6 @@ function Home() {
           </div>
         </main>
       </div>
-     <Footer />
     </Sidebar>
   );
 }

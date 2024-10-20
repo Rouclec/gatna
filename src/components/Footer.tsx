@@ -6,7 +6,7 @@ import WhatsApp from "@/public/assets/icons/whatsapp.svg";
 
 const Footer: FC = () => {
   return (
-    <footer className="h-[75px] border-t-[0.5px] border-neutral-1A flex items-center justify-between pl-[52px] pr-[294px]">
+    <footer className="h-[75px] border-t-[0.5px] border-neutral-1A flex items-center justify-between pl-[52px] pr-[294px] ml-[108px]">
       <p className={`${gilroyMedium.className} text-base text-white`}>
         <span className={`${gilroyBold.className}`}>Copyright 2024</span> |{" "}
         <span>All rights reserved</span> | <span>Made with love by</span> |{" "}
