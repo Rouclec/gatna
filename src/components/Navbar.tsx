@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 // import { Filter, Home } from "react-iconly";
 import Home from '@/public/assets/icons/home.svg'
 import Profile from '@/public/assets/icons/profile.svg'
@@ -16,6 +16,25 @@ const Navbar: FC = () => {
   const router = useRouter()
 
   const [isOpen, setIsOpen] = useState(false)
+  const sidebarRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
 
   return (
     <div className='lg:container mx-auto fixed left-0 right-0 h-[104px] flex items-center justify-between lg:justify-normal md:gap-64 px-6 lg:px-36 border-b-[0.5px] border-grey-bg bg-primary-500 z-50'>
@@ -79,6 +98,7 @@ const Navbar: FC = () => {
         className={`md:hidden bg-primary-500 shadow-lg border border-grey-bg fixed top-0 right-0 bottom-0 w-[80vw] max-w-96 z-50 transition-transform duration-300 transform ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
+        ref={sidebarRef}
       >
         <div className='w-full h-[104px] items-center flex justify-end px-6'>
           <div className='cursor-pointer' onClick={() => setIsOpen(false)}>
@@ -86,14 +106,26 @@ const Navbar: FC = () => {
           </div>
         </div>
         <div className='h-full w-full flex flex-col p-6 items-end gap-6'>
-          <p className={`${gilroyBold.className} text-neutral-10 text-base cursor-pointer`}>Home</p>
-          <p className={`${gilroyBold.className} text-neutral-10 text-base cursor-pointer`}>About Us</p>
-          <p className={`${gilroyBold.className} text-neutral-10 text-base cursor-pointer`}>Courses</p>
+          <p
+            className={`${gilroyBold.className} text-neutral-10 text-base cursor-pointer`}
+          >
+            Home
+          </p>
+          <p
+            className={`${gilroyBold.className} text-neutral-10 text-base cursor-pointer`}
+          >
+            About Us
+          </p>
+          <p
+            className={`${gilroyBold.className} text-neutral-10 text-base cursor-pointer`}
+          >
+            Courses
+          </p>
           <div
             className='flex mt-10 items-center gap-2 cursor-pointer'
             onClick={() => router.push('/signin')}
           >
-            <Profile className="w-12 h-12" key={'profile-sidebar'}/>
+            <Profile className='w-12 h-12' key={'profile-sidebar'} />
             {/* <p className={`${gilroyMedium.className} text-neutral-10`}>Sign in</p> */}
             <p
               className={
