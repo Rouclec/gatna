@@ -18,7 +18,7 @@ const Navbar: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className='lg:container mx-auto fixed left-0 right-0 h-[104px] flex items-center justify-between lg:justify-normal md:gap-64 px-6 mx:px-6 lg:px-36 border-b-[0.5px] border-grey-bg bg-primary-500 z-50'>
+    <div className='lg:container mx-auto fixed left-0 right-0 h-[104px] flex items-center justify-between lg:justify-normal md:gap-64 px-6 lg:px-36 border-b-[0.5px] border-grey-bg bg-primary-500 z-50'>
       <Image
         src={logo}
         alt='logo'

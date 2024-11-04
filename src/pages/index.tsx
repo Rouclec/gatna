@@ -3,8 +3,10 @@ import profile1 from '@/public/assets/images/profile1.png'
 import profile2 from '@/public/assets/images/profile2.png'
 import profile3 from '@/public/assets/images/profile3.png'
 import profile4 from '@/public/assets/images/profile4.png'
+import logo from '@/public/assets/images/logo.png'
 import Plus from '@/public/assets/icons/plus.svg'
 import SpiralArrow from '@/public/assets/icons/spiral-arrow.svg'
+import Location from '@/public/assets/icons/location.svg'
 import WhatsApp from '@/public/assets/icons/whatsapp.svg'
 import Telegram from '@/public/assets/icons/telegram-blue.svg'
 import landingimage from '@/public/assets/images/landing-page-image.png'
@@ -13,12 +15,15 @@ import { CourseDetails, Navbar } from '../components'
 import Image from 'next/image'
 import { MapProvider } from '../providers/map-provider'
 import { MapComponent } from '../components/Map'
-import { Send } from 'react-iconly'
+import { Call, Message, Send } from 'react-iconly'
 import { useState } from 'react'
 import {
   getCountries,
-  getCountryCallingCode,
-} from "react-phone-number-input/input";
+  getCountryCallingCode
+} from 'react-phone-number-input/input'
+import Footer from '../components/Footer'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -181,10 +186,29 @@ const courses = [
 ]
 
 const colors = ['#8250ED', '#F2714E', '#8EAD12', '#EF4439', '#0665BD']
+const importantLinks = [
+  {
+    name: 'Home',
+    route: '/'
+  },
+  {
+    name: 'About us',
+    route: '/'
+  },
+  {
+    name: 'Terms & conditions',
+    route: '/'
+  },
+  {
+    name: 'Privacy policies',
+    route: '/'
+  }
+]
 
 export default function Home () {
-  const countries = getCountries();
-  const [country, setCountry] = useState<string>("Cameroon");
+  const countries = getCountries()
+  const [country, setCountry] = useState<string>('Cameroon')
+  const router = useRouter()
 
   return (
     <div
@@ -200,7 +224,7 @@ export default function Home () {
               </p>
               <p className={`${gilroyRegular.className} text-lg md:text-2xl`}>
                 Achetez vos formations crypto et obtenez un nombre de pièces en
-                staking pouvant vous générer jusqu’à 20% de ROI.
+                staking pouvant vous générer jusqu&apos;à 20% de ROI.
               </p>
               <div className='flex flex-col md:flex-row gap-4'>
                 <div className='flex h-[60px] w-full  items-center justify-center bg-gradient rounded-[10px]'>
@@ -214,7 +238,7 @@ export default function Home () {
                   <p
                     className={`${gilroyBold.className} text-base text-neutral-10`}
                   >
-                    J’ai déjà un compte
+                    J&apos;ai déjà un compte
                   </p>
                 </div>
               </div>
@@ -440,7 +464,108 @@ export default function Home () {
           </div>
         </div>
       </main>
-      <footer className='row-start-3 flex gap-6 flex-wrap items-center justify-center'></footer>
+      <footer className='grid bg-grey-bg mt-16 lg:mt-60'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 items-center py-6 lg:pt-20 lg:pb-12 w-full px-6 lg:px-36'>
+          <div className='col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3'>
+            <div className='grid items-start justify-between gap-6'>
+              <Image
+                src={logo}
+                alt='logo'
+                className='w-[170px] h-[62px] cursor-pointer'
+              />
+              <div className='grid items-start gap-3'>
+                <div className='flex flex-row gap-2 items-center'>
+                  <Location />
+                  <p className={`${gilroyBold.className}`}>Douala - Cameroon</p>
+                </div>
+                <p
+                  className={`pl-8 text-opacity-90 ${gilroyRegular.className}`}
+                >
+                  Situé au carrefour Douala Bercy
+                  <br />
+                  BP : 15170 Akwa Douala
+                </p>
+              </div>
+            </div>
+            <div className='grid gap-6 items-start'>
+              <p className={`${gilroyBold.className}`}>Important links</p>
+              <div className='grid gap-3'>
+                {importantLinks.map((link, index) => {
+                  return (
+                    <p
+                      key={index}
+                      className={`cursor-pointer text-opacity-90 ${gilroyRegular.className}`}
+                      onClick={() => router.push(link.route)}
+                    >
+                      <span className='text-primary-400'>-</span> {link.name}
+                    </p>
+                  )
+                })}
+              </div>
+            </div>
+            <div className='flex flex-col gap-6 items-start'>
+              <p className={`${gilroyBold.className}`}>Contact us</p>
+              <div className='grid gap-3'>
+                <div className='flex flex-row gap-2 items-center'>
+                  <Message size={20} primaryColor='#8250ED' />
+                  <Link
+                    href={`mailto:info@gatna.io`}
+                    className={`${gilroyRegular.className} text-base text-white opacity-90 underline`}
+                  >
+                    info@gatna.io
+                  </Link>
+                </div>
+                <div className='flex flex-row gap-2 items-start'>
+                  <Call size={20} primaryColor='#8250ED' />
+                  <div>
+                    <Link
+                      href={`tel:+237657878787`}
+                      className={`${gilroyRegular.className} text-base cursor-pointer text-white`}
+                    >
+                      +237 657 87 87 87
+                    </Link>
+                    <br />
+                    <Link
+                      href={`tel:+237681618161`}
+                      className={`${gilroyRegular.className} text-base cursor-pointer text-white`}
+                    >
+                      +237 681 61 81 61
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='col-span-1 flex flex-col gap-6 items-start h-full'>
+            <p className={`${gilroyBold.className}`}>Subscribe to Newsletter</p>
+            <div className='w-full p-4 rounded-[10px] flex items-center bg-82 bg-opacity-20 gap-3'>
+              {/* Icon with no grow or shrink */}
+              <div className='flex-none'>
+                <Message primaryColor='#fff' size={20} />
+              </div>
+
+              {/* Input with flex-grow to take remaining space */}
+              <input
+                className={`flex-grow max-w-full focus:outline-none bg-transparent min-w-2 placeholder:text-white ${gilroyRegular.className}`}
+                placeholder='Your Email'
+              />
+
+              {/* Button with no grow or shrink */}
+              <div className="flex-none">
+                <button className='button-primary flex items-center px-3 py-[10px] rounded-md'>
+                  <p
+                    className={`${gilroyBold.className} text-[10px] leading-3 text-white`}
+                  >
+                    Subscribe
+                  </p>
+                  <Send size={16} primaryColor='#fff' />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </footer>
     </div>
   )
 }

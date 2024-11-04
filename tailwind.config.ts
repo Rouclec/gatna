@@ -61,7 +61,8 @@ const config: Config = {
         success: "#3FA247",
         blue: "#452ECE",
         info: "#0590DE",
-        blue14: "#462FCF14"
+        blue14: "#462FCF14",
+        "82": "#828282"
       },
       screens: {
         xs: "480px", // Extra small devices (mobile phones)
