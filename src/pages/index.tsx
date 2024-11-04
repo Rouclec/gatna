@@ -273,7 +273,7 @@ export default function Home () {
               <Image
                 src={landingimage}
                 alt='landing-image'
-                className='w-full max-w-[556px] h-[432px] z-10'
+                className='w-full max-w-[556px] h-auto lg:h-[432px] z-10'
               />
             </div>
           </div>
