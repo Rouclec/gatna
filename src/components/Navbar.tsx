@@ -37,7 +37,7 @@ const Navbar: FC = () => {
   }, [isOpen])
 
   return (
-    <div className='lg:container mx-auto fixed left-0 right-0 h-[104px] flex items-center justify-between lg:justify-normal md:gap-64 px-6 lg:px-36 border-b-[0.5px] border-grey-bg bg-primary-500 z-50'>
+    <div className='lg:container mx-auto fixed left-0 right-0 h-[104px] flex items-center justify-between lg:justify-normal md:gap-64 px-6 lg:px-36 border-b-[0.5px] border-grey-bg bg-primary-500 z-40'>
       <Image
         src={logo}
         alt='logo'
@@ -95,7 +95,7 @@ const Navbar: FC = () => {
         <BoardMenu2 />
       </div>
       <div
-        className={`md:hidden bg-primary-500 shadow-lg border border-grey-bg fixed top-0 right-0 bottom-0 w-[80vw] max-w-96 z-50 transition-transform duration-300 transform ${
+        className={`md:hidden bg-primary-500 shadow-lg border border-grey-bg fixed top-0 right-0 bottom-0 w-[80vw] max-w-96 z-40 transition-transform duration-300 transform ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         ref={sidebarRef}

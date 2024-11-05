@@ -7,7 +7,7 @@ import { gilroyBold, gilroyRegular } from '../pages'
 
 const AdminNav = () => {
   return (
-    <div className=' lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-[72px] right-2 sm:left-[148px] sm:right-20 border-neutral-1A items-end flex z-50 bg-background'>
+    <div className=' lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 right-2 md:left-[120px] md:pl-0 md:right-20 border-neutral-1A items-end flex z-40 bg-background'>
       <div className='flex w-full items-center justify-between'>
         <div className='flex flex-col gap-1 sm:gap-2'>
           <p
