@@ -43,9 +43,9 @@ function Settings() {
 
   return (
     <Sidebar>
-      <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
-        <main className="mt-8 ml-3 pb-20 flex gap-5">
-          <div className="p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] w-[545px] h-[598px] justify-between">
+      <div className="mr-3 md:ml-10 md:mr-28 overflow-x-hidden overflow-y-hidden">
+        <main className="mt-8 ml-3 pb-20 gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          <div className="p-7 flex flex-col col-span-1 md:col-span-2 border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-fit md:h-[598px] gap-12 justify-between">
             <div className="flex flex-col gap-4">
               <div>
                 <p className={`${gilroyBold.className} text-2xl text-white`}>
@@ -55,8 +55,8 @@ function Settings() {
                   Modifez vos donnees
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-5">
-                <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-3 order-2 sm:order-1">
                   <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                     <p
                       className={`${gilroyRegular.className} text-neutral-50 text-sm`}
@@ -96,7 +96,7 @@ function Settings() {
                     placeholder="Upload profile pic"
                   />
                 </div>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 order-1 sm:order-2">
                   <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                     <p
                       className={`${gilroyRegular.className} text-neutral-50 text-sm`}
@@ -171,7 +171,7 @@ function Settings() {
               <Send size={20} primaryColor="#fff" />
             </div>
           </div>
-          <div className="w-fit p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-[598px] justify-between">
+          <div className="p-7 flex flex-col col-span-1 border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-fit md:h-[598px] gap-12 justify-between">
             <div className="flex flex-col gap-4">
               <div>
                 <p className={`${gilroyBold.className} text-2xl text-white`}>
@@ -184,7 +184,7 @@ function Settings() {
               <div className="grid grid-cols-1 gap-5">
                 <div className="flex flex-col gap-3">
                   <div className="flex gap-1 items-center justify-between relative">
-                    <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
+                    <div className="bg-grey-bg w-full rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -204,7 +204,7 @@ function Settings() {
                     </div>
                   </div>
                   <div className="flex gap-1 items-center justify-between relative">
-                    <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
+                    <div className="bg-grey-bg w-full rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -224,7 +224,7 @@ function Settings() {
                     </div>
                   </div>
                   <div className="flex gap-1 items-center justify-between relative">
-                    <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
+                    <div className="bg-grey-bg w-full rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -237,7 +237,7 @@ function Settings() {
                         maxLength={6}
                       />
                     </div>
-                    <div className="absolute right-1">
+                    <div className="absolute right-2">
                       <div className="w-[74px] h-7 flex rounded-full items-center justify-center bg-primary-400 cursor-pointer">
                         <p
                           className={`${gilroySemiBold.className} text-xs text-white`}
@@ -255,7 +255,7 @@ function Settings() {
               <Send size={20} primaryColor="#fff" />
             </div>
           </div>
-          <div className="w-fit p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-[598px] justify-between">
+          <div className="p-7 flex flex-col col-span-1 border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-fit md:h-[598px] gap-12 justify-between">
             <div className="flex flex-col gap-4">
               <div>
                 <p className={`${gilroyBold.className} text-2xl text-white`}>
@@ -268,7 +268,7 @@ function Settings() {
               <div className="grid grid-cols-1 gap-5">
                 <div className="flex flex-col gap-3">
                   <div className="flex gap-1 items-center justify-between relative">
-                    <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
+                    <div className="bg-grey-bg w-full rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -288,7 +288,7 @@ function Settings() {
                     </div>
                   </div>
                   <div className="flex gap-1 items-center justify-between relative">
-                    <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
+                    <div className="bg-grey-bg w-full rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -308,7 +308,7 @@ function Settings() {
                     </div>
                   </div>
                   <div className="flex gap-1 items-center justify-between relative">
-                    <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
+                    <div className="bg-grey-bg w-full rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -321,7 +321,7 @@ function Settings() {
                         maxLength={6}
                       />
                     </div>
-                    <div className="absolute right-1">
+                    <div className="absolute right-2">
                       <div className="w-[74px] h-7 flex rounded-full items-center justify-center bg-primary-400 cursor-pointer">
                         <p
                           className={`${gilroySemiBold.className} text-xs text-white`}

@@ -23,38 +23,38 @@ function Message () {
 
   return (
     <Sidebar>
-      <div className='ml-10 mr-28 overflow-x-hidden overflow-y-hidden'>
-        <main className='mt-8 ml-3 pb-20 grid grid-cols-2 gap-10'>
+      <div className='px-4 sm:px-10 md:px-20 lg:px-28 overflow-x-hidden overflow-y-hidden'>
+        <main className='mt-8 pb-20 grid grid-cols-1 md:grid-cols-2 gap-10'>
           <div className='w-full flex flex-col gap-7'>
             <div className='pb-5 border-b-[1px] border-neutral-1A'>
-              <p className={`${gilroyBold.className} text-[40px] leading-10`}>
+              <p className={`${gilroyBold.className} text-3xl sm:text-[40px] leading-10`}>
                 Envoyer un message
               </p>
-              <p className={`${gilroyRegular.className} text-lg `}>
+              <p className={`${gilroyRegular.className} text-base sm:text-lg `}>
                 Remplissez le formulaire
               </p>
             </div>
-            <div className='w-[438px]'>
+            <div className='w-full md:w-[438px]'>
               <MapProvider>
                 <MapComponent />
               </MapProvider>
             </div>
             <div className='flex gap-3 items-center'>
-              <div className='h-14 w-14 rounded-full bg-grey-bg flex items-center justify-center'>
-                <Facebook className='w-6 h-6' stroke='#ffffff' />
+              <div className='h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-grey-bg flex items-center justify-center'>
+                <Facebook className='w-5 h-5 sm:w-6 sm:h-6' stroke='#ffffff' />
               </div>
-              <div className='h-14 w-14 rounded-full bg-grey-bg flex items-center justify-center'>
-                <Telegram className='w-6 h-6' />
+              <div className='h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-grey-bg flex items-center justify-center'>
+                <Telegram className='w-5 h-5 sm:w-6 sm:h-6' />
               </div>
-              <div className='h-14 w-14 rounded-full bg-grey-bg flex items-center justify-center'>
-                <WhatsApp className='w-6 h-6' stroke='#ffffff' />
+              <div className='h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-grey-bg flex items-center justify-center'>
+                <WhatsApp className='w-5 h-5 sm:w-6 sm:h-6' stroke='#ffffff' />
               </div>
-              <div className='h-14 w-14 rounded-full bg-grey-bg flex items-center justify-center'>
-                <Instagram className='w-6 h-6' stroke='#ffffff' />
+              <div className='h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-grey-bg flex items-center justify-center'>
+                <Instagram className='w-5 h-5 sm:w-6 sm:h-6' stroke='#ffffff' />
               </div>
             </div>
             <div className='grid gap-5'>
-              <div className='flex items-start gap-[6px]'>
+              <div className='flex items-start gap-2 sm:gap-[6px]'>
                 <Location size={24} primaryColor='#fff' />
                 <div className='flex flex-col gap-3'>
                   <p className={`${gilroyBold.className} text-base text-white`}>
@@ -75,9 +75,9 @@ function Message () {
                 </div>
               </div>
               <div className='flex flex-col gap-2'>
-                <div className='flex items-start gap-[6px]'>
+                <div className='flex items-start gap-2 sm:gap-[6px]'>
                   <div className='flex flex-col gap-3'>
-                    <MessageIcon size={24} primaryColor='#fff' />
+                    <MessageIcon size={24}  primaryColor='#fff' />
                     <Call size={24} primaryColor='#fff' />
                   </div>
                   <div className='flex flex-col gap-3'>
@@ -108,11 +108,11 @@ function Message () {
             </div>
           </div>
           <div className='w-full flex flex-col gap-10 mt-4'>
-            <div className='w-full p-4 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] gap-16'>
+            <div className='w-full p-4 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] gap-8 sm:gap-16'>
               <div className='flex flex-col gap-3'>
-                <div className='grid grid-cols-2 gap-4'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                   <div className='flex flex-col gap-3'>
-                    <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                    <div className='bg-grey-bg rounded-lg h-[60px] sm:h-[70px] flex flex-col px-5 py-3 sm:py-4 gap-1'>
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -122,7 +122,7 @@ function Message () {
                         className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
                       />
                     </div>
-                    <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                    <div className='bg-grey-bg rounded-lg h-[60px] sm:h-[70px] flex flex-col px-5 py-3 sm:py-4 gap-1'>
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -134,7 +134,7 @@ function Message () {
                     </div>
                   </div>
                   <div className='flex flex-col gap-3'>
-                    <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                    <div className='bg-grey-bg rounded-lg h-[60px] sm:h-[70px] flex flex-col px-5 py-3 sm:py-4 gap-1'>
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -144,7 +144,7 @@ function Message () {
                         className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
                       />
                     </div>
-                    <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                    <div className='bg-grey-bg rounded-lg h-[60px] sm:h-[70px] flex flex-col px-5 py-3 sm:py-4 gap-1'>
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
@@ -157,7 +157,7 @@ function Message () {
                             console.log(event.target.value)
                             setCountry(event.target.value)
                           }}
-                          className={`w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                          className={`w-14 sm:w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
                         >
                           <option value=''>
                             +{getCountryCallingCode('CM')}
@@ -179,7 +179,7 @@ function Message () {
                     </div>
                   </div>
                 </div>
-                <div className='bg-grey-bg rounded-lg h-[142px] flex flex-col p-5 gap-1'>
+                <div className='bg-grey-bg rounded-lg h-[120px] sm:h-[142px] flex flex-col px-5 py-4 gap-1'>
                   <p
                     className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                   >
@@ -191,8 +191,8 @@ function Message () {
                 </div>
               </div>
             </div>
-            <div className='bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer'>
-              <p className={`${gilroyBold.className} text-lg`}>
+            <div className='bg-gradient flex items-center gap-2 sm:gap-[10px] px-6 sm:px-8 py-4 sm:py-5 w-fit rounded-[10px] cursor-pointer'>
+              <p className={`${gilroyBold.className} text-base sm:text-lg`}>
                 Envoyer votre message
               </p>
               <Send size={20} primaryColor='#fff' />

@@ -36,70 +36,76 @@ const CourseCard: FC<Props> = ({ course, index, onClick, isSelected }) => {
 
   return (
     <div
-      className={`w-full h-[112px] rounded-[20px] px-6 py-5 ${
+      className={`w-full h-auto rounded-[20px] p-4 md:p-5 flex flex-col sm:flex-row justify-between items-center ${
         isSelected
           ? "bg-gradient-to-r from-[#462FCF14] to-[#462FCF14] border-2 border-blue"
           : "bg-neutral-1A40"
-      } flex items-center cursor-pointer`}
+      } cursor-pointer`}
       onClick={onClick}
     >
-      <div className="grid gap-2">
-        <div>
-          <p
-            className={`text-ellipsis overflow-hidden line-clamp-1 ${gilroyBold.className}`}
-          >
-            {index.toString().padStart(2, "0")}. {course.title}
-          </p>
-          <p
-            className={`text-sm text-ellipsis overflow-hidden line-clamp-1 ${gilroyRegular.className} text-xs`}
-          >
-            {course.description}
-          </p>
+      <div className="flex flex-col sm:flex-row flex-grow gap-2 items-center sm:items-start">
+        <div className="flex flex-col flex-grow gap-2">
+          <div>
+            <p className={`text-ellipsis overflow-hidden line-clamp-1 ${gilroyBold.className} text-lg md:text-xl`}>
+              {index.toString().padStart(2, "0")}. {course.title}
+            </p>
+            <p className={`text-sm text-ellipsis overflow-hidden line-clamp-1 ${gilroyRegular.className}`}>
+              {course.description}
+            </p>
+          </div>
+          <div className="flex items-center flex-wrap gap-2">
+            {!!course.pdf && (
+              <div className="px-3 py-2 flex gap-2 rounded-full items-center bg-grey-bg">
+                <Document className="w-4 h-4" />
+                <p className={`${gilroySemiBold.className} text-xs`}>PDF</p>
+              </div>
+            )}
+            {!!course.duration && (
+              <div
+                className={`px-3 py-2 flex gap-2 rounded-full items-center ${
+                  isSelected ? "bg-blue" : "bg-grey-bg"
+                }`}
+              >
+                <VideoCameraPlay className="w-4 h-4" />
+                <p className={`${gilroySemiBold.className} text-xs`}>Video</p>
+              </div>
+            )}
+            {!!course.duration && (
+              <div className="px-3 py-2 flex gap-2 rounded-full items-center bg-grey-bg">
+                <CircleClock className="w-4 h-4" />
+                <p className={`${gilroySemiBold.className} text-xs`}>
+                  {Math.floor(+course.duration / 60)} : {+course.duration % 60} mins
+                </p>
+              </div>
+            )}
+            {isSelected && (
+              <div className="flex items-center justify-center w-[24px] h-[24px] rounded-full bg-whatsapp">
+                <CheckMark className="w-3 h-3" />
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-[10px]">
-          {!!course.pdf && (
-            <div className="px-3 py-[10px] flex gap-2 rounded-full items-center bg-grey-bg">
-              <Document className={"w-4 h-4"} />
-              <p className={`${gilroySemiBold.className} text-xs`}>PDF</p>
-            </div>
-          )}
-          {!!course.duration && (
-            <div
-              className={`px-3 py-[10px] flex gap-2 rounded-full items-center ${
-                isSelected ? "bg-blue" : " bg-grey-bg"
-              }`}
-            >
-              <VideoCameraPlay className={"w-4 h-4"} />
-              <p className={`${gilroySemiBold.className} text-xs`}>Video</p>
-            </div>
-          )}
-          {!!course.duration && (
-            <div className="px-3 py-[10px] flex gap-2 rounded-full items-center bg-grey-bg">
-              <CircleClock className={"w-4 h-4"} />
-              <p className={`${gilroySemiBold.className} text-xs`}>
-                {Math.floor(+course.duration / 60)} : {+course.duration % 60}{" "}
-                mins
-              </p>
-            </div>
-          )}
-          {isSelected && (
-            <div className="flex items-center justify-center w-[24px] h-[24px] rounded-full bg-whatsapp">
-              <CheckMark className="w-3 h-3" />
-            </div>
-          )}
-        </div>
+        {/* Show progress bar below text on xs screens and alongside on sm and up */}
+        {!course.pdf && (
+          <div className="sm:ml-4 mt-4 sm:mt-0">
+            <CircularProgressBar
+              percentage={percentage}
+              radius={28}
+              strokeWidth={4}
+              strokeColor={
+                percentage < 40 ? colors.low.stroke : percentage < 80 ? colors.medium.stroke : colors.high.stroke
+              }
+              pathColor={
+                percentage < 40 ? colors.low.background : percentage < 80 ? colors.medium.background : colors.high.background
+              }
+              backgroundColor={
+                percentage < 40 ? colors.low.background : percentage < 80 ? colors.medium.background : colors.high.background
+              }
+              padding={5}
+            />
+          </div>
+        )}
       </div>
-      {!course.pdf && (
-        <CircularProgressBar
-          percentage={percentage}
-          radius={28}
-          strokeWidth={4}
-          strokeColor={percentage < 40 ? colors.low.stroke : percentage < 80 ? colors.medium.stroke : colors.high.stroke }
-          pathColor={percentage < 40 ? colors.low.background : percentage < 80 ? colors.medium.background : colors.high.background }
-          backgroundColor={percentage < 40 ? colors.low.background : percentage < 80 ? colors.medium.background : colors.high.background }
-          padding={5}
-        />
-      )}
     </div>
   );
 };

@@ -1,10 +1,8 @@
 import React, { FC, useEffect, useState } from 'react'
-
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import logoicon from '@/public/assets/images/logo-icon.png'
-
 import Reels from '@/public/assets/icons/reels.svg'
 import Email from '@/public/assets/icons/email.svg'
 import Logout from '@/public/assets/icons/logout.svg'
@@ -107,19 +105,25 @@ const Sidebar: FC<Props> = ({ children }) => {
 
   return (
     <div className='flex'>
-      <div className='fixed z-40 h-screen bg-primary-200 transition-all duration-300 ease-in-out w-[108px]'>
-        <aside className='fixed flex flex-col items-start top-0 left-0 z-40 h-screen bg-primary-200 w-[108px] p-4 pt-0'>
-          <div className='h-[152px] w-full flex items-center justify-center'>
-            <Image src={logoicon} alt='logo' width={60} height={60} />
+      <div className='fixed z-40 h-screen bg-primary-200  transition-all duration-300 ease-in-out w-16 sm:w-[108px]'>
+        <aside className='fixed flex flex-col items-start top-0 left-0 z-40 h-screen bg-primary-200 w-16 sm:w-[108px] p-2 sm:p-4 pt-0'>
+          <div className='h-[100px] sm:h-[152px] w-full flex items-center justify-center'>
+            <Image
+              src={logoicon}
+              alt='logo'
+              width={45}
+              height={45}
+              className='sm:w-15 sm:h-15'
+            />
           </div>
-          <div className='h-full px-6 mt-8 self-center flex flex-col items-center justify-between'>
+          <div className='h-full px-3 sm:px-6 mt-4 sm:mt-8 self-center flex flex-col items-center justify-between'>
             <div>
-              <div className='grid w-full gap-6'>
+              <div className='grid w-full gap-4 sm:gap-6'>
                 {activeNav.map((item, index) => {
                   return (
                     <div
                       key={item.route}
-                      className='flex flex-col items-center gap-6'
+                      className='flex flex-col items-center gap-4 sm:gap-6'
                     >
                       <div
                         className='flex flex-col gap-[2px] items-center justify-center cursor-pointer'
@@ -128,9 +132,9 @@ const Sidebar: FC<Props> = ({ children }) => {
                         <div
                           className={`${
                             item.name === active?.name
-                              ? 'w-[54px] h-[54px] icon-gradient'
-                              : 'w-8 h-8'
-                          } rounded-[10px] flex items-center justify-center`}
+                              ? 'w-[36px] sm:w-[54px] h-[36px] sm:h-[54px] icon-gradient'
+                              : 'w-5 h-5 sm:w-8 sm:h-8'
+                          } rounded-[8px] sm:rounded-[10px] flex items-center justify-center`}
                         >
                           {item.name === active?.name
                             ? item.logoActive
@@ -141,20 +145,20 @@ const Sidebar: FC<Props> = ({ children }) => {
                             item.name === active?.name
                               ? gilroyBold.className
                               : gilroyRegular.className
-                          } text-sm text-grey-60`}
+                          } text-[8px] sm:text-sm text-grey-60`}
                         >
                           {item.name}
                         </p>
                       </div>
                       {index + 1 !== activeNav.length && (
-                        <div className='w-[14px] border-[2px] opacity-20 bg-neutral-21 rounded-sm' />
+                        <div className='w-[10px] sm:w-[14px] border-[1px] sm:border-[2px] opacity-20 bg-neutral-21 rounded-sm' />
                       )}
                     </div>
                   )
                 })}
               </div>
-              <div className='w-full mt-16 flex flex-col items-center gap-16'>
-                <div className='w-[14px] border-[2px] opacity-20 bg-neutral-21 rounded-sm' />
+              <div className='w-full mt-10 sm:mt-16 flex flex-col items-center gap-10 sm:gap-16'>
+                <div className='w-[10px] sm:w-[14px] border-[1px] sm:border-[2px] opacity-20 bg-neutral-21 rounded-sm' />
                 <div
                   className='flex flex-col gap-[2px] items-center justify-center cursor-pointer'
                   onClick={() => {
@@ -165,9 +169,9 @@ const Sidebar: FC<Props> = ({ children }) => {
                   <div
                     className={`${
                       SETTINGS.name === active?.name
-                        ? 'w-[54px] h-[54px] icon-gradient'
-                        : 'w-8 h-8'
-                    } rounded-[10px] flex items-center justify-center`}
+                        ? 'w-[36px] sm:w-[54px] h-[36px] sm:h-[54px] icon-gradient'
+                        : 'w-5 h-5 sm:w-8 sm:h-8'
+                    } rounded-[8px] sm:rounded-[10px] flex items-center justify-center`}
                   >
                     {activeSettings.name === active?.name
                       ? activeSettings.logoActive
@@ -178,23 +182,25 @@ const Sidebar: FC<Props> = ({ children }) => {
                       activeSettings.name === active?.name
                         ? gilroyBold.className
                         : gilroyRegular.className
-                    } text-sm text-grey-60`}
+                    } text-[8px] sm:text-sm text-grey-60`}
                   >
                     {activeSettings.name}
                   </p>
                 </div>
               </div>
             </div>
-            <div className='self-center flex bg-error w-[60px] h-[54px] rounded-xl items-center justify-center'>
-              <Logout className='w-6 h-6' />
+            <div className='self-center flex bg-error w-[45px] sm:w-[60px] h-[40px] sm:h-[54px] rounded-xl items-center justify-center'>
+              <Logout className='w-5 h-5 sm:w-6 sm:h-6' />
             </div>
           </div>
         </aside>
       </div>
-      <main className='w-screen min-h-screen'>
+      <main className='lg:container lg:mx-auto w-screen min-h-screen'>
         {activeNav === ADMIN_NAV_ITEMS ? <AdminNav /> : <MainNav />}
-        <div className='my-40 ml-[108px]'>{children}</div>
-        <Footer />
+        <div className='my-24 sm:my-40 ml-16 sm:ml-[108px]'>{children}</div>
+        <div className='ml-16 sm:ml-[108px]'>
+          <Footer />
+        </div>
       </main>
     </div>
   )

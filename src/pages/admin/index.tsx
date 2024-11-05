@@ -185,7 +185,7 @@ function Index() {
   return (
     <Sidebar>
       <div className="ml-12 mr-20 mt-8 flex flex-col gap-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 items-center gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-center gap-8">
           {cards.map((card, index) => {
             return <AdminInfoCard item={card} key={card.title} index={index} />;
           })}

@@ -40,16 +40,16 @@ function Home() {
   };
   return (
     <Sidebar>
-      <div className="ml-10 mr-28 overflow-x-hidden overflow-y-hidden">
-        <main className="pb-20 flex flex-col gap-7">
+      <div className="mx-2 sm:mx-6 lg:ml-10 lg:mr-28 overflow-x-hidden overflow-y-hidden">
+        <main className="pb-5 sm:pb-20 flex flex-col gap-7">
           <div>
-            <p className={`${gilroyBold.className} text-4xl`}>Welcome back!</p>
+            <p className={`${gilroyBold.className} text-2xl sm:text-4xl`}>Welcome back!</p>
             <p className={`${gilroyRegular.className} text-grey-60`}>
               Continue where you left off!
             </p>
           </div>
-          <div className="grid grid-cols-[350px_1fr] gap-10">
-            <div className="grid gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-10">
+            <div className="grid gap-2 order-2 md:order-1">
               {courses.map((course, index) => (
                 <CourseCard
                   course={course}
@@ -61,8 +61,8 @@ function Home() {
               ))}
             </div>
             {selectedCourse && (
-              <div className="flex flex-col gap-3">
-                <div className="w-full h-full bg-grey-bg rounded-[32px]"></div>
+              <div className="flex flex-col gap-3 order-1 md:order-2">
+                <div className="w-full h-64 sm:h-96 md:h-full bg-grey-bg rounded-[32px]"></div>
                 <div>
                   <p
                     className={`${gilroyBold.className} text-4xl text-ellipsis overflow-hidden line-clamp-1`}
