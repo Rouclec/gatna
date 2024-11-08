@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
 import { Navbar } from '../components'
+import { useRouter } from 'next/router'
 
 function SignUp () {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -90,8 +92,7 @@ function SignUp () {
       })
 
       if (response.ok) {
-        alert('Account created successfully!')
-        // Redirect or handle success
+        router.push('/signin')
       } else {
         const data = await response.json()
         setErrors(prev => ({
