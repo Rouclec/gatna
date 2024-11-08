@@ -87,6 +87,13 @@ body {
   fill: none;
 }
 
+input:-webkit-autofill {
+  background-color: rgba(26, 26, 26, 0.4) !important; /* Same as your input background */
+  color: inherit !important; /* Ensures text color remains consistent */
+  -webkit-text-fill-color: inherit !important; /* Ensures text color remains consistent */
+  transition: background-color 5000s ease-in-out 0s; /* Prevents flicker */
+}
+
 .circle-background {
   stroke: #ddd;
 }

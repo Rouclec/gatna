@@ -11,6 +11,8 @@ import en from "react-phone-number-input/locale/en.json";
 
 import { ChangeEvent, useState } from "react";
 import ImageUploadButton from "@/src/components/ImageUploadButton";
+import { GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 
 function Settings() {
   const countries = getCountries();
@@ -43,7 +45,7 @@ function Settings() {
 
   return (
     <Sidebar>
-      <div className="mr-3 md:ml-10 md:mr-28 overflow-x-hidden overflow-y-hidden">
+      <div className="mr-6 ml-4 md:ml-10 md:mr-28 overflow-x-hidden overflow-y-hidden">
         <main className="mt-8 ml-3 pb-20 gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           <div className="p-7 flex flex-col col-span-1 md:col-span-2 border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-fit md:h-[598px] gap-12 justify-between">
             <div className="flex flex-col gap-4">
@@ -346,3 +348,24 @@ function Settings() {
 }
 
 export default Settings;
+
+
+export async function getServerSideProps (context: GetServerSidePropsContext) {
+  const session = await getSession(context)
+
+  // Check if the user is authenticated
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false
+      }
+    }
+  }
+
+
+  // If there is a user
+  return {
+    props: { session }
+  }
+}

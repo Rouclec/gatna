@@ -13,6 +13,8 @@ import ClipboardText from '@/public/assets/icons/clipboard-text.svg'
 import DocumentText from '@/public/assets/icons/document-text.svg'
 import Reels from '@/public/assets/icons/reels.svg'
 import Stopwatch from '@/public/assets/icons/stopwatch.svg'
+import { getSession } from 'next-auth/react'
+import { GetServerSidePropsContext } from 'next'
 
 const courses = [
   {
@@ -541,3 +543,35 @@ function CreateCourse () {
 }
 
 export default CreateCourse
+
+
+export async function getServerSideProps (context: GetServerSidePropsContext) {
+  const session = await getSession(context)
+
+  // Check if the user is authenticated
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false
+      }
+    }
+  }
+
+  console.log(session.user.role)
+
+  // Check if the user has the admin role
+  if (session.user.role !== 'admin') {
+    return {
+      redirect: {
+        destination: '/403',
+        permanent: false
+      }
+    }
+  }
+
+  // If the user is an admin, proceed to render the page
+  return {
+    props: { session }
+  }
+}

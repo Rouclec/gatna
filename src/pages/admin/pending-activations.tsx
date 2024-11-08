@@ -13,6 +13,8 @@ import { gilroyBold, gilroyMedium, gilroyRegular } from "@/src/pages/index";
 import { ChevronDown, ChevronUp, EditSquare } from "react-iconly";
 import moment from "moment";
 import CircularProgressBar from "@/src/components/CircularProgressBar";
+import { GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 
 const colors = {
   high: {
@@ -632,3 +634,35 @@ function PendingActivation() {
 }
 
 export default PendingActivation;
+
+
+export async function getServerSideProps (context: GetServerSidePropsContext) {
+  const session = await getSession(context)
+
+  // Check if the user is authenticated
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false
+      }
+    }
+  }
+
+  console.log(session.user.role)
+
+  // Check if the user has the admin role
+  if (session.user.role !== 'admin') {
+    return {
+      redirect: {
+        destination: '/403',
+        permanent: false
+      }
+    }
+  }
+
+  // If the user is an admin, proceed to render the page
+  return {
+    props: { session }
+  }
+}

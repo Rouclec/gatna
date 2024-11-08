@@ -4,6 +4,8 @@ import CourseCard from "@/src/components/CourseCard";
 import { Course } from "@/src/interfaces";
 import { useState } from "react";
 import Pagination from "@/src/components/Pagination";
+import { GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 
 
 const courses: Course[] = [
@@ -40,7 +42,7 @@ function Home() {
   };
   return (
     <Sidebar>
-      <div className="mx-2 sm:mx-6 lg:ml-10 lg:mr-28 overflow-x-hidden overflow-y-hidden">
+      <div className="mx-6 lg:ml-10 lg:mr-28 overflow-x-hidden overflow-y-hidden">
         <main className="pb-5 sm:pb-20 flex flex-col gap-7">
           <div>
             <p className={`${gilroyBold.className} text-2xl sm:text-4xl`}>Welcome back!</p>
@@ -91,3 +93,23 @@ function Home() {
 }
 
 export default Home;
+
+export async function getServerSideProps (context: GetServerSidePropsContext) {
+  const session = await getSession(context)
+
+  // Check if the user is authenticated
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false
+      }
+    }
+  }
+
+
+  // If there is a user
+  return {
+    props: { session }
+  }
+}

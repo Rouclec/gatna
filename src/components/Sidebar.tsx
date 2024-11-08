@@ -12,6 +12,7 @@ import { gilroyBold, gilroyRegular } from '../pages'
 import MainNav from './MainNav'
 import AdminNav from './AdminNav'
 import Footer from './Footer'
+import { signOut } from 'next-auth/react'
 
 type Props = {
   children: React.ReactNode
@@ -228,7 +229,10 @@ const Sidebar: FC<Props> = ({ children }) => {
                 </div>
               </div>
             </div>
-            <div className='self-center flex bg-error w-[60px] h-[54px] rounded-xl items-center justify-center'>
+            <div
+              className='self-center flex bg-error w-[60px] h-[54px] rounded-xl items-center justify-center cursor-pointer'
+              onClick={() => signOut({ callbackUrl: '/' })}
+            >
               <Logout className='w-6 h-6' />
             </div>
           </div>

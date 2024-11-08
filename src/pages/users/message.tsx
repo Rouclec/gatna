@@ -16,6 +16,8 @@ import {
 } from 'react-phone-number-input/input'
 
 import { useState } from 'react'
+import { GetServerSidePropsContext } from 'next'
+import { getSession } from 'next-auth/react'
 
 function Message () {
   const countries = getCountries()
@@ -23,7 +25,7 @@ function Message () {
 
   return (
     <Sidebar>
-      <div className='px-4 sm:px-10 md:px-20 lg:px-28 overflow-x-hidden overflow-y-hidden'>
+      <div className='px-6 sm:px-10 md:px-20 lg:px-28 overflow-x-hidden overflow-y-hidden'>
         <main className='mt-8 pb-20 grid grid-cols-1 md:grid-cols-2 gap-10'>
           <div className='w-full flex flex-col gap-7'>
             <div className='pb-5 border-b-[1px] border-neutral-1A'>
@@ -205,3 +207,24 @@ function Message () {
 }
 
 export default Message
+
+
+export async function getServerSideProps (context: GetServerSidePropsContext) {
+  const session = await getSession(context)
+
+  // Check if the user is authenticated
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false
+      }
+    }
+  }
+
+
+  // If there is a user
+  return {
+    props: { session }
+  }
+}
