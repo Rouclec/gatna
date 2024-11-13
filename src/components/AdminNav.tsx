@@ -4,8 +4,10 @@ import Email from '@/public/assets/icons/email.svg'
 import NotebookCheck from '@/public/assets/icons/notebook-check.svg'
 import Bell from '@/public/assets/icons/bell.svg'
 import { gilroyBold, gilroyRegular } from '../pages'
+import { useSession } from 'next-auth/react'
 
 const AdminNav = () => {
+  const session = useSession()
   return (
     <div className=' lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 right-2 md:left-[120px] md:pl-0 md:right-20 border-neutral-1A items-end flex z-40 bg-background'>
       <div className='flex w-full items-center justify-between'>
@@ -18,7 +20,7 @@ const AdminNav = () => {
           <p
             className={`${gilroyBold.className} text-lg sm:text-2xl text-white`}
           >
-            gatna.io
+            {session.data?.user.name ?? 'gatna.io'}
           </p>
         </div>
         <div className='flex w-fit items-center gap-2 sm:gap-[10px]'>

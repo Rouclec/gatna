@@ -2425,6 +2425,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-spinner@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@types/react-spinner/-/react-spinner-0.2.3.tgz#e759ffce502a21796eff918352ca171278d78c81"
+  integrity sha512-KmEOJVcAYP1Sg09l1QI4IrHZZF58SYlFKH4fTNYFjokWEgqpslwIC3oPFDfj8AVGNIM9/H+AKvYVY6qWbB+Kgg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react@*", "@types/react@^18":
   version "18.3.10"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.10.tgz#6edc26dc22ff8c9c226d3c7bf8357b013c842219"
@@ -5524,6 +5531,11 @@ react-player@^2.16.0:
     memoize-one "^5.1.1"
     prop-types "^15.7.2"
     react-fast-compare "^3.0.1"
+
+react-spinners@^0.14.1:
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.14.1.tgz#de7d7d6b3e6d4f29d9620c65495b502c7dd90812"
+  integrity sha512-2Izq+qgQ08HTofCVEdcAQCXFEYfqTDdfeDQJeo/HHQiQJD4imOicNLhkfN2eh1NYEWVOX4D9ok2lhuDB0z3Aag==
 
 react@^18:
   version "18.3.1"

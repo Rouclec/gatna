@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import mongoose, { Schema, Document, model, QueryWithHelpers } from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
