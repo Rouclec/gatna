@@ -1,4 +1,7 @@
 // pages/api/auth/[...nextauth].ts
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import Role from "@/src/models/Role";
+
 import User from "@/src/models/User";
 import dbConnect from "@/src/util/db";
 import NextAuth, { NextAuthOptions } from "next-auth";
