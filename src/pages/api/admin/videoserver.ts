@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
-import VideoServer from "@/src/models/VideoServer";
+import { VideoServer } from "@/src/models";
 
 const secret = process.env.NEXTAUTH_SECRET;
 

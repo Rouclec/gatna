@@ -1,8 +1,4 @@
-import User from "@/src/models/User";
-
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Role from "@/src/models/Role";
+import { User } from "@/src/models";
 import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";
 

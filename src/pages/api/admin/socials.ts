@@ -3,7 +3,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
-import Socials from "@/src/models/Socials";
+import { Socials } from "@/src/models";
+
 
 const secret = process.env.NEXTAUTH_SECRET;
 

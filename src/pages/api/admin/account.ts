@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
-import Account from "@/src/models/Account"; // Import the Account model
+import { Account } from "@/src/models";
 
 const secret = process.env.NEXTAUTH_SECRET;
 

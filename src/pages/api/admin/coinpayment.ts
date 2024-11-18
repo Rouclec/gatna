@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
-import Coinpayment from "@/src/models/Coinpayment";
+import { Coinpayment } from "@/src/models";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
