@@ -2,25 +2,31 @@ import React, { FC } from 'react'
 import Pin from '@/public/assets/icons/pin.svg'
 import { gilroyBlack, gilroyBold, gilroyHeavy, gilroyRegular } from '../pages'
 import { Paper, TimeSquare, Video } from 'react-iconly'
+import { Course } from '../hooks/course'
+import { useGetVideoPlaybackInfo } from '../hooks/video'
 
 interface Props {
-  course: {
-    videoURL: string
-    id: string | number
-    title: string
-    description: string
-    videos: string | number
-    pdf?: string
-    duration: string | number
-    tag: string
-    price: number | string
-    watermark: string
-  }
+  course: Course
   inverted?: boolean
   pinColor: string
 }
 
+const CURRENCY_SYMBOL = {
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  XAF: 'XAF'
+} as const // `as const` ensures the keys and values are readonly
+
+function getCurrencySymbol (currency: string): string {
+  if (currency in CURRENCY_SYMBOL) {
+    return CURRENCY_SYMBOL[currency as keyof typeof CURRENCY_SYMBOL]
+  }
+  return currency
+}
+
 const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
+  const { data, isLoading } = useGetVideoPlaybackInfo(course?.videos[0]?.id)
   return (
     <div
       // className={`flex flex-col items-center justify-center relative ${
@@ -38,7 +44,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             <p
               className={`block lg:hidden ${gilroyHeavy.className} text-6xl mx:text-8xl text-center leading-none text-white text-opacity-[2%] whitespace-nowrap`}
             >
-              {course.watermark}
+              {course.category.name}
             </p>
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
@@ -48,7 +54,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
                     <p className={`${gilroyRegular.className} text-lg`}>
-                      {course.tag} /{' '}
+                      {course.category.tag} /{' '}
                       <span className={`${gilroyBold.className}`}>
                         ${course.price}
                       </span>
@@ -57,24 +63,25 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   <p
                     className={`leading-[52px] text-3xl md:text-[40px] ${gilroyBlack.className} text-center md:text-right`}
                   >
-                    {course.title}
+                    {course?.videos[0]?.title ?? course?.pdfs[0]?.title}
                   </p>
                   <p
                     className={`${gilroyRegular.className} text-lg text-center md:text-right`}
                   >
-                    {course.description}
+                    {course?.videos[0]?.description ??
+                      course.pdfs[0].description}
                   </p>
                   <div className='grid grid-cols-2 md:grid-cols-3 items-center gap-3'>
-                    {!course.pdf && <div className='hidden md:block'/>}
+                    {!course.pdfs && <div className='hidden md:block' />}
                     <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
                       <Video size={24} style={{ opacity: 0.4 }} />
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course.videos} videos
+                        {course?.videos?.length ?? 0} videos
                       </p>
                     </div>
-                    {course.pdf && (
+                    {course?.pdfs && (
                       <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
                         <Paper size={24} style={{ opacity: 0.4 }} />
                         <p
@@ -89,7 +96,11 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course.duration} hours
+                        {course?.duration && course.duration > 3600
+                          ? `${Math.round(
+                              (course.duration ?? 0) / (60 * 60)
+                            )} hours`
+                          : `${Math.round((course.duration ?? 0) / 60)} mins`}
                       </p>
                     </div>
                   </div>
@@ -105,7 +116,17 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   inverted ? 'mr-10' : 'ml-10'
                 }`}
               >
-                <p>Video goes here</p>
+                <iframe
+                  src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
+                  style={{
+                    border: 0,
+                    borderRadius: 32,
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  allow='encrypted-media'
+                  allowFullScreen
+                />
               </div>
             </div>
             <div className='relative flex items-center justify-center ml-16'>
@@ -117,7 +138,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   transform: 'translate(-50%, -50%) rotate(90deg)'
                 }}
               >
-                {course.watermark}
+                {course.category.name}
               </p>
             </div>
           </div>
@@ -129,7 +150,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             <p
               className={`block lg:hidden ${gilroyHeavy.className} text-6xl mx:text-8xl text-center leading-none text-white text-opacity-[2%] whitespace-nowrap`}
             >
-              {course.watermark}
+              {course.category.name}
             </p>
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
@@ -142,35 +163,47 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   transform: 'translate(-50%, -50%) rotate(90deg)'
                 }}
               >
-                {course.watermark}
+                {course.category.name}
               </p>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
               <div
                 className={`w-full mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex mr-10`}
               >
-                <p>Video goes here</p>
+                <iframe
+                  src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
+                  style={{
+                    border: 0,
+                    borderRadius: 32,
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  allow='encrypted-media'
+                  allowFullScreen
+                />
               </div>
               <div className='flex flex-col gap-16 col-span-1'>
                 <div className='flex flex-col gap-3 items-center md:items-start'>
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
                     <p className={`${gilroyRegular.className} text-lg`}>
-                      {course.tag} /{' '}
+                      {course.category.tag} /{' '}
                       <span className={`${gilroyBold.className}`}>
-                        ${course.price}
+                        {getCurrencySymbol(course.currency)}
+                        {course.price}
                       </span>
                     </p>
                   </div>
                   <p
                     className={`leading-[52px] text-3xl md:text-[40px] ${gilroyBlack.className} text-center md:text-left`}
                   >
-                    {course.title}
+                    {course?.videos[0]?.title ?? course?.pdfs[0]?.title}
                   </p>
                   <p
                     className={`${gilroyRegular.className} text-lg text-center md:text-left`}
                   >
-                    {course.description}
+                    {course?.videos[0]?.description ??
+                      course?.pdfs[0]?.description}
                   </p>
                   <div className='grid grid-cols-2 md:grid-cols-3 items-center gap-3'>
                     <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
@@ -178,10 +211,10 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course.videos} videos
+                        {course?.videos?.length ?? 0} videos
                       </p>
                     </div>
-                    {course.pdf && (
+                    {course.pdfs && (
                       <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
                         <Paper size={24} style={{ opacity: 0.4 }} />
                         <p
@@ -196,7 +229,11 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course.duration} hours
+                        {course?.duration && course.duration > 3600
+                          ? `${Math.round(
+                              (course.duration ?? 0) / (60 * 60)
+                            )} hours`
+                          : `${Math.round((course.duration ?? 0) / 60)} mins`}
                       </p>
                     </div>
                   </div>

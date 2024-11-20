@@ -1,7 +1,10 @@
 import mongoose, { Schema, Document, model } from "mongoose";
 
 interface ISocials extends Document {
-  userId: string;
+  userId: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  };
   facebook?: string;
   instagram?: string;
   whatsapp?: string;
@@ -12,7 +15,12 @@ interface ISocials extends Document {
 
 const SocialsSchema: Schema<ISocials> = new Schema(
   {
-    userId: { type: String, required: true, unique: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
     facebook: String,
     instagram: String,
     whatsapp: String,

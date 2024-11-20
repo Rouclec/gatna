@@ -4,7 +4,7 @@ import React, { ChangeEvent, FC, useState } from 'react'
 import DocumentVerified from '@/public/assets/icons/document-verified.svg'
 import Filter from '@/public/assets/icons/filter.svg'
 import Completed from '@/public/assets/icons/complete.svg'
-import Failed from '@/public/assets/icons/failed.svg'
+// import Failed from '@/public/assets/icons/failed.svg'
 
 import { gilroyBold, gilroyMedium, gilroyRegular } from '@/src/pages/index'
 import { ChevronDown, ChevronUp, EditSquare } from 'react-iconly'
@@ -12,100 +12,18 @@ import CheckMark from '@/public/assets/icons/checkmark.svg'
 import ClipboardText from '@/public/assets/icons/clipboard-text.svg'
 import DocumentText from '@/public/assets/icons/document-text.svg'
 import Reels from '@/public/assets/icons/reels.svg'
-import Stopwatch from '@/public/assets/icons/stopwatch.svg'
+// import Stopwatch from '@/public/assets/icons/stopwatch.svg'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next'
-
-const courses = [
-  {
-    id: 'A1B2C3D4E5F6G7H8',
-    courseTitle: 'Intro to Cryptocurrency Basics',
-    description:
-      'Learn the fundamentals of cryptocurrency, blockchain technology, and digital wallets.',
-    fileType: 'Video',
-    duration: 60,
-    status: 'Completed'
-  },
-  {
-    id: 'I9J8K7L6M5N4O3P2',
-    courseTitle: 'Blockchain Technology Explained',
-    description:
-      "A deep dive into how blockchain works and why it's considered revolutionary in finance.",
-    fileType: 'PDF',
-    status: 'failed'
-  },
-  {
-    id: 'Q1R2S3T4U5V6W7X8',
-    courseTitle: 'Advanced Crypto Trading Strategies',
-    description:
-      'Discover advanced techniques for analyzing and trading cryptocurrencies effectively.',
-    fileType: 'Video',
-    duration: 120,
-    status: 'failed'
-  },
-  {
-    id: 'Y9Z8A7B6C5D4E3F2',
-    courseTitle: 'Understanding Decentralized Finance (DeFi)',
-    description:
-      'An introduction to DeFi, including popular protocols and risk management.',
-    fileType: 'Video',
-    duration: 90,
-    status: 'failed'
-  },
-  {
-    id: 'G1H2I3J4K5L6M7N8',
-    courseTitle: 'Crypto Wallet Security Best Practices',
-    description:
-      'Learn essential security practices for protecting your digital assets.',
-    fileType: 'PDF',
-    status: 'failed'
-  },
-  {
-    id: 'O9P8Q7R6S5T4U3V2',
-    courseTitle: 'Ethereum and Smart Contracts',
-    description:
-      "A beginner's guide to Ethereum and how smart contracts work within the network.",
-    fileType: 'Video',
-    duration: 75,
-    status: 'failed'
-  },
-  {
-    id: 'W1X2Y3Z4A5B6C7D8',
-    courseTitle: 'NFTs: Creating and Collecting Digital Art',
-    description:
-      'Explore the world of NFTs, from creating digital assets to collecting and investing.',
-    fileType: 'Video',
-    duration: 50,
-    status: 'failed'
-  },
-  {
-    id: 'E9F8G7H6I5J4K3L2',
-    courseTitle: 'Mining Cryptocurrency: Getting Started',
-    description:
-      'An overview of cryptocurrency mining, hardware requirements, and profitability.',
-    fileType: 'PDF',
-    status: 'failed'
-  },
-  {
-    id: 'M1N2O3P4Q5R6S7T8',
-    courseTitle: 'Crypto Taxation and Compliance',
-    description:
-      'Understand the taxation rules and compliance requirements for crypto transactions.',
-    fileType: 'Video',
-    duration: 45,
-    status: 'failed'
-  },
-  {
-    id: 'U9V8W7X6Y5Z4A3B2',
-    courseTitle: 'Exploring Altcoins Beyond Bitcoin',
-    description:
-      'An in-depth look at altcoins, their uses, and how they differ from Bitcoin.',
-    fileType: 'PDF',
-    status: 'failed'
-  }
-]
-
-const courseTypes = ['Gatna 1', 'Gatna 2', 'Gatna 3', 'Gatna 4']
+import { useGetCategories } from '@/src/hooks/category'
+import {
+  CreateCourseRequest,
+  useGetCourses,
+  useSaveCourse
+} from '@/src/hooks/course'
+import { storage } from '@/src/util/firebase'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { ClipLoader, FadeLoader } from 'react-spinners'
 
 interface InputProps {
   leftIcon?: React.ReactNode
@@ -172,12 +90,93 @@ const Input: FC<InputProps> = ({
 function CreateCourse () {
   const [selectedType, setSelectedType] = useState(0)
   const [courseType, setCourseType] = useState<string>()
-  const [durtion, setDurtion] = useState<number>()
+  // const [durtion, setDurtion] = useState<number>()
   const [courseTitle, setCourseTitle] = useState<string>()
   const [videoID, setVideoID] = useState<string>()
   const [description, setDescripton] = useState<string>()
+
+  const [file, setFile] = useState<File | null>(null)
+  // const [progress, setProgress] = useState(0);
+  const [downloadURL, setDownloadURL] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0])
+    }
+  }
+
+  const handleUpload = () => {
+    if (!file) return
+
+    // Create a storage reference
+    const storageRef = ref(storage, `uploads/${file.name}`)
+
+    // Start the file upload
+    const uploadTask = uploadBytesResumable(storageRef, file)
+
+    // Monitor upload progress
+    uploadTask.on(
+      'state_changed',
+      snapshot => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        console.log(`Upload is ${progress}% done`)
+      },
+      error => {
+        console.error('Upload failed:', error)
+      },
+      async () => {
+        // Get the download URL after the upload completes
+        const url = await getDownloadURL(uploadTask.snapshot.ref)
+        setDownloadURL(url)
+      }
+    )
+  }
+
+  const { data: categories, isFetching: isCategoriesFetching } =
+    useGetCategories({})
+  const { data: coursesData, isFetching: isCoursesFetching } = useGetCourses()
+
+  const handleCreate = async () => {
+    try {
+      setLoading(true)
+      if (courseType === 'pdf') {
+        handleUpload()
+        const course: CreateCourseRequest = {
+          category: categories![selectedType]._id,
+          videoID: null,
+          title: courseTitle!,
+          description: description!,
+          pdf: downloadURL
+        }
+        mutate(course)
+      } else {
+        const course: CreateCourseRequest = {
+          category: categories![selectedType]._id,
+          videoID: videoID!,
+          title: courseTitle!,
+          description: description!,
+          pdf: null
+        }
+        mutate(course)
+      }
+    } catch (error) {
+      console.error(`Error uploading course: ${error}`)
+      alert(`Error uploading course: ${error}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const { mutate } = useSaveCourse()
+
   return (
     <Sidebar>
+      {(isCategoriesFetching || isCoursesFetching) && (
+        <div className='absolute inset-0 bg-transparent bg-opacity-10 backdrop-blur-sm z-[9999] flex items-start pt-[30vh] justify-center'>
+          <FadeLoader />
+        </div>
+      )}
       <div className='container ml-12 mr-20 mt-8 grid grid-cols-11 gap-3 items-center justify-center'>
         <div className='flex flex-col h-full gap-8 col-span-11 lg:col-span-4'>
           <div className='w-full p-8 h-full rounded-3xl bg-grey-bg overflow-x-auto flex flex-col gap-12'>
@@ -197,7 +196,7 @@ function CreateCourse () {
               </div>
             </div>
             <div className='w-full rounded-2xl bg-black bg-opacity-25 flex items-center justify-evenly gap-2 px-3 py-5'>
-              {courseTypes.map((item, index) => {
+              {categories?.map((item, index) => {
                 return (
                   <div
                     key={index}
@@ -207,7 +206,7 @@ function CreateCourse () {
                     onClick={() => setSelectedType(index)}
                   >
                     <p className={`${gilroyBold.className} text-xs text-white`}>
-                      {item}
+                      {item.name}
                     </p>
                     {selectedType === index && (
                       <div className='flex items-center justify-center w-[18px] h-[18px] rounded-full bg-whatsapp absolute -top-1 -right-1'>
@@ -220,6 +219,14 @@ function CreateCourse () {
             </div>
             <div className='grid gap-16'>
               <div className='grid gap-x-3 gap-y-5'>
+                <div className='w-full rounded-lg bg-black bg-opacity-15'>
+                  <Input
+                    leftIcon={<DocumentText />}
+                    placeholder='Course title'
+                    value={courseTitle}
+                    onChange={e => setCourseTitle(e.target.value)}
+                  />
+                </div>
                 <div className='grid grid-cols-2 gap-4'>
                   <Input
                     options={[
@@ -229,7 +236,7 @@ function CreateCourse () {
                       },
                       {
                         label: 'PDF',
-                        value: 'pdf˝'
+                        value: 'pdf'
                       }
                     ]}
                     onChange={e => setCourseType(e.target.value)}
@@ -237,25 +244,46 @@ function CreateCourse () {
                     value={courseType}
                     leftIcon={<ClipboardText />}
                   />
-                  <Input
+                  {/* <Input
                     leftIcon={<Stopwatch />}
                     placeholder='Duration'
                     value={durtion}
                     inputMode='numeric'
                     onChange={e => setDurtion(+e.target.value)}
-                  />
-                  <Input
-                    leftIcon={<DocumentText />}
-                    placeholder='Course title'
-                    value={courseTitle}
-                    onChange={e => setCourseTitle(e.target.value)}
-                  />
-                  <Input
-                    leftIcon={<Reels className='w-5 h-5' />}
-                    placeholder='Video ID'
-                    value={videoID}
-                    onChange={e => setVideoID(e.target.value)}
-                  />
+                  /> */}
+                  {courseType === 'pdf' ? (
+                    <div>
+                      <div className='w-full h-16 flex items-center'>
+                        <input
+                          type='file'
+                          id='fileInput'
+                          accept='application/pdf'
+                          onChange={handleFileChange}
+                          className='hidden'
+                        />
+                        {/* Custom button */}
+                        <label
+                          htmlFor='fileInput'
+                          className='button-dark cursor-pointer flex items-center justify-center px-4 py-2 rounded-lg text-white'
+                        >
+                          {file ? 'Change File' : 'Select File'}
+                        </label>
+                      </div>
+
+                      {file && (
+                        <p className='text-sm trim overflow-hidden line-clamp-1'>
+                          {file.name}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <Input
+                      leftIcon={<Reels className='w-4' />}
+                      placeholder='Video ID'
+                      value={videoID}
+                      onChange={e => setVideoID(e.target.value)}
+                    />
+                  )}
                 </div>
                 <div className='w-full h-28 rounded-lg bg-black bg-opacity-15'>
                   <textarea
@@ -266,14 +294,21 @@ function CreateCourse () {
                   />
                 </div>
               </div>
-              <button className='w-fit button-primary flex px-8 py-5 items-center justify-center'>
+              <button
+                className={`w-fit button-primary flex px-8 py-5 items-center gap-[10px] justify-center ${
+                  loading && 'opacity-60'
+                }`}
+                onClick={handleCreate}
+                disabled={loading}
+              >
                 <p className={`${gilroyBold.className} text-sm`}>Save & Add</p>
+                {loading && <ClipLoader size={20} color='#fff' />}
               </button>
             </div>
           </div>
         </div>
-        <div className='flex flex-col gap-8 col-span-11 lg:col-span-7'>
-          <div className='w-full p-8 rounded-3xl bg-grey-bg overflow-x-auto max-h-screen overflow-y-auto'>
+        <div className='flex flex-col gap-8 col-span-11 lg:col-span-7 min-h-full'>
+          <div className='w-full h-full p-8 rounded-3xl bg-grey-bg overflow-x-auto max-h-screen overflow-y-auto'>
             <div className='w-full flex items-center justify-between'>
               <div className='flex items-center gap-[10px]'>
                 <DocumentVerified className='w-[52px]' />
@@ -316,7 +351,7 @@ function CreateCourse () {
                 </div>
               </div>
             </div>
-            <table className='min-w-full w-full table-auto mt-7'>
+            <table className='min-w-full h-full w-full table-auto mt-7'>
               <thead className='bg-neutral-CF bg-opacity-10 rounded-lg'>
                 <tr>
                   <th className='text-left px-3 py-5 whitespace-nowrap rounded-l-lg'>
@@ -459,80 +494,87 @@ function CreateCourse () {
                 </tr>
               </thead>
               <tbody>
-                {courses.map((item, index) => {
-                  return (
-                    <tr key={index}>
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <input className='checkbox-custom' type='checkbox' />
-                      </td>
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <p
-                          className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                        >
-                          {item.id}
-                        </p>
-                      </td>
-
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <p
-                          className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                        >
-                          {item.courseTitle}
-                        </p>
-                      </td>
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <p
-                          className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                        >
-                          {item.description}
-                        </p>
-                      </td>
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <p
-                          className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                        >
-                          {item.fileType}
-                        </p>
-                      </td>
-
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <p
-                          className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                        >
-                          {item?.duration
-                            ? `${Math.floor(item.duration / 60)}:${
-                                item.duration % 60
-                              }`
-                            : 'N/A'}
-                        </p>
-                      </td>
-                      <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                        <div className='flex items-center gap-3'>
-                          <div
-                            className={`w-6 h-6 rounded-md flex items-center justify-center`}
-                            style={{
-                              backgroundColor:
-                                item.status === 'completed'
-                                  ? '#14A42B33'
-                                  : '#D1416333'
-                            }}
+                {coursesData
+                  ?.flatMap(course => [
+                    ...(course.videos ?? []),
+                    ...(course.pdfs ?? [])
+                  ])
+                  ?.map((item, index) => {
+                    return (
+                      <tr key={index}>
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <input className='checkbox-custom' type='checkbox' />
+                        </td>
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
                           >
-                            {item.status === 'completed' ? (
+                            {item._id}
+                          </p>
+                        </td>
+
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item.title}
+                          </p>
+                        </td>
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item.description}
+                          </p>
+                        </td>
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item.fileType.charAt(0).toUpperCase() +
+                              item.fileType.slice(1)}
+                          </p>
+                        </td>
+
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item?.length
+                              ? `${Math.floor(item.length / (60 * 60))}:${
+                                  item.length % (60)
+                                }`
+                              : 'N/A'}
+                          </p>
+                        </td>
+                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                          <div className='flex items-center gap-3'>
+                            <div
+                              className={`w-6 h-6 rounded-md flex items-center justify-center`}
+                              style={{
+                                backgroundColor:
+                                  // item.status === 'completed'
+                                  //   ?
+                                  '#14A42B33'
+                                // : '#D1416333'
+                              }}
+                            >
+                              {/* {item.status === 'completed' ? ( */}
                               <Completed className='w-3' />
-                            ) : (
-                              <Failed className='w-3' />
-                            )}
+                              {/* ) : (
+                                <Failed className='w-3' />
+                              )} */}
+                            </div>
+                            <div
+                              className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-info`}
+                            >
+                              <EditSquare primaryColor='#ffffff' size={12} />
+                            </div>
                           </div>
-                          <div
-                            className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-info`}
-                          >
-                            <EditSquare primaryColor='#ffffff' size={12} />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
+                        </td>
+                      </tr>
+                    )
+                  })}
               </tbody>
             </table>
           </div>
@@ -543,7 +585,6 @@ function CreateCourse () {
 }
 
 export default CreateCourse
-
 
 export async function getServerSideProps (context: GetServerSidePropsContext) {
   const session = await getSession(context)
@@ -557,8 +598,6 @@ export async function getServerSideProps (context: GetServerSidePropsContext) {
       }
     }
   }
-
-  console.log(session.user.role)
 
   // Check if the user has the admin role
   if (session.user.role !== 'admin') {

@@ -24,6 +24,7 @@ import {
 import Footer from '../components/Footer'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useGetCourses } from '../hooks/course'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -210,6 +211,8 @@ export default function Home () {
   const [country, setCountry] = useState<string>('Cameroon')
   const router = useRouter()
 
+  const { data: coursesData, isFetching: isCoursesFetching } = useGetCourses();
+
   return (
     <div
       className={`${geistSans.variable} ${geistMono.variable} ${gilroyRegular.variable} ${gilroyMedium.variable} ${gilroyBold.variable} ${gilroyBlack.variable} grid lg:container mx-auto`}
@@ -279,9 +282,9 @@ export default function Home () {
           </div>
         </div>
         <div className='grid my-16 lg:my-64 gap-10 lg:gap-48'>
-          {courses.map(({ course }, index) => {
+          {coursesData?.map((course, index) => {
             return (
-              <div key={course.id}>
+              <div key={course?._id}>
                 <CourseDetails
                   course={course}
                   inverted={index % 2 !== 0}

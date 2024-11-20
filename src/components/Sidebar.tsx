@@ -13,6 +13,7 @@ import MainNav from './MainNav'
 import AdminNav from './AdminNav'
 import Footer from './Footer'
 import { signOut } from 'next-auth/react'
+import { Category } from 'react-iconly'
 
 type Props = {
   children: React.ReactNode
@@ -41,20 +42,20 @@ const NAV_ITEMS = [
 
 const ADMIN_NAV_ITEMS = [
   {
-    name: 'Videos',
+    name: 'Dashboard',
     route: '/admin',
+    logoActive: <Category size={24} />,
+    logo: <Category size={32} />
+  },
+  {
+    name: 'Courses',
+    route: '/admin/course/create',
     logoActive: <Reels className='w-6 h-6' />,
     logo: <Reels className='w-8 h-8' />
   },
   {
-    name: 'Message',
-    route: '/admin/message',
-    logoActive: <Email className='w-6 h-6' />,
-    logo: <Email className='w-8 h-8' />
-  },
-  {
-    name: 'Gateway',
-    route: '/gateway',
+    name: 'Activations',
+    route: '/admin/pending-activations',
     logoActive: <ArrowCircle className='w-6 h-6' />,
     logo: <ArrowCircle className='w-8 h-8' />
   },

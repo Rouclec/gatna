@@ -171,7 +171,7 @@ function Settings () {
   }
   const handleVideoServerSave = () => {
     try {
-      if (videoSeverData?._id) {
+      if (videoServerData?._id) {
         updateVideoServer({
           ...videoServer!,
           privateKey: ''
@@ -210,10 +210,9 @@ function Settings () {
   })
   const { mutate: updatePassword } = useUpdatePassword(() => {
     setEditSecurity(false)
-    setSecurity(undefined)
   })
 
-  const { isLoading: isGetVideoServerLoading, data: videoSeverData } =
+  const { isLoading: isGetVideoServerLoading, data: videoServerData } =
     useGetVideoServer()
 
   const { mutate: createVideoServer } = useCreateVideoServer(() => {
@@ -233,6 +232,7 @@ function Settings () {
     setEditCoinpayment(false)
   )
 
+
   useEffect(() => {
     if ((userAccount?.walletId ?? '').length > 10) {
       const firstFive = (userAccount?.walletId ?? '').substring(0, 8)
@@ -243,7 +243,20 @@ function Settings () {
     } else {
       setWalletDisplayValue(userAccount?.walletId ?? '')
     }
-  }, [userAccount])
+
+    if (userAccount) {
+      setAccount(userAccount)
+    }
+    if (userSocials) {
+      setSocials(userSocials)
+    }
+    if (coinPaymentData) {
+      setCoinpayment(coinPaymentData)
+    }
+    if (videoServerData) {
+      setVideoServer(videoServerData)
+    }
+  }, [userAccount, userSocials, coinPaymentData, videoServerData])
 
   return (
     <Sidebar>
@@ -434,11 +447,12 @@ function Settings () {
                 </div>
               </div>
               {editAccount && (
-                <div
+                <button
                   className={`${
                     isAccountLoading && 'opacity-60'
                   } bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer`}
                   onClick={handleAccountSave}
+                  disabled={isAccountLoading}
                 >
                   <p className={`${gilroyBold.className} text-lg`}>
                     Save settings
@@ -448,7 +462,7 @@ function Settings () {
                   ) : (
                     <Send size={20} primaryColor='#fff' />
                   )}
-                </div>
+                </button>
               )}
             </div>
             <div className='col-span-1 p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-full justify-between gap-7'>
@@ -572,11 +586,12 @@ function Settings () {
                 </div>
               </div>
               {editSocials && (
-                <div
+                <button
                   className={`${
                     isSocialsLoading && 'opacity-60'
                   } bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer`}
                   onClick={handleSocialsSave}
+                  disabled={isSocialsLoading}
                 >
                   <p className={`${gilroyBold.className} text-lg`}>
                     Save settings
@@ -586,7 +601,7 @@ function Settings () {
                   ) : (
                     <Send size={20} primaryColor='#fff' />
                   )}
-                </div>
+                </button>
               )}
             </div>
             <div className='col-span-1 p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-full justify-between gap-7'>
@@ -725,11 +740,12 @@ function Settings () {
                 </div>
               </div>
               {editSecurity && (
-                <div
+                <button
                   className={`${
                     isSecurityLoading && 'opacity-60'
                   } bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer`}
                   onClick={handleSecuritySave}
+                  disabled={isSecurityLoading}
                 >
                   <p className={`${gilroyBold.className} text-lg`}>
                     Save settings
@@ -739,7 +755,7 @@ function Settings () {
                   ) : (
                     <Send size={20} primaryColor='#fff' />
                   )}
-                </div>
+                </button>
               )}
             </div>
           </div>
@@ -855,11 +871,12 @@ function Settings () {
                 </div>
               </div>
               {editCoinpayment && (
-                <div
+                <button
                   className={`${
                     isCoinPaymentLoading && 'opacity-60'
                   } bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer`}
                   onClick={handleCoinpaymentSave}
+                  disabled={isCoinPaymentLoading}
                 >
                   <p className={`${gilroyBold.className} text-lg`}>
                     Save settings
@@ -869,7 +886,7 @@ function Settings () {
                   ) : (
                     <Send size={20} primaryColor='#fff' />
                   )}
-                </div>
+                </button>
               )}
             </div>
             <div className='col-span-2 p-7 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] h-full justify-between gap-7'>
@@ -913,7 +930,7 @@ function Settings () {
                           }))
                         }}
                         disabled={!editVideoServer}
-                        defaultValue={videoSeverData?.publicKey}
+                        defaultValue={videoServerData?.publicKey}
                       />
                     </div>
                     <div className='bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1'>
@@ -931,18 +948,19 @@ function Settings () {
                           }))
                         }}
                         disabled={!editVideoServer}
-                        defaultValue={videoSeverData?.secretKey}
+                        defaultValue={videoServerData?.secretKey}
                       />
                     </div>
                   </div>
                 </div>
               </div>
               {editVideoServer && (
-                <div
+                <button
                   className={`${
                     isVideoServerLoading && 'opacity-60'
                   } bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer`}
                   onClick={handleVideoServerSave}
+                  disabled={isVideoServerLoading}
                 >
                   <p className={`${gilroyBold.className} text-lg`}>
                     Save settings
@@ -952,7 +970,7 @@ function Settings () {
                   ) : (
                     <Send size={20} primaryColor='#fff' />
                   )}
-                </div>
+                </button>
               )}
             </div>
           </div>

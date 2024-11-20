@@ -2,7 +2,10 @@ import mongoose, { Schema, Document, model } from "mongoose";
 import { encrypt, maskKey, decrypt } from "../util/encryption";
 
 interface ICoinpayment extends Document {
-  userId: Schema.Types.ObjectId; // Reference to User model
+  userId: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  }; //Reference to User model
   publicKey?: string;
   privateKey?: string;
   secretKey?: string;
@@ -12,7 +15,12 @@ interface ICoinpayment extends Document {
 // Define the Coinpayment Schema
 const CoinpaymentSchema: Schema<ICoinpayment> = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
     publicKey: {
       type: String,
       set: (value: string) => encrypt(value), // Encrypt value before saving

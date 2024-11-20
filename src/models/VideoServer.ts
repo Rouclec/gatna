@@ -2,6 +2,10 @@ import mongoose, { Schema, Document, model } from "mongoose";
 import { encrypt, decrypt, maskKey } from "@/src/util/encryption"; // Import the encryption utility
 
 interface IVideoServer extends Document {
+  userId: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  };
   publicKey?: string;
   privateKey?: string;
   secretKey?: string;
@@ -11,6 +15,12 @@ interface IVideoServer extends Document {
 // Define the VideoServer Schema
 const VideoServerSchema: Schema<IVideoServer> = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
     publicKey: {
       type: String,
       set: (value: string) => encrypt(value), // Encrypt the publicKey before saving
@@ -31,18 +41,23 @@ const VideoServerSchema: Schema<IVideoServer> = new Schema(
 );
 
 // Decrypt sensitive fields when retrieving documents
-VideoServerSchema.pre('find', function () {
-  this.select('publicKey privateKey secretKey otp');
+VideoServerSchema.pre("find", function () {
+  this.select("publicKey privateKey secretKey otp");
 });
 
-VideoServerSchema.pre('findOne', function () {
-  this.select('publicKey privateKey secretKey otp');
+VideoServerSchema.pre("findOne", function () {
+  this.select("publicKey privateKey secretKey otp");
 });
 
 // Add methods to decrypt and mask fields
 VideoServerSchema.methods.getPublicKey = function () {
   const decryptedKey = decrypt(this.publicKey);
   return maskKey(decryptedKey); // Mask the key when returning
+};
+
+// Add methods to decrypt and mask fields
+VideoServerSchema.methods.getDecryptedPublicKey = function () {
+  return decrypt(this.publicKey);
 };
 
 VideoServerSchema.methods.getPrivateKey = function () {

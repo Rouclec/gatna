@@ -65,6 +65,9 @@ export default async function handler(
         // Return the masked and decrypted keys
         return res.status(200).json({
           data: {
+            _id: coinpayment._id,
+            createdAt: coinpayment.createdAt,
+            updatedAt: coinpayment.updatedAt,
             publicKey: coinpayment.getPublicKey(),
             privateKey: coinpayment.getPrivateKey(),
             secretKey: coinpayment.getSecretKey(),

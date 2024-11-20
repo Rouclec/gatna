@@ -22,6 +22,7 @@ export default async function handler(
   const userId = token.id; // ID of the logged-in user
   const isAdmin = token.role === "admin"; // Check if user is admin
 
+
   if (!isAdmin) {
     return res
       .status(403)
@@ -65,9 +66,12 @@ export default async function handler(
         // Return the masked and decrypted keys
         return res.status(200).json({
           data: {
+            _id: videoServer._id,
             publicKey: videoServer.getPublicKey(),
             privateKey: videoServer.getPrivateKey(),
             secretKey: videoServer.getSecretKey(),
+            createdAt: videoServer.createdAt,
+            updatedAt: videoServer.updatedAt,
           },
         });
       } catch (error) {
