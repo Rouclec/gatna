@@ -17,6 +17,7 @@ import { GetServerSidePropsContext } from 'next'
 import { getSession, useSession } from 'next-auth/react'
 import {
   useCreateAccount,
+  useGetAccountOTP,
   useGetUserAccount,
   useUpdateAccount
 } from '@/src/hooks/account'
@@ -25,7 +26,7 @@ import {
   useGetUserSocials,
   useUpdateSocials
 } from '@/src/hooks/socials'
-import { useUpdatePassword } from '@/src/hooks/auth'
+import { useGetUserOTP, useUpdatePassword } from '@/src/hooks/auth'
 import {
   useCreateVideoServer,
   useGetVideoServer,
@@ -34,6 +35,7 @@ import {
 import {
   useCreateCoinpayment,
   useGetCoinpayment,
+  useGetCoinpaymentOTP,
   useUpdateCoinpayment
 } from '@/src/hooks/coinpayment'
 
@@ -88,6 +90,7 @@ function Settings () {
     publicKey?: string
     secretKey?: string
     privateKey?: string
+    otp?: string
   }>()
 
   const [videoServer, setVideoServer] = useState<{
@@ -118,13 +121,13 @@ function Settings () {
     setIsWalletFocused(true)
   }
 
-  const handleAccountSave = () => {
+  const handleAccountSave = async () => {
     try {
       setIsAccountLoading(true)
       if (userAccount?._id) {
-        updateAccount(account!)
+        await updateAccount(account!)
       } else {
-        createAccount(account!)
+        await createAccount(account!)
       }
     } catch (error) {
       console.error({ error }, 'creating account')
@@ -132,13 +135,13 @@ function Settings () {
       setIsAccountLoading(false)
     }
   }
-  const handleSocialsSave = () => {
+  const handleSocialsSave = async () => {
     try {
       setIsSocialsLoading(true)
       if (userSocials?._id) {
-        updateSocials(socials!)
+        await updateSocials(socials!)
       } else {
-        createSocials(socials!)
+        await createSocials(socials!)
       }
     } catch (error) {
       console.error({ error }, 'creating socials')
@@ -146,22 +149,23 @@ function Settings () {
       setIsSocialsLoading(false)
     }
   }
-  const handleSecuritySave = () => {
+  const handleSecuritySave = async () => {
     try {
       setIsSecurityLoading(true)
-      updatePassword(security!)
+      await updatePassword(security!)
     } catch (error) {
       console.error({ error }, 'updating password')
     } finally {
       setIsSecurityLoading(false)
     }
   }
-  const handleCoinpaymentSave = () => {
+  const handleCoinpaymentSave = async () => {
     try {
+      setIsCounPaymentLoding(true)
       if (coinPaymentData?._id) {
-        updateCoinPayment(coinpayment!)
+        await updateCoinPayment(coinpayment!)
       } else {
-        createCoinpayment(coinpayment!)
+        await createCoinpayment(coinpayment!)
       }
     } catch (error) {
       console.error({ error }, 'creating coinpayment')
@@ -169,15 +173,16 @@ function Settings () {
       setIsCounPaymentLoding(false)
     }
   }
-  const handleVideoServerSave = () => {
+  const handleVideoServerSave = async () => {
     try {
+      setIsVideoServerLoading(true)
       if (videoServerData?._id) {
-        updateVideoServer({
+        await updateVideoServer({
           ...videoServer!,
           privateKey: ''
         })
       } else {
-        createVideoServer({
+        await createVideoServer({
           ...videoServer!,
           privateKey: ''
         })
@@ -189,49 +194,55 @@ function Settings () {
     }
   }
 
-  const { isLoading: isGetUserAccountLoading, data: userAccount } =
+  const { isFetched: isGetUserAccountFetched, data: userAccount } =
     useGetUserAccount()
 
-  const { mutate: createAccount } = useCreateAccount(() => {
+  const { mutateAsync: createAccount } = useCreateAccount(() => {
     setEditAccount(false)
   })
-  const { mutate: updateAccount } = useUpdateAccount(() => {
+  const { mutateAsync: updateAccount } = useUpdateAccount(() => {
     setEditAccount(false)
   })
 
-  const { isLoading: isGetUserSocialsLoading, data: userSocials } =
+  const { isFetched: isGetUserSocialsFetched, data: userSocials } =
     useGetUserSocials()
 
-  const { mutate: createSocials } = useCreateSocials(() => {
+  const { mutateAsync: createSocials } = useCreateSocials(() => {
     setEditSocials(false)
   })
-  const { mutate: updateSocials } = useUpdateSocials(() => {
+  const { mutateAsync: updateSocials } = useUpdateSocials(() => {
     setEditSocials(false)
   })
-  const { mutate: updatePassword } = useUpdatePassword(() => {
+  const { mutateAsync: updatePassword } = useUpdatePassword(() => {
     setEditSecurity(false)
+    setSecurity(undefined)
   })
 
-  const { isLoading: isGetVideoServerLoading, data: videoServerData } =
+  const { isFetched: isGetVideoServerFetched, data: videoServerData } =
     useGetVideoServer()
 
-  const { mutate: createVideoServer } = useCreateVideoServer(() => {
+  const { mutateAsync: createVideoServer } = useCreateVideoServer(() => {
     setEditVideoServer(false)
   })
-  const { mutate: updateVideoServer } = useUpdateVideoServer(() =>
+  const { mutateAsync: updateVideoServer } = useUpdateVideoServer(() =>
     setEditVideoServer(false)
   )
 
-  const { isLoading: isGetCoinpaymentLoading, data: coinPaymentData } =
+  const { isFetched: isGetCoinpaymentFetched, data: coinPaymentData } =
     useGetCoinpayment()
 
-  const { mutate: createCoinpayment } = useCreateCoinpayment(() => {
+  const { mutateAsync: createCoinpayment } = useCreateCoinpayment(() => {
     setEditCoinpayment(false)
   })
-  const { mutate: updateCoinPayment } = useUpdateCoinpayment(() =>
+  const { mutateAsync: updateCoinPayment } = useUpdateCoinpayment(() =>
     setEditCoinpayment(false)
   )
 
+  const { mutateAsync: getAccountOTP } = useGetAccountOTP()
+
+  const { mutateAsync: getUserOTP } = useGetUserOTP()
+
+  const { mutateAsync: getCointPaymentOTP } = useGetCoinpaymentOTP()
 
   useEffect(() => {
     if ((userAccount?.walletId ?? '').length > 10) {
@@ -261,10 +272,12 @@ function Settings () {
   return (
     <Sidebar>
       <div className='ml-10 mr-28 overflow-x-hidden overflow-y-hidden relative'>
-        {(isGetUserAccountLoading ||
-          isGetCoinpaymentLoading ||
-          isGetUserSocialsLoading ||
-          isGetVideoServerLoading) && (
+        {!(
+          isGetUserAccountFetched &&
+          isGetCoinpaymentFetched &&
+          isGetUserSocialsFetched &&
+          isGetVideoServerFetched
+        ) && (
           <div className='absolute inset-0 bg-transparent bg-opacity-10 backdrop-blur-sm z-[9999] flex items-start pt-[30vh] justify-center'>
             <FadeLoader />
           </div>
@@ -431,16 +444,40 @@ function Settings () {
                           placeholder='_ _ _ _ _ _'
                           maxLength={6}
                           disabled={!editAccount}
+                          onChange={e => {
+                            setAccount(prev => ({
+                              ...prev,
+                              otp: e.target.value
+                            }))
+                          }}
                         />
                       </div>
                       <div className='absolute right-1'>
-                        <div className='w-[74px] h-7 flex rounded-full items-center justify-center bg-primary-400 cursor-pointer'>
+                        <button
+                          className={`w-[84px] h-7 gap-[10px] flex rounded-full items-center justify-center bg-primary-400 cursor-pointer ${
+                            isAccountLoading && 'opacity-60'
+                          }`}
+                          disabled={isAccountLoading}
+                          onClick={() => {
+                            try {
+                              setIsAccountLoading(true)
+                              getAccountOTP()
+                            } catch (error) {
+                              console.error({ error })
+                            } finally {
+                              setIsAccountLoading(false)
+                            }
+                          }}
+                        >
                           <p
                             className={`${gilroySemiBold.className} text-xs text-white`}
                           >
                             Get code
                           </p>
-                        </div>
+                          {isAccountLoading && (
+                            <ClipLoader size={10} color='#fff' />
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -724,16 +761,40 @@ function Settings () {
                           placeholder='_ _ _ _ _ _'
                           maxLength={6}
                           disabled={!editSecurity}
+                          onChange={e => {
+                            setSecurity(prev => ({
+                              ...prev,
+                              otp: e.target.value
+                            }))
+                          }}
                         />
                       </div>
                       <div className='absolute right-1'>
-                        <div className='w-[74px] h-7 flex rounded-full items-center justify-center bg-primary-400 cursor-pointer'>
+                        <button
+                          className={`w-[84px] h-7 gap-[10px] flex rounded-full items-center justify-center bg-primary-400 cursor-pointer ${
+                            isSecurityLoading && 'opacity-60'
+                          }`}
+                          disabled={isSecurityLoading}
+                          onClick={() => {
+                            try {
+                              setIsSecurityLoading(true)
+                              getUserOTP()
+                            } catch (error) {
+                              console.error({ error })
+                            } finally {
+                              setIsSecurityLoading(false)
+                            }
+                          }}
+                        >
                           <p
                             className={`${gilroySemiBold.className} text-xs text-white`}
                           >
                             Get code
                           </p>
-                        </div>
+                          {isSecurityLoading && (
+                            <ClipLoader size={10} color='#fff' />
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -855,16 +916,40 @@ function Settings () {
                           placeholder='_ _ _ _ _ _'
                           maxLength={6}
                           disabled={!editCoinpayment}
+                          onChange={e => {
+                            setCoinpayment(prev => ({
+                              ...prev,
+                              otp: e.target.value
+                            }))
+                          }}
                         />
                       </div>
                       <div className='absolute right-1'>
-                        <div className='w-[74px] h-7 flex rounded-full items-center justify-center bg-primary-400 cursor-pointer'>
+                        <button
+                          className={`w-[84px] h-7 gap-[10px] flex rounded-full items-center justify-center bg-primary-400 cursor-pointer ${
+                            isCoinPaymentLoading && 'opacity-60'
+                          }`}
+                          disabled={isCoinPaymentLoading}
+                          onClick={() => {
+                            try {
+                              setIsCounPaymentLoding(true)
+                              getCointPaymentOTP()
+                            } catch (error) {
+                              console.error({ error })
+                            } finally {
+                              setIsCounPaymentLoding(false)
+                            }
+                          }}
+                        >
                           <p
                             className={`${gilroySemiBold.className} text-xs text-white`}
                           >
                             Get code
                           </p>
-                        </div>
+                          {isCoinPaymentLoading && (
+                            <ClipLoader size={10} color='#fff' />
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>

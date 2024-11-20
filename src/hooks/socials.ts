@@ -30,6 +30,18 @@ export const useGetUserSocials = () => {
   });
 };
 
+export const useGetPublicSocials = () => {
+  return useQuery({
+    queryKey: ["socials", "public"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/get-public-socials", {
+        withCredentials: true,
+      });
+      return data.data as Socials;
+    },
+  });
+};
+
 // Create a new socials entry
 export const useCreateSocials = (
   onSuccess?: (data?: Socials) => void,

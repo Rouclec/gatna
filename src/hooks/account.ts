@@ -33,6 +33,22 @@ export const useGetUserAccount = (filter?: { userId?: string }) => {
   });
 };
 
+export const useGetAccountOTP = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.get(`${API_URL}/get-otp`, {
+        withCredentials: true,
+      });
+      return data.data as string;
+    },
+    onSuccess,
+    onError,
+  });
+};
+
 // Create a new account
 export const useCreateAccount = (
   onSuccess?: (data?: Account) => void,

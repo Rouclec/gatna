@@ -9,6 +9,7 @@ import logo from '@/public/assets/images/logo.png'
 import { gilroyBold, gilroyMedium } from '../pages'
 import { useRouter } from 'next/router'
 import { CloseSquare } from 'react-iconly'
+import Link from 'next/link'
 
 // interface Props {}
 
@@ -20,7 +21,10 @@ const Navbar: FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false)
       }
     }
@@ -45,7 +49,10 @@ const Navbar: FC = () => {
       />
       <div className='hidden md:flex items-center justify-between lg:justify-normal lg:gap-32 w-full'>
         <div className='flex items-center gap-9 w-full'>
-          <div className='relative items-center bg-neutral-24 flex p-3 rounded-[14px] gap-4 w-[66px] cursor-pointer'>
+          <Link
+            className='relative items-center bg-neutral-24 flex p-3 rounded-[14px] gap-4 w-[66px] cursor-pointer'
+            href={'#'}
+          >
             <div className='w-2 h-2 rounded-full bg-primary-400 absolute -left-3' />
             <div className='w-4 h-4 items-center justify-center'>
               <Home className='w-4 h-4' />
@@ -53,17 +60,17 @@ const Navbar: FC = () => {
             <p className={`${gilroyBold.className} text-neutral-10 text-base`}>
               Home
             </p>
-          </div>
-          <div className='cursor-pointer'>
+          </Link>
+          <Link className='cursor-pointer' href={'#contact'}>
             <p className={`${gilroyMedium.className} text-neutral-10`}>
-              About Us
+              Contact Us
             </p>
-          </div>
-          <div className='cursor-pointer'>
+          </Link>
+          <Link className='cursor-pointer' href={'#courses'}>
             <p className={`${gilroyMedium.className} text-neutral-10`}>
               Courses
             </p>
-          </div>
+          </Link>
         </div>
         <div className='flex items-center justify-end lg:justify-normal gap-8 w-full'>
           <div

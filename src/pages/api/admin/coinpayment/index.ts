@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
 import { Coinpayment } from "@/src/models";
+import { verifyEntityOTP } from "@/src/util/otp";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -31,7 +32,16 @@ export default async function handler(
   switch (req.method) {
     case "POST":
       try {
-        const { publicKey, privateKey, secretKey } = req.body;
+        const { publicKey, privateKey, secretKey, otp } = req.body;
+
+        const validOTP = await verifyEntityOTP(
+          Coinpayment,
+          otp,
+          userId as string
+        );
+        if (!validOTP) {
+          return res.status(400).json({ message: "Invalid otp" });
+        }
 
         // Create a new Coinpayment entry
         const newCoinpayment = new Coinpayment({
@@ -82,7 +92,16 @@ export default async function handler(
 
     case "PUT":
       try {
-        const { publicKey, privateKey, secretKey } = req.body;
+        const { publicKey, privateKey, secretKey, otp } = req.body;
+
+        const validOTP = await verifyEntityOTP(
+          Coinpayment,
+          otp,
+          userId as string
+        );
+        if (!validOTP) {
+          return res.status(400).json({ message: "Invalid otp" });
+        }
 
         // Find the Coinpayment by ID and update it
         const updatedCoinpayment = await Coinpayment.findOneAndUpdate(

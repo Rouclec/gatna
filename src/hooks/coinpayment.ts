@@ -25,6 +25,22 @@ export const useGetCoinpayment = () => {
   });
 };
 
+
+export const useGetCoinpaymentOTP = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.get(`${API_URL_COINPAYMENT}/get-otp`, {
+        withCredentials: true,
+      });
+      return data.data as string;
+    },
+    onSuccess,
+    onError,
+  });
+};
 // Create Coinpayment record
 export const useCreateCoinpayment = (
   onSuccess?: (data?: Coinpayment) => void,

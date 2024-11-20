@@ -4,6 +4,7 @@ import { gilroyBlack, gilroyBold, gilroyHeavy, gilroyRegular } from '../pages'
 import { Paper, TimeSquare, Video } from 'react-iconly'
 import { Course } from '../hooks/course'
 import { useGetVideoPlaybackInfo } from '../hooks/video'
+import { ClipLoader } from 'react-spinners'
 
 interface Props {
   course: Course
@@ -112,21 +113,25 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                 </div>
               </div>
               <div
-                className={`w-full mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex ${
+                className={`w-fit lg:w-[526px] mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex ${
                   inverted ? 'mr-10' : 'ml-10'
                 }`}
               >
-                <iframe
-                  src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
-                  style={{
-                    border: 0,
-                    borderRadius: 32,
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  allow='encrypted-media'
-                  allowFullScreen
-                />
+                {isLoading ? (
+                  <ClipLoader color='#fff' />
+                ) : (
+                  <iframe
+                    src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
+                    style={{
+                      border: 0,
+                      borderRadius: 32,
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    allow='encrypted-media'
+                    allowFullScreen
+                  />
+                )}
               </div>
             </div>
             <div className='relative flex items-center justify-center ml-16'>
@@ -168,19 +173,23 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
               <div
-                className={`w-full mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex mr-10`}
+                className={`w-fit lg:w-[526px] mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex mr-10`}
               >
-                <iframe
-                  src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
-                  style={{
-                    border: 0,
-                    borderRadius: 32,
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  allow='encrypted-media'
-                  allowFullScreen
-                />
+                {isLoading ? (
+                  <ClipLoader color='#fff' />
+                ) : (
+                  <iframe
+                    src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
+                    style={{
+                      border: 0,
+                      borderRadius: 32,
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    allow='encrypted-media'
+                    allowFullScreen
+                  />
+                )}
               </div>
               <div className='flex flex-col gap-16 col-span-1'>
                 <div className='flex flex-col gap-3 items-center md:items-start'>

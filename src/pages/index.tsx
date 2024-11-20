@@ -25,6 +25,8 @@ import Footer from '../components/Footer'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useGetCourses } from '../hooks/course'
+import { ClipLoader } from 'react-spinners'
+import { useContactUs } from '../hooks/useContact'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -110,82 +112,6 @@ const profiles = [
   }
 ]
 
-const courses = [
-  {
-    course: {
-      videoURL: '123456',
-      id: '1',
-      title: 'Apprenez les bases du trading.',
-      description:
-        'Comprendre comment fonctionne le monde de la crypto monnaie, est une formation nécessaire dans ce plan.',
-      videos: '9',
-      pdf: '12345',
-      duration: '41',
-      tag: 'Gatna I',
-      watermark: 'Gatna 1',
-      price: '250'
-    }
-  },
-  {
-    course: {
-      videoURL: '123456',
-      id: '2',
-      title: 'Analyse pyschologique du trader',
-      description:
-        'Comprendre comment fonctionne le monde de la crypto monnaie, est une formation nécessaire dans ce plan.',
-      videos: '9',
-      pdf: '213510',
-      duration: '41',
-      tag: 'Gatna II',
-      watermark: 'Gatna 2',
-      price: '500'
-    }
-  },
-  {
-    course: {
-      videoURL: '123456',
-      id: '3',
-      title: 'Apprenez les bases du trading.',
-      description:
-        'Comprendre comment fonctionne le monde de la crypto monnaie, est une formation nécessaire dans ce plan.',
-      videos: '9',
-      duration: '41',
-      tag: 'Gatna III',
-      watermark: 'Gatna 3',
-      price: '10000'
-    }
-  },
-  {
-    course: {
-      videoURL: '123456',
-      id: '4',
-      title: 'Analyse psychologique du trader',
-      description:
-        'Comprendre comment fonctionne le monde de la crypto monnaie, est une formation nécessaire dans ce plan.',
-      videos: '9',
-      duration: '41',
-      tag: 'Gatna IV',
-      watermark: 'Gatna 4',
-      price: '2500'
-    }
-  },
-  {
-    course: {
-      videoURL: '123456',
-      id: '5',
-      title: 'Analyse psychologique du trader',
-      description:
-        'Comprendre comment fonctionne le monde de la crypto monnaie, est une formation nécessaire dans ce plan.',
-      videos: '9',
-      duration: '41',
-      pdf: '123456',
-      tag: 'Gatna V',
-      watermark: 'Gatna 5',
-      price: '3000'
-    }
-  }
-]
-
 const colors = ['#8250ED', '#F2714E', '#8EAD12', '#EF4439', '#0665BD']
 const importantLinks = [
   {
@@ -209,9 +135,35 @@ const importantLinks = [
 export default function Home () {
   const countries = getCountries()
   const [country, setCountry] = useState<string>('Cameroon')
+  const [isSendingMessage, setIsSendingMessage] = useState(false)
+  const [name, setName] = useState<string>('')
+  const [surname, setSurname] = useState<string>('')
+  const [phoneNumber, setPhoneNumber] = useState<string>('')
+  const [countryCode, setCountryCode] = useState<string>('+237')
+  const [message, setMessage] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const router = useRouter()
 
-  const { data: coursesData, isFetching: isCoursesFetching } = useGetCourses();
+  const { data: coursesData, isFetched: isCoursesDataFetched } = useGetCourses()
+
+  const handleContactUs = async () => {
+    try {
+      setIsSendingMessage(true)
+      await contactUs({
+        name,
+        surname,
+        email,
+        phoneNumber: phoneNumber + countryCode,
+        message
+      })
+    } catch (error) {
+      console.error({ error }, 'sending message')
+    } finally {
+      setIsSendingMessage(false)
+    }
+  }
+
+  const { mutateAsync: contactUs } = useContactUs()
 
   return (
     <div
@@ -219,253 +171,292 @@ export default function Home () {
     >
       <Navbar />
       <main className='grid mt-16 lg:mt-[104px] pt-[136px] px-6 lg:px-10'>
-        <div className='relative grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-center px-0 lg:px-32 mx-auto'>
-          <div className='relative md:order-1 order-2 h-full'>
-            <div className='grid gap-6 px-4'>
-              <p className='font-readex font-bold text-3xl md:text-5xl w-full'>
-                Formation crypto avec gantna.io
-              </p>
-              <p className={`${gilroyRegular.className} text-lg md:text-2xl`}>
-                Achetez vos formations crypto et obtenez un nombre de pièces en
-                staking pouvant vous générer jusqu&apos;à 20% de ROI.
-              </p>
-              <div className='flex flex-col md:flex-row gap-4'>
-                <div className='flex h-[60px] w-full  items-center justify-center bg-gradient rounded-[10px]'>
-                  <p
-                    className={`${gilroyBold.className} text-base text-neutral-10`}
-                  >
-                    Acheter ma formation
-                  </p>
+        <section id=''>
+          <div className='relative grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-center px-0 lg:px-32 mx-auto'>
+            <div className='relative md:order-1 order-2 h-full'>
+              <div className='grid gap-6 px-4'>
+                <p className='font-readex font-bold text-3xl md:text-5xl w-full'>
+                  Formation crypto avec gantna.io
+                </p>
+                <p className={`${gilroyRegular.className} text-lg md:text-2xl`}>
+                  Achetez vos formations crypto et obtenez un nombre de pièces
+                  en staking pouvant vous générer jusqu&apos;à 20% de ROI.
+                </p>
+                <div className='flex flex-col md:flex-row gap-4'>
+                  <div className='flex h-[60px] w-full  items-center justify-center bg-gradient rounded-[10px]'>
+                    <p
+                      className={`${gilroyBold.className} text-base text-neutral-10`}
+                    >
+                      Acheter ma formation
+                    </p>
+                  </div>
+                  <div className='flex h-[60px] w-full items-center justify-center bg-neutral-24 rounded-[10px]'>
+                    <p
+                      className={`${gilroyBold.className} text-base text-neutral-10`}
+                    >
+                      J&apos;ai déjà un compte
+                    </p>
+                  </div>
                 </div>
-                <div className='flex h-[60px] w-full items-center justify-center bg-neutral-24 rounded-[10px]'>
+                <div className='relative flex flex-col md:flex-row mt-4 gap-4 items-center w-full'>
+                  <SpiralArrow className='absolute w-36 h-40 right-full mr-4 -bottom-4' />
+                  <div className='flex items-center justify-center relative px-2'>
+                    {profiles.map((profile, index) => {
+                      const zIndex = 4 * index
+
+                      return (
+                        <div
+                          key={index}
+                          className={`w-12 h-12 md:w-14 md:h-14 items-center justify-center rounded-full bg-gradient z-[${zIndex}] flex -ml-4`}
+                        >
+                          {profile.icon}
+                        </div>
+                      )
+                    })}
+                  </div>
                   <p
-                    className={`${gilroyBold.className} text-base text-neutral-10`}
+                    className={`w-full md:w-[245px] ${gilroyMedium.className} text-neutral-10 text-center md:text-left`}
                   >
-                    J&apos;ai déjà un compte
+                    Plus de{' '}
+                    <span className={`${gilroyBold.className}`}>120</span>{' '}
+                    utilisateurs abonnés suivent nos formations
                   </p>
                 </div>
               </div>
-              <div className='relative flex flex-col md:flex-row mt-4 gap-4 items-center w-full'>
-                <SpiralArrow className='absolute w-36 h-40 right-full mr-4 -bottom-4' />
-                <div className='flex items-center justify-center relative px-2'>
-                  {profiles.map((profile, index) => {
-                    const zIndex = 4 * index
+            </div>
 
-                    return (
-                      <div
-                        key={index}
-                        className={`w-12 h-12 md:w-14 md:h-14 items-center justify-center rounded-full bg-gradient z-[${zIndex}] flex -ml-4`}
-                      >
-                        {profile.icon}
-                      </div>
-                    )
-                  })}
-                </div>
+            <div className='mx-auto md:order-2 order-1'>
+              <div className=''>
+                <Image
+                  src={landingimage}
+                  alt='landing-image'
+                  className='w-full max-w-[556px] h-auto lg:h-[432px] z-10'
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id='courses'>
+          <div className='grid my-16 lg:my-64 gap-10 lg:gap-48'>
+            {isCoursesDataFetched ? (
+              coursesData?.map((course, index) => {
+                return (
+                  <div key={course?._id}>
+                    <CourseDetails
+                      course={course}
+                      inverted={index % 2 !== 0}
+                      pinColor={colors[index % 5]}
+                    />
+                  </div>
+                )
+              })
+            ) : (
+              <ClipLoader />
+            )}
+          </div>
+        </section>
+        <section id='contact'>
+          <div className='flex flex-col gap-14 justify-center'>
+            <div className='grid grid-cols-7 gap-4 md:gap-[72px] relative'>
+              <div className='col-span-7 grid items-center md:justify-start justify-center md:col-span-3'>
                 <p
-                  className={`w-full md:w-[245px] ${gilroyMedium.className} text-neutral-10 text-center md:text-left`}
+                  className={`${gilroyBlack.className} text-3xl md:text-[40px] text-center md:text-left leading-[50px]`}
                 >
-                  Plus de <span className={`${gilroyBold.className}`}>120</span>{' '}
-                  utilisateurs abonnés suivent nos formations
+                  Contactez-nous
+                </p>
+                <p
+                  className={`${gilroyRegular.className} text-xl text-center md:text-left`}
+                >
+                  Nous sommes disponible sur ces canaux
+                </p>
+              </div>
+              <div className='col-span-7 md:col-span-4 whitespace-nowrap overflow-hidden text-clip'>
+                <p
+                  className={`${gilroyHeavy.className} hidden md:block text-[200px] absolute leading-[225px] -top-10 overflow-hidden opacity-[2%]`}
+                >
+                  Ecrivez nous
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className='mx-auto md:order-2 order-1'>
-            <div className=''>
-              <Image
-                src={landingimage}
-                alt='landing-image'
-                className='w-full max-w-[556px] h-auto lg:h-[432px] z-10'
-              />
-            </div>
-          </div>
-        </div>
-        <div className='grid my-16 lg:my-64 gap-10 lg:gap-48'>
-          {coursesData?.map((course, index) => {
-            return (
-              <div key={course?._id}>
-                <CourseDetails
-                  course={course}
-                  inverted={index % 2 !== 0}
-                  pinColor={colors[index % 5]}
-                />
-              </div>
-            )
-          })}
-        </div>
-        <div className='flex flex-col gap-14 justify-center'>
-          <div className='grid grid-cols-7 gap-4 md:gap-[72px] relative'>
-            <div className='col-span-7 grid items-center md:justify-start justify-center md:col-span-3'>
-              <p
-                className={`${gilroyBlack.className} text-3xl md:text-[40px] text-center md:text-left leading-[50px]`}
-              >
-                Contactez-nous
-              </p>
-              <p
-                className={`${gilroyRegular.className} text-xl text-center md:text-left`}
-              >
-                Nous sommes disponible sur ces canaux
-              </p>
-            </div>
-            <div className='col-span-7 md:col-span-4 whitespace-nowrap overflow-hidden text-clip'>
-              <p
-                className={`${gilroyHeavy.className} hidden md:block text-[200px] absolute leading-[225px] -top-10 overflow-hidden opacity-[2%]`}
-              >
-                Ecrivez nous
-              </p>
-            </div>
-          </div>
-          <div className='grid grid-cols-7 gap-4 md:gap-[72px]'>
-            <div className='col-span-7 md:col-span-3 grid gap-12'>
-              <div className='grid grid-cols-1  md:grid-cols-2 gap-6'>
-                <div className='h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between'>
-                  <div className='flex gap-[6px] items-center'>
-                    <div className='w-[44px] h-[44px] rounded-xl bg-neutral-10 items-center justify-center flex'>
-                      <Telegram className='w-6 h-6' />
-                    </div>
-                    <div>
-                      <p className={`${gilroyBold.className} text-base`}>
-                        Telegram
-                      </p>
-                      <p className={`${gilroyRegular.className} text-sm`}>
-                        +971 50 829 1203
-                      </p>
-                    </div>
-                  </div>
-                  <div className='h-12 items-center justify-center flex rounded-lg bg-telegram'>
-                    <p className={`${gilroySemiBold.className} text-sm`}>
-                      Chat us
-                    </p>
-                  </div>
-                </div>
-                <div className='h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between'>
-                  <div className='flex gap-[6px] items-center'>
-                    <div className='w-[44px] h-[44px] rounded-xl bg-neutral-10 items-center justify-center flex'>
-                      <WhatsApp className='w-6 h-6' stroke='#14A42B' />
-                    </div>
-                    <div>
-                      <p className={`${gilroyBold.className} text-base`}>
-                        WhatsApp
-                      </p>
-                      <p className={`${gilroyRegular.className} text-sm`}>
-                        +971 50 829 1203
-                      </p>
-                    </div>
-                  </div>
-                  <div className='h-12 items-center justify-center flex rounded-lg bg-whatsapp'>
-                    <p className={`${gilroySemiBold.className} text-sm`}>
-                      Chat us
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <MapProvider>
-                <MapComponent />
-              </MapProvider>
-            </div>
-            <div className='col-span-7 md:col-span-4'>
-              <p
-                className={`text-4xl md:hidden text-center text-white text-opacity-[2%] ${gilroyHeavy.className}`}
-              >
-                Encrivez nous
-              </p>
-              <div className='w-full flex flex-col gap-10 mt-4'>
-                <div className='w-full p-4 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] gap-16'>
-                  <div className='flex flex-col gap-3'>
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div className='flex flex-col gap-3'>
-                        <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
-                          <p
-                            className={`${gilroyRegular.className} text-neutral-50 text-sm`}
-                          >
-                            Nom
-                          </p>
-                          <input
-                            className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
-                          />
-                        </div>
-                        <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
-                          <p
-                            className={`${gilroyRegular.className} text-neutral-50 text-sm`}
-                          >
-                            Addresse email
-                          </p>
-                          <input
-                            className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
-                          />
-                        </div>
+            <div className='grid grid-cols-7 gap-4 md:gap-[72px]'>
+              <div className='col-span-7 md:col-span-3 grid gap-12'>
+                <div className='grid grid-cols-1  md:grid-cols-2 gap-6'>
+                  <div className='h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between'>
+                    <div className='flex gap-[6px] items-center'>
+                      <div className='w-[44px] h-[44px] rounded-xl bg-neutral-10 items-center justify-center flex'>
+                        <Telegram className='w-6 h-6' />
                       </div>
-                      <div className='flex flex-col gap-3'>
-                        <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
-                          <p
-                            className={`${gilroyRegular.className} text-neutral-50 text-sm`}
-                          >
-                            Prenoms
-                          </p>
-                          <input
-                            className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
-                          />
-                        </div>
-                        <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
-                          <p
-                            className={`${gilroyRegular.className} text-neutral-50 text-sm`}
-                          >
-                            Telephone
-                          </p>
-                          <div className='flex items-center gap-2'>
-                            <select
-                              value={country}
-                              onChange={event => {
-                                console.log(event.target.value)
-                                setCountry(event.target.value)
-                              }}
-                              className={`w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                      <div>
+                        <p className={`${gilroyBold.className} text-base`}>
+                          Telegram
+                        </p>
+                        <p className={`${gilroyRegular.className} text-sm`}>
+                          +971 50 829 1203
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      className='h-12 items-center cursor-pointer justify-center flex rounded-lg bg-telegram'
+                      href={'https://t.me/971508291203'}
+                      target='_blank'
+                    >
+                      <p className={`${gilroySemiBold.className} text-sm`}>
+                        Chat us
+                      </p>
+                    </Link>
+                  </div>
+                  <div className='h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between'>
+                    <div className='flex gap-[6px] items-center'>
+                      <div className='w-[44px] h-[44px] rounded-xl bg-neutral-10 items-center justify-center flex'>
+                        <WhatsApp className='w-6 h-6' stroke='#14A42B' />
+                      </div>
+                      <div>
+                        <p className={`${gilroyBold.className} text-base`}>
+                          WhatsApp
+                        </p>
+                        <p className={`${gilroyRegular.className} text-sm`}>
+                          +971 50 829 1203
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      className='h-12 cursor-pointer items-center justify-center flex rounded-lg bg-whatsapp'
+                      href={'https://wa.me/971508291203'}
+                      target='_blank'
+                    >
+                      <p className={`${gilroySemiBold.className} text-sm`}>
+                        Chat us
+                      </p>
+                    </Link>
+                  </div>
+                </div>
+                <MapProvider>
+                  <MapComponent />
+                </MapProvider>
+              </div>
+              <div className='col-span-7 md:col-span-4'>
+                <p
+                  className={`text-4xl md:hidden text-center text-white text-opacity-[2%] ${gilroyHeavy.className}`}
+                >
+                  Encrivez nous
+                </p>
+                <div className='w-full flex flex-col gap-10 mt-4'>
+                  <div className='w-full p-4 flex flex-col border-grey-D933 bg-grey-920D rounded-2xl border-[1px] gap-16'>
+                    <div className='flex flex-col gap-3'>
+                      <div className='grid grid-cols-2 gap-4'>
+                        <div className='flex flex-col gap-3'>
+                          <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                            <p
+                              className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                             >
-                              <option value=''>
-                                +{getCountryCallingCode('CM')}
-                              </option>
-                              {countries.map(countryCode => (
-                                <option
-                                  key={countryCode}
-                                  value={`+${getCountryCallingCode(
-                                    countryCode
-                                  )}`}
-                                >
-                                  +{getCountryCallingCode(countryCode)}
-                                </option>
-                              ))}
-                            </select>
+                              Nom
+                            </p>
                             <input
                               className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
-                              placeholder='54 100 0003'
+                              onChange={e => setName(e.target.value)}
+                              value={name}
+                            />
+                          </div>
+                          <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                            <p
+                              className={`${gilroyRegular.className} text-neutral-50 text-sm`}
+                            >
+                              Addresse email
+                            </p>
+                            <input
+                              className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                              onChange={e => setEmail(e.target.value)}
+                              value={email}
                             />
                           </div>
                         </div>
+                        <div className='flex flex-col gap-3'>
+                          <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                            <p
+                              className={`${gilroyRegular.className} text-neutral-50 text-sm`}
+                            >
+                              Prenoms
+                            </p>
+                            <input
+                              className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                              onChange={e => setSurname(e.target.value)}
+                              value={surname}
+                            />
+                          </div>
+                          <div className='bg-grey-bg rounded-lg h-[70px] flex flex-col px-5 py-4 gap-1'>
+                            <p
+                              className={`${gilroyRegular.className} text-neutral-50 text-sm`}
+                            >
+                              Telephone
+                            </p>
+                            <div className='flex items-center gap-2'>
+                              <select
+                                value={country}
+                                onChange={event => {
+                                  setCountry(event.target.value)
+                                  setCountryCode(event.target.value)
+                                }}
+                                className={`w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                              >
+                                <option value=''>
+                                  +{getCountryCallingCode('CM')}
+                                </option>
+                                {countries.map(countryCode => (
+                                  <option
+                                    key={countryCode}
+                                    value={`+${getCountryCallingCode(
+                                      countryCode
+                                    )}`}
+                                  >
+                                    +{getCountryCallingCode(countryCode)}
+                                  </option>
+                                ))}
+                              </select>
+                              <input
+                                className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                                placeholder='54 100 0003'
+                                onChange={e => setPhoneNumber(e.target.value)}
+                                value={phoneNumber}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='bg-grey-bg rounded-lg h-[142px] flex flex-col p-5 gap-1'>
+                        <p
+                          className={`${gilroyRegular.className} text-neutral-50 text-sm`}
+                        >
+                          Votre message
+                        </p>
+                        <textarea
+                          className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                          onChange={e => setMessage(e.target.value)}
+                          value={message}
+                        />
                       </div>
                     </div>
-                    <div className='bg-grey-bg rounded-lg h-[142px] flex flex-col p-5 gap-1'>
-                      <p
-                        className={`${gilroyRegular.className} text-neutral-50 text-sm`}
-                      >
-                        Votre message
-                      </p>
-                      <textarea
-                        className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
-                      />
-                    </div>
                   </div>
-                </div>
-                <div className='bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer'>
-                  <p className={`${gilroyBold.className} text-lg`}>
-                    Envoyer votre message
-                  </p>
-                  <Send size={20} primaryColor='#fff' />
+                  <button
+                    className={`bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer ${
+                      isSendingMessage && 'opacity-60'
+                    }`}
+                    disabled={isSendingMessage}
+                    onClick={handleContactUs}
+                  >
+                    <p className={`${gilroyBold.className} text-lg`}>
+                      Envoyer votre message
+                    </p>
+                    {isSendingMessage ? (
+                      <ClipLoader size={20} color='#fff' />
+                    ) : (
+                      <Send size={20} primaryColor='#fff' />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
       <footer className='grid bg-grey-bg mt-16 lg:mt-60'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 items-center py-6 lg:pt-20 lg:pb-12 w-full px-6 lg:px-36'>
@@ -554,7 +545,7 @@ export default function Home () {
               />
 
               {/* Button with no grow or shrink */}
-              <div className="flex-none">
+              <div className='flex-none'>
                 <button className='button-primary flex items-center px-3 py-[10px] rounded-md'>
                   <p
                     className={`${gilroyBold.className} text-[10px] leading-3 text-white`}

@@ -1,6 +1,7 @@
 import { Role, User } from "@/src/models";
 
 import dbConnect from "@/src/util/db";
+import { verifyEntityOTP } from "@/src/util/otp";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 
@@ -27,7 +28,17 @@ export default async function handler(
   switch (req.method) {
     case "POST":
       try {
-        const { oldPassword, newPassword, confirmNewPassword } = req.body; // Extract email and password from request body
+        const { oldPassword, newPassword, confirmNewPassword, otp } = req.body; // Extract email and password from request body
+
+        const validOTP = await verifyEntityOTP(
+          User,
+          otp,
+          undefined,
+          userId as string
+        );
+        if (!validOTP) {
+          return res.status(400).json({ message: "Invalid otp" });
+        }
 
         const userFound = await User.findById(userId).select("+password");
 

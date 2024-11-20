@@ -33,7 +33,10 @@ const AccountSchema: Schema<IAccount> = new Schema(
       default: "+237",
     },
     telephone: String,
-    otp: String,
+    otp: {
+      type: String,
+      select: false,
+    },
   },
   {
     timestamps: true,

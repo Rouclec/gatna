@@ -33,7 +33,10 @@ const VideoServerSchema: Schema<IVideoServer> = new Schema(
       type: String,
       set: (value: string) => encrypt(value), // Encrypt the secretKey before saving
     },
-    otp: String,
+    otp: {
+      type: String,
+      select: false,
+    },
   },
   {
     timestamps: true,

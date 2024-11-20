@@ -33,7 +33,10 @@ const CoinpaymentSchema: Schema<ICoinpayment> = new Schema(
       type: String,
       set: (value: string) => encrypt(value), // Encrypt value before saving
     },
-    otp: String,
+    otp: {
+      type: String,
+      select: false,
+    },
   },
   {
     timestamps: true,

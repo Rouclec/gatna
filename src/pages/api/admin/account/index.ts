@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
 import { Account } from "@/src/models";
+import { verifyEntityOTP } from "@/src/util/otp";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -20,7 +21,6 @@ export default async function handler(
       .json({ message: "You must be logged in to access this resource." });
   }
 
-
   const userId = token.id; // ID of the logged-in user
   const isAdmin = token.role === "admin"; // Check if user is admin
 
@@ -34,14 +34,6 @@ export default async function handler(
     // Create a new Account for the authenticated user
     case "POST":
       try {
-        // Check if the user already has an account
-        const existingAccount = await Account.findOne({ userId });
-        if (existingAccount) {
-          return res
-            .status(400)
-            .json({ message: "You already have an account." });
-        }
-
         const {
           companyName,
           minimumWithdrawalAmount,
@@ -52,6 +44,18 @@ export default async function handler(
           countryCode,
         } = req.body;
 
+        const validOTP = await verifyEntityOTP(Account, otp, userId as string);
+        if (!validOTP) {
+          return res.status(400).json({ message: "Invalid otp" });
+        }
+        // Check if the user already has an account
+        const existingAccount = await Account.findOne({ userId });
+        if (existingAccount) {
+          return res
+            .status(400)
+            .json({ message: "You already have an account." });
+        }
+
         // Create a new account with the user's ID
         const newAccount = await Account.create({
           userId,
@@ -60,7 +64,6 @@ export default async function handler(
           email,
           walletId,
           telephone,
-          otp,
           countryCode,
         });
 
@@ -98,6 +101,11 @@ export default async function handler(
           countryCode,
         } = req.body;
 
+        const validOTP = await verifyEntityOTP(Account, otp, userId as string);
+        if (!validOTP) {
+          return res.status(400).json({ message: "Invalid otp" });
+        }
+
         const updatedAccount = await Account.findOneAndUpdate(
           { userId },
           {
@@ -106,7 +114,6 @@ export default async function handler(
             email,
             walletId,
             telephone,
-            otp,
             countryCode,
           },
           {

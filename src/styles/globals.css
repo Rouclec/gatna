@@ -21,6 +21,10 @@ body {
   background: var(--background);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @layer utilities {
   .border-gradient {
     border: 2px solid;

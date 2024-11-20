@@ -16,8 +16,7 @@ interface IUser extends Document {
   };
   lastLogin: Date;
   active: boolean;
-  resetToken?: string;
-  resetTokenExpiration?: Date;
+  otp?: string;
   comparePassword(password: string): Promise<boolean>;
   createResetToken(): string;
 }
@@ -50,6 +49,7 @@ const UserSchema: Schema<IUser> = new Schema(
         message:
           "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one special character.",
       },
+      set: (value: string) => bcrypt.hashSync(value, 10),
     },
     phoneNumber: {
       type: String,
@@ -67,8 +67,10 @@ const UserSchema: Schema<IUser> = new Schema(
       type: Boolean,
       default: true,
     },
-    resetToken: String,
-    resetTokenExpiration: Date,
+    otp: {
+      type: String,
+      select: false,
+    },
   },
   {
     timestamps: true,
@@ -88,34 +90,31 @@ UserSchema.pre<QueryWithHelpers<any, IUser>>(
   }
 );
 
-// Pre-save hook to hash the password if it's new or modified
-UserSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) return next();
+// // Pre-save hook to hash the password if it's new or modified
+// UserSchema.pre<IUser>("save", async function (next) {
+//   if (!this.isModified("password")) return next();
 
-  // Hash the password
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+//   // Hash the password
+//   this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
+
+// // Pre-update hook for `findOneAndUpdate`, `updateOne`, and `findByIdAndUpdate`
+// UserSchema.pre<IUser>("findOneAndUpdate", async function (next) {
+//   if (!this.isModified("password")) return next();
+
+//   // Hash the password
+//   this.password = await bcrypt.hash(this.password, 10);
+//   next();
+
+//   next();
+// });
 
 // Middleware method to compare passwords
 UserSchema.methods.comparePassword = async function (
   password: string
 ): Promise<boolean> {
   return bcrypt.compare(password, this.password);
-};
-
-// Middleware method to create a reset token
-UserSchema.methods.createResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString("hex");
-
-  // Hash the reset token before saving it
-  this.resetToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-  this.resetTokenExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-
-  return resetToken; // Return plain token to be sent to the user
 };
 
 export default mongoose.models.User || model<IUser>("User", UserSchema);

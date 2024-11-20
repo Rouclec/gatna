@@ -149,7 +149,7 @@ function CreateCourse () {
           description: description!,
           pdf: downloadURL
         }
-        mutate(course)
+        await mutateAsync(course)
       } else {
         const course: CreateCourseRequest = {
           category: categories![selectedType]._id,
@@ -158,7 +158,7 @@ function CreateCourse () {
           description: description!,
           pdf: null
         }
-        mutate(course)
+        await mutateAsync(course)
       }
     } catch (error) {
       console.error(`Error uploading course: ${error}`)
@@ -168,7 +168,7 @@ function CreateCourse () {
     }
   }
 
-  const { mutate } = useSaveCourse()
+  const { mutateAsync } = useSaveCourse()
 
   return (
     <Sidebar>

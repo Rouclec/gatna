@@ -48,23 +48,6 @@ export const useCreateRole = (
   });
 };
 
-// // Update role
-// export const useUpdateRole = (id: string) => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation(
-//     async (updatedRole: { name: string }) => {
-//       const { data } = await axios.put(`${API_URL}/${id}`, updatedRole);
-//       return data.data;
-//     },
-//     {
-//       onSuccess: () => {
-//         queryClient.invalidateQueries(["roles"]);
-//         queryClient.invalidateQueries(["role", id]);
-//       },
-//     }
-//   );
-// };
 
 // Delete role
 export const useDeleteRole = (
