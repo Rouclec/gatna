@@ -132,7 +132,7 @@ function SignUp () {
   const { mutateAsync } = useInitiatePayment(data => {
     alert('You will be redirected to complete your payment')
     window.open(data?.checkout_url, '_blank')
-    window.location.reload()
+    // window.location.reload()
   })
 
   return (
