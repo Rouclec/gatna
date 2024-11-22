@@ -71,7 +71,7 @@ export default async function handler(
           currency1: pack.currency,
           currency2: "USDT.TRC20",
           // amount: Package.price, //TODO: revert this to use the Package's price
-          amount: 2,
+          amount: 1,
           buyer_email: user.email,
           item_name: user.firstName,
           success_url: successUrl,
