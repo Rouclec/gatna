@@ -24,7 +24,6 @@ export default async function handler(
         .json({ message: "You must be logged in to access this resource." });
     }
 
-    const userId = authToken?.id; // ID of the logged-in user
     const isAdmin = authToken?.role === "admin"; // Check if user is admin
 
     if (!isAdmin) {
@@ -39,7 +38,6 @@ export default async function handler(
           Account,
           authToken?.email as string,
           authToken?.name as string,
-          userId as string
         );
 
         return res

@@ -2,7 +2,11 @@ import mongoose, { Schema, Document, model } from "mongoose";
 import { encrypt, decrypt, maskKey } from "@/src/util/encryption"; // Import the encryption utility
 
 interface IVideoServer extends Document {
-  userId: {
+  createdBy: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  }; // Reference to User model
+  updatedBy?: {
     type: Schema.Types.ObjectId;
     ref: "User";
   };
@@ -15,11 +19,14 @@ interface IVideoServer extends Document {
 // Define the VideoServer Schema
 const VideoServerSchema: Schema<IVideoServer> = new Schema(
   {
-    userId: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
+    },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     publicKey: {
       type: String,

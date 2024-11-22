@@ -1,4 +1,4 @@
-import { Category, Course, VideoServer } from "@/src/models";
+import { Course, Package, VideoServer } from "@/src/models";
 
 import dbConnect from "@/src/util/db";
 import axios from "axios";
@@ -32,19 +32,25 @@ export default async function handler(
           });
         }
 
-        const { category, videoID, pdf, title, description } = req.body; // Extract name from the request body
+        const { package: pack, videoID, pdf, title, description } = req.body; // Extract name from the request body
 
-        const categoryFound = await Category.findById(category);
+        const packageFound = await Package.findById(pack);
 
-        if (!categoryFound) {
+        if (!packageFound) {
           return res
             .status(400)
-            .json({ message: `No category with id ${category}` });
+            .json({ message: `No package with id ${pack}` });
         }
 
-        const existingCourse = await Course.findOne({ category });
+        const existingCourse = await Course.findOne({ package: pack });
 
         const videoAPIKeys = await VideoServer.findOne();
+
+        if (!videoAPIKeys) {
+          return res
+            .status(404)
+            .json({ message: `No video server data found on database` });
+        }
 
         const decryptedPublicKey = videoAPIKeys.getDecryptedPublicKey();
 
@@ -85,7 +91,7 @@ export default async function handler(
           }
 
           const newCourse = new Course({
-            category,
+            package: pack,
             videos: videos,
             pdfs: !!pdf
               ? [
@@ -96,8 +102,6 @@ export default async function handler(
                   },
                 ]
               : null,
-            price: categoryFound.price,
-            currency: categoryFound.currency,
           });
           await newCourse.save();
 
@@ -201,7 +205,35 @@ export default async function handler(
       }
     case "GET":
       try {
-        const courses = await Course.find();
+        const courses = await Course.aggregate([
+          {
+            $lookup: {
+              from: "packages", // Name of the Package collection
+              localField: "package", // Field in the Course collection
+              foreignField: "_id", // Field in the Package collection
+              as: "packageDetails", // Resulting field name
+            },
+          },
+          {
+            $unwind: "$packageDetails", // Decompose the packageDetails array for sorting
+          },
+          {
+            $sort: { "packageDetails.price": 1 }, // Sort by package price (ascending)
+          },
+          {
+            $project: {
+              // Include all fields from Course and packageDetails
+              _id: 1,
+              videos: 1,
+              pdfs: 1,
+              duration: 1,
+              published: 1,
+              createdAt: 1,
+              updatedAt: 1,
+              package: "$packageDetails", // Embed full package details
+            },
+          },
+        ]);
 
         return res.status(200).json({ data: courses });
       } catch (error) {

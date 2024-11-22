@@ -32,7 +32,6 @@ export default async function handler(
           User,
           authToken?.email as string,
           authToken?.name as string,
-          undefined,
           userId as string
         );
 

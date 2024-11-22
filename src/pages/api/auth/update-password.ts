@@ -33,7 +33,6 @@ export default async function handler(
         const validOTP = await verifyEntityOTP(
           User,
           otp,
-          undefined,
           userId as string
         );
         if (!validOTP) {

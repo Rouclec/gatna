@@ -1,7 +1,11 @@
 import mongoose, { Schema, Document, model } from "mongoose";
 
 interface ISocials extends Document {
-  userId: {
+  createdBy: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  }; // Reference to User model
+  updatedBy?: {
     type: Schema.Types.ObjectId;
     ref: "User";
   };
@@ -15,11 +19,14 @@ interface ISocials extends Document {
 
 const SocialsSchema: Schema<ISocials> = new Schema(
   {
-    userId: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
+    },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     facebook: String,
     instagram: String,

@@ -15,7 +15,6 @@ import Reels from '@/public/assets/icons/reels.svg'
 // import Stopwatch from '@/public/assets/icons/stopwatch.svg'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next'
-import { useGetCategories } from '@/src/hooks/category'
 import {
   CreateCourseRequest,
   useGetCourses,
@@ -24,6 +23,7 @@ import {
 import { storage } from '@/src/util/firebase'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { ClipLoader, FadeLoader } from 'react-spinners'
+import { useGetPackages } from '@/src/hooks/package'
 
 interface InputProps {
   leftIcon?: React.ReactNode
@@ -133,8 +133,7 @@ function CreateCourse () {
     )
   }
 
-  const { data: categories, isFetching: isCategoriesFetching } =
-    useGetCategories({})
+  const { data: packages, isFetching: isPackagesFetching } = useGetPackages({})
   const { data: coursesData, isFetching: isCoursesFetching } = useGetCourses()
 
   const handleCreate = async () => {
@@ -143,7 +142,7 @@ function CreateCourse () {
       if (courseType === 'pdf') {
         handleUpload()
         const course: CreateCourseRequest = {
-          category: categories![selectedType]._id,
+          package: packages![selectedType]._id,
           videoID: null,
           title: courseTitle!,
           description: description!,
@@ -152,7 +151,7 @@ function CreateCourse () {
         await mutateAsync(course)
       } else {
         const course: CreateCourseRequest = {
-          category: categories![selectedType]._id,
+          package: packages![selectedType]._id,
           videoID: videoID!,
           title: courseTitle!,
           description: description!,
@@ -168,11 +167,13 @@ function CreateCourse () {
     }
   }
 
-  const { mutateAsync } = useSaveCourse()
+  const { mutateAsync } = useSaveCourse(() => {
+    window.location.reload()
+  })
 
   return (
     <Sidebar>
-      {(isCategoriesFetching || isCoursesFetching) && (
+      {(isPackagesFetching || isCoursesFetching) && (
         <div className='absolute inset-0 bg-transparent bg-opacity-10 backdrop-blur-sm z-[9999] flex items-start pt-[30vh] justify-center'>
           <FadeLoader />
         </div>
@@ -196,7 +197,7 @@ function CreateCourse () {
               </div>
             </div>
             <div className='w-full rounded-2xl bg-black bg-opacity-25 flex items-center justify-evenly gap-2 px-3 py-5'>
-              {categories?.map((item, index) => {
+              {packages?.map((item, index) => {
                 return (
                   <div
                     key={index}
@@ -541,9 +542,9 @@ function CreateCourse () {
                             className={`${gilroyMedium.className} text-sm text-neutral-10`}
                           >
                             {item?.length
-                              ? `${Math.floor(item.length / (60 * 60))}:${
-                                  item.length % (60)
-                                }`
+                              ? `${Math.floor(
+                                  item.length / (60 * 60)
+                                )}:${Math.round(item.length / 60)}`
                               : 'N/A'}
                           </p>
                         </td>

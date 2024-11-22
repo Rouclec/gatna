@@ -3528,6 +3528,11 @@ cliui@^8.0.1:
     strip-ansi "^6.0.1"
     wrap-ansi "^7.0.0"
 
+coinpayments@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/coinpayments/-/coinpayments-2.2.0.tgz#268aba8231c16911350e098e2178fa0e307d4099"
+  integrity sha512-TJ8nAW1nPTBHBmYy4w78k9iH4gVgksdv1aiS/Oq3IsYiZAGn9QgyC+RcXZfjJrjDL9HZwc7kgyc3Gi3DMUiljw==
+
 color-convert@^1.9.0:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"

@@ -5,9 +5,21 @@ import axios from "axios";
 
 export interface Course {
   _id?: string;
-  category: {
+  package: {
+    _id: string;
     tag: string;
     name: string;
+    price: number;
+    currency: string;
+    previewVideo: {
+      _id: string;
+      id: string;
+      length: number;
+      title: string;
+      description: string;
+      fileType: string;
+    };
+    parent?: string;
   };
   videos: {
     _id: string;
@@ -25,8 +37,6 @@ export interface Course {
     fileType: string;
     length?: number;
   }[];
-  price: number;
-  currency: string;
   duration?: number;
   published?: boolean;
   createdAt?: string;
@@ -34,7 +44,7 @@ export interface Course {
 }
 
 export interface CreateCourseRequest {
-  category: string;
+  package: string;
   videoID: string | null;
   pdf: string | null;
   title: string;

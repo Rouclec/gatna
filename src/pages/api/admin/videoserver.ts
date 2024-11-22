@@ -39,7 +39,7 @@ export default async function handler(
           publicKey,
           privateKey,
           secretKey,
-          userId,
+          createdBy: userId,
         });
 
         await newVideoServer.save();
@@ -86,8 +86,8 @@ export default async function handler(
 
         // Find the VideoServer by ID and update it
         const updatedVideoServer = await VideoServer.findOneAndUpdate(
-          { userId },
-          { publicKey, privateKey, secretKey },
+          {},
+          { publicKey, privateKey, secretKey, updatedBy: userId },
           { new: true, runValidators: true }
         );
 
@@ -106,9 +106,7 @@ export default async function handler(
     case "DELETE":
       try {
         // Find the VideoServer by the user id and delete it
-        const deletedVideoServer = await VideoServer.findOneAndDelete({
-          userId,
-        });
+        const deletedVideoServer = await VideoServer.findOneAndDelete();
 
         if (!deletedVideoServer) {
           return res.status(404).json({ message: "VideoServer not found." });

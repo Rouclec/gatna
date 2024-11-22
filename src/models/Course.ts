@@ -1,11 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import mongoose, { Schema, Document, model, QueryWithHelpers } from "mongoose";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
+import mongoose, { Schema, Document, model } from "mongoose";
 
 interface ICourse extends Document {
-  price: number;
-  currency?: string;
   videos: {
     _id: string;
     id: string;
@@ -21,9 +16,9 @@ interface ICourse extends Document {
     description: string;
     fileType: string;
   }[];
-  category: {
+  package: {
     type: Schema.Types.ObjectId;
-    ref: "Category";
+    ref: "Package";
     name: string;
     tag: string;
   };
@@ -35,16 +30,10 @@ interface ICourse extends Document {
 
 const CourseSchema: Schema<ICourse> = new Schema(
   {
-    category: {
+    package: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "Package",
       required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      default: 0,
-      min: 0,
     },
     videos: [
       {
@@ -73,10 +62,6 @@ const CourseSchema: Schema<ICourse> = new Schema(
     published: {
       type: Boolean,
       default: true,
-    },
-    currency: {
-      type: String,
-      default: "USD",
     },
   },
   {
@@ -132,17 +117,17 @@ CourseSchema.post("findOneAndUpdate", async function (doc) {
 CourseSchema.pre("find", function (next) {
   // Ensure that TypeScript understands the context
   this.populate({
-    path: "category",
-    select: "name tag", // Only select the fields you need
+    path: "package",
+    select: "name tag price currency previewVideo parent", // Only select the fields you need
   });
   next();
 });
 
 CourseSchema.pre("findOneAndUpdate", function (next) {
-  // Automatically populate the `category` field on update queries
+  // Automatically populate the `package` field on update queries
   this.populate({
-    path: "category",
-    select: "name tag",
+    path: "package",
+    select: "name tag price currency previewVideo parent", // Only select the fields you need
   });
   next();
 });

@@ -12,7 +12,6 @@ import { Account, Socials, Coinpayment, VideoServer } from "../models";
  * @param model - The Mongoose model representing the entity.
  * @param email - The email to send the OTP to.
  * @param name - The name of the user
- * @param userId - The userId to identify the entity. (Optional)
  * @param _id - The id of the entity (in the case of a user entity) (Optional)
  * @returns The created or updated entity.
  */
@@ -20,7 +19,6 @@ export async function getEntityOTP<T extends Document>(
   model: Model<T>,
   email: string,
   name: string,
-  userId?: string,
   _id?: string
 ): Promise<T | null> {
   try {
@@ -68,7 +66,7 @@ export async function getEntityOTP<T extends Document>(
       return updatedEntity;
     } else {
       const updatedEntity = await model.findOneAndUpdate(
-        { userId },
+        {},
         {
           $set: {
             otp: encryptedToken,
@@ -89,7 +87,6 @@ export async function getEntityOTP<T extends Document>(
  *
  * @param model - The Mongoose model representing the entity.
  * @param otp - string
- * @param userId - The userId to identify the entity. (optional)
  * @param _id - The id of the entity (in case of user entity) (optional)
  * @returns The created or updated entity.
  */
@@ -98,7 +95,6 @@ export async function verifyEntityOTP<
 >(
   model: Model<T>,
   otp: string,
-  userId?: string,
   _id?: string
 ): Promise<boolean | null> {
   try {
@@ -112,11 +108,11 @@ export async function verifyEntityOTP<
     if (_id) {
       entity = await model.findById(_id).select("+otp");
     } else {
-      entity = await model.findOne({ userId }).select("+otp");
+      entity = await model.findOne().select("+otp");
     }
 
     if (!entity) {
-      throw new Error(`No ${model} found for user with id: ${userId}`);
+      throw new Error(`No ${model} found`);
     }
 
     const decryptedTokenString = decrypt(entity.otp);

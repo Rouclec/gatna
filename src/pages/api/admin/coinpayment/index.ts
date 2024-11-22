@@ -30,37 +30,33 @@ export default async function handler(
   }
 
   switch (req.method) {
-    case "POST":
-      try {
-        const { publicKey, privateKey, secretKey, otp } = req.body;
+    // case "POST":
+    //   try {
+    //     const { ipnSecret, privateKey, secretKey, otp } = req.body;
 
-        const validOTP = await verifyEntityOTP(
-          Coinpayment,
-          otp,
-          userId as string
-        );
-        if (!validOTP) {
-          return res.status(400).json({ message: "Invalid otp" });
-        }
+    //     const validOTP = await verifyEntityOTP(Coinpayment, otp);
+    //     if (!validOTP) {
+    //       return res.status(400).json({ message: "Invalid otp" });
+    //     }
 
-        // Create a new Coinpayment entry
-        const newCoinpayment = new Coinpayment({
-          publicKey,
-          privateKey,
-          secretKey,
-          userId,
-        });
+    //     // Create a new Coinpayment entry
+    //     const newCoinpayment = new Coinpayment({
+    //       ipnSecret,
+    //       privateKey,
+    //       secretKey,
+    //       createdBy: userId,
+    //     });
 
-        await newCoinpayment.save();
-        return res
-          .status(201)
-          .json({ message: "Coinpayment info saved securely" });
-      } catch (error) {
-        console.error(error);
-        return res
-          .status(500)
-          .json({ message: "Error saving Coinpayment info" });
-      }
+    //     await newCoinpayment.save();
+    //     return res
+    //       .status(201)
+    //       .json({ message: "Coinpayment info saved securely" });
+    //   } catch (error) {
+    //     console.error(error);
+    //     return res
+    //       .status(500)
+    //       .json({ message: "Error saving Coinpayment info" });
+    //   }
 
     case "GET":
       try {
@@ -78,7 +74,7 @@ export default async function handler(
             _id: coinpayment._id,
             createdAt: coinpayment.createdAt,
             updatedAt: coinpayment.updatedAt,
-            publicKey: coinpayment.getPublicKey(),
+            ipnSecret: coinpayment.getIpnSecret(),
             privateKey: coinpayment.getPrivateKey(),
             secretKey: coinpayment.getSecretKey(),
           },
@@ -92,21 +88,25 @@ export default async function handler(
 
     case "PUT":
       try {
-        const { publicKey, privateKey, secretKey, otp } = req.body;
+        const { ipnSecret, privateKey, secretKey, otp } = req.body;
 
-        const validOTP = await verifyEntityOTP(
-          Coinpayment,
-          otp,
-          userId as string
-        );
+        const validOTP = await verifyEntityOTP(Coinpayment, otp);
         if (!validOTP) {
           return res.status(400).json({ message: "Invalid otp" });
         }
 
+        let createdBy = userId;
+
+        const existingCoinPayment = await Coinpayment.findOne();
+
+        if (existingCoinPayment.createdBy) {
+          createdBy = existingCoinPayment.createdBy;
+        }
+
         // Find the Coinpayment by ID and update it
         const updatedCoinpayment = await Coinpayment.findOneAndUpdate(
-          { userId },
-          { publicKey, privateKey, secretKey },
+          {},
+          { ipnSecret, privateKey, secretKey, updatedBy: userId, createdBy },
           { new: true, runValidators: true }
         );
 
@@ -125,9 +125,7 @@ export default async function handler(
     case "DELETE":
       try {
         // Find the Coinpayment by the user id and delete it
-        const deletedCoinpayment = await Coinpayment.findOneAndDelete({
-          userId,
-        });
+        const deletedCoinpayment = await Coinpayment.findOneAndDelete();
 
         if (!deletedCoinpayment) {
           return res.status(404).json({ message: "Coinpayment not found." });
@@ -142,7 +140,7 @@ export default async function handler(
       }
 
     default:
-      res.setHeader("Allow", ["POST", "GET", "PUT", "DELETE"]);
+      res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
       return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

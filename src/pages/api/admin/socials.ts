@@ -5,7 +5,6 @@ import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
 import { Socials } from "@/src/models";
 
-
 const secret = process.env.NEXTAUTH_SECRET;
 
 export default async function handler(
@@ -35,24 +34,24 @@ export default async function handler(
     // Create new socials entry for the user
     case "POST":
       try {
-        const existingSocials = await Socials.findOne({ userId });
+        const existingSocials = await Socials.findOne();
         if (existingSocials) {
           return res
             .status(400)
-            .json({ message: "Socials record already exists for this user." });
+            .json({ message: "Socials record already exists" });
         }
 
         const { facebook, instagram, whatsapp, tiktok, otp, countryCode } =
           req.body;
 
         const newSocials = await Socials.create({
-          userId,
           facebook,
           instagram,
           whatsapp,
           tiktok,
           countryCode,
           otp,
+          createdBy: userId,
         });
 
         return res.status(201).json({ data: newSocials });
@@ -64,7 +63,7 @@ export default async function handler(
     // Retrieve the user's socials
     case "GET":
       try {
-        const socials = await Socials.findOne({ userId });
+        const socials = await Socials.findOne();
 
         if (!socials) {
           return res.status(404).json({ message: "Socials not found." });
@@ -83,8 +82,16 @@ export default async function handler(
           req.body;
 
         const updatedSocials = await Socials.findOneAndUpdate(
-          { userId },
-          { facebook, instagram, whatsapp, tiktok, otp, countryCode },
+          {},
+          {
+            facebook,
+            instagram,
+            whatsapp,
+            tiktok,
+            otp,
+            countryCode,
+            updatedBy: userId,
+          },
           {
             new: true,
             runValidators: true,

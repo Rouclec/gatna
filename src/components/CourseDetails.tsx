@@ -5,6 +5,7 @@ import { Paper, TimeSquare, Video } from 'react-iconly'
 import { Course } from '../hooks/course'
 import { useGetVideoPlaybackInfo } from '../hooks/video'
 import { ClipLoader } from 'react-spinners'
+import { useRouter } from 'next/router'
 
 interface Props {
   course: Course
@@ -27,7 +28,18 @@ function getCurrencySymbol (currency: string): string {
 }
 
 const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
-  const { data, isLoading } = useGetVideoPlaybackInfo(course?.videos[0]?.id)
+  const router = useRouter()
+
+  const { data, isLoading } = useGetVideoPlaybackInfo(
+    course?.package.previewVideo?.id
+  )
+
+  const handleClick = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('@buying-course', JSON.stringify(course.package._id))
+      router.push('/signup')
+    }
+  }
   return (
     <div
       // className={`flex flex-col items-center justify-center relative ${
@@ -45,7 +57,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             <p
               className={`block lg:hidden ${gilroyHeavy.className} text-6xl mx:text-8xl text-center leading-none text-white text-opacity-[2%] whitespace-nowrap`}
             >
-              {course.category.name}
+              {course.package.name}
             </p>
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
@@ -55,22 +67,23 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
                     <p className={`${gilroyRegular.className} text-lg`}>
-                      {course.category.tag} /{' '}
+                      {course.package.tag} /{' '}
                       <span className={`${gilroyBold.className}`}>
-                        ${course.price}
+                        {getCurrencySymbol(course.package.currency)}
+                        {course.package.price}
                       </span>
                     </p>
                   </div>
                   <p
                     className={`leading-[52px] text-3xl md:text-[40px] ${gilroyBlack.className} text-center md:text-right`}
                   >
-                    {course?.videos[0]?.title ?? course?.pdfs[0]?.title}
+                    {course?.package.previewVideo?.title ?? course?.package.tag}
                   </p>
                   <p
                     className={`${gilroyRegular.className} text-lg text-center md:text-right`}
                   >
-                    {course?.videos[0]?.description ??
-                      course.pdfs[0].description}
+                    {course?.package.previewVideo?.description ??
+                      course?.package.tag}
                   </p>
                   <div className='grid grid-cols-2 md:grid-cols-3 items-center gap-3'>
                     {!course.pdfs && <div className='hidden md:block' />}
@@ -143,7 +156,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   transform: 'translate(-50%, -50%) rotate(90deg)'
                 }}
               >
-                {course.category.name}
+                {course.package.name}
               </p>
             </div>
           </div>
@@ -155,7 +168,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             <p
               className={`block lg:hidden ${gilroyHeavy.className} text-6xl mx:text-8xl text-center leading-none text-white text-opacity-[2%] whitespace-nowrap`}
             >
-              {course.category.name}
+              {course.package.name}
             </p>
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
@@ -168,7 +181,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   transform: 'translate(-50%, -50%) rotate(90deg)'
                 }}
               >
-                {course.category.name}
+                {course.package.name}
               </p>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
@@ -196,23 +209,23 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
                     <p className={`${gilroyRegular.className} text-lg`}>
-                      {course.category.tag} /{' '}
+                      {course.package.tag} /{' '}
                       <span className={`${gilroyBold.className}`}>
-                        {getCurrencySymbol(course.currency)}
-                        {course.price}
+                        {getCurrencySymbol(course.package.currency)}
+                        {course.package.price}
                       </span>
                     </p>
                   </div>
                   <p
                     className={`leading-[52px] text-3xl md:text-[40px] ${gilroyBlack.className} text-center md:text-left`}
                   >
-                    {course?.videos[0]?.title ?? course?.pdfs[0]?.title}
+                    {course?.package.previewVideo?.title ?? course?.package.tag}
                   </p>
                   <p
                     className={`${gilroyRegular.className} text-lg text-center md:text-left`}
                   >
-                    {course?.videos[0]?.description ??
-                      course?.pdfs[0]?.description}
+                    {course?.package.previewVideo?.description ??
+                      course?.package.tag}
                   </p>
                   <div className='grid grid-cols-2 md:grid-cols-3 items-center gap-3'>
                     <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
@@ -247,7 +260,10 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                     </div>
                   </div>
                 </div>
-                <div className='bg-gradient w-[254px] h-[70px] items-center self-center md:self-start justify-center flex rounded-[10px]'>
+                <div
+                  className='bg-gradient w-[254px] h-[70px] items-center self-center md:self-start justify-center flex rounded-[10px] cursor-pointer'
+                  onClick={handleClick}
+                >
                   <p className={`${gilroyBold.className}`}>
                     Acheter ma formation
                   </p>

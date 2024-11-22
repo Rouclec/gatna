@@ -31,52 +31,52 @@ export default async function handler(
   }
 
   switch (req.method) {
-    // Create a new Account for the authenticated user
-    case "POST":
-      try {
-        const {
-          companyName,
-          minimumWithdrawalAmount,
-          email,
-          walletId,
-          telephone,
-          otp,
-          countryCode,
-        } = req.body;
+    // // Create a new Account for the authenticated user
+    // case "POST":
+    //   try {
+    //     const {
+    //       companyName,
+    //       minimumWithdrawalAmount,
+    //       email,
+    //       walletId,
+    //       telephone,
+    //       otp,
+    //       countryCode,
+    //     } = req.body;
 
-        const validOTP = await verifyEntityOTP(Account, otp, userId as string);
-        if (!validOTP) {
-          return res.status(400).json({ message: "Invalid otp" });
-        }
-        // Check if the user already has an account
-        const existingAccount = await Account.findOne({ userId });
-        if (existingAccount) {
-          return res
-            .status(400)
-            .json({ message: "You already have an account." });
-        }
+    //     const validOTP = await verifyEntityOTP(Account, otp);
+    //     if (!validOTP) {
+    //       return res.status(400).json({ message: "Invalid otp" });
+    //     }
+    //     // Check if the user already has an account
+    //     const existingAccount = await Account.findOne();
+    //     if (existingAccount) {
+    //       return res
+    //         .status(400)
+    //         .json({ message: "You already have an account." });
+    //     }
 
-        // Create a new account with the user's ID
-        const newAccount = await Account.create({
-          userId,
-          companyName,
-          minimumWithdrawalAmount,
-          email,
-          walletId,
-          telephone,
-          countryCode,
-        });
+    //     // Create a new account with the user's ID
+    //     const newAccount = await Account.create({
+    //       companyName,
+    //       minimumWithdrawalAmount,
+    //       email,
+    //       walletId,
+    //       telephone,
+    //       countryCode,
+    //       createdBy: userId,
+    //     });
 
-        return res.status(201).json({ data: newAccount });
-      } catch (error) {
-        console.error("Error creating account:", error);
-        return res.status(500).json({ message: "Error creating account." });
-      }
+    //     return res.status(201).json({ data: newAccount });
+    //   } catch (error) {
+    //     console.error("Error creating account:", error);
+    //     return res.status(500).json({ message: "Error creating account." });
+    //   }
 
     // Retrieve the authenticated user's account
     case "GET":
       try {
-        const account = await Account.findOne({ userId });
+        const account = await Account.findOne();
 
         if (!account) {
           return res.status(404).json({ message: "Account not found." });
@@ -101,13 +101,20 @@ export default async function handler(
           countryCode,
         } = req.body;
 
-        const validOTP = await verifyEntityOTP(Account, otp, userId as string);
+        const validOTP = await verifyEntityOTP(Account, otp);
         if (!validOTP) {
           return res.status(400).json({ message: "Invalid otp" });
         }
 
+        let createdBy = userId;
+        const existingAccount = await Account.findOne();
+
+        if (existingAccount.createdBy) {
+          createdBy = existingAccount.createdBy;
+        }
+
         const updatedAccount = await Account.findOneAndUpdate(
-          { userId },
+          {},
           {
             companyName,
             minimumWithdrawalAmount,
@@ -115,6 +122,8 @@ export default async function handler(
             walletId,
             telephone,
             countryCode,
+            createdBy,
+            updatedBy: userId,
           },
           {
             new: true, // Return the updated document
@@ -133,7 +142,7 @@ export default async function handler(
       }
 
     default:
-      res.setHeader("Allow", ["POST", "GET", "PUT"]);
+      res.setHeader("Allow", ["GET", "PUT"]);
       return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

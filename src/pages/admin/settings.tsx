@@ -16,7 +16,7 @@ import Pencil from '@/public/assets/icons/pencil.svg'
 import { GetServerSidePropsContext } from 'next'
 import { getSession, useSession } from 'next-auth/react'
 import {
-  useCreateAccount,
+  // useCreateAccount,
   useGetAccountOTP,
   useGetUserAccount,
   useUpdateAccount
@@ -33,7 +33,7 @@ import {
   useUpdateVideoServer
 } from '@/src/hooks/videoserver'
 import {
-  useCreateCoinpayment,
+  // useCreateCoinpayment,
   useGetCoinpayment,
   useGetCoinpaymentOTP,
   useUpdateCoinpayment
@@ -87,7 +87,7 @@ function Settings () {
   }>()
 
   const [coinpayment, setCoinpayment] = useState<{
-    publicKey?: string
+    ipnSecret?: string
     secretKey?: string
     privateKey?: string
     otp?: string
@@ -124,11 +124,11 @@ function Settings () {
   const handleAccountSave = async () => {
     try {
       setIsAccountLoading(true)
-      if (userAccount?._id) {
-        await updateAccount(account!)
-      } else {
-        await createAccount(account!)
-      }
+      // if (userAccount?._id) {
+      await updateAccount(account!)
+      // } else {
+      //   await createAccount(account!)
+      // }
     } catch (error) {
       console.error({ error }, 'creating account')
     } finally {
@@ -161,12 +161,12 @@ function Settings () {
   }
   const handleCoinpaymentSave = async () => {
     try {
-      setIsCounPaymentLoding(true)
-      if (coinPaymentData?._id) {
-        await updateCoinPayment(coinpayment!)
-      } else {
-        await createCoinpayment(coinpayment!)
-      }
+      // setIsCounPaymentLoding(true)
+      // if (coinPaymentData?._id) {
+      await updateCoinPayment(coinpayment!)
+      // } else {
+      //   await createCoinpayment(coinpayment!)
+      // }
     } catch (error) {
       console.error({ error }, 'creating coinpayment')
     } finally {
@@ -197,11 +197,12 @@ function Settings () {
   const { isFetched: isGetUserAccountFetched, data: userAccount } =
     useGetUserAccount()
 
-  const { mutateAsync: createAccount } = useCreateAccount(() => {
-    setEditAccount(false)
-  })
+  // const { mutateAsync: createAccount } = useCreateAccount(() => {
+  //   setEditAccount(false)
+  // })
   const { mutateAsync: updateAccount } = useUpdateAccount(() => {
     setEditAccount(false)
+    window.location.reload()
   })
 
   const { isFetched: isGetUserSocialsFetched, data: userSocials } =
@@ -209,34 +210,42 @@ function Settings () {
 
   const { mutateAsync: createSocials } = useCreateSocials(() => {
     setEditSocials(false)
+    window.location.reload()
   })
   const { mutateAsync: updateSocials } = useUpdateSocials(() => {
     setEditSocials(false)
+    window.location.reload()
   })
   const { mutateAsync: updatePassword } = useUpdatePassword(() => {
     setEditSecurity(false)
     setSecurity(undefined)
+    window.location.reload()
   })
 
   const { isFetched: isGetVideoServerFetched, data: videoServerData } =
     useGetVideoServer()
 
   const { mutateAsync: createVideoServer } = useCreateVideoServer(() => {
-    setEditVideoServer(false)
+    {
+      setEditVideoServer(false)
+      window.location.reload()
+    }
   })
-  const { mutateAsync: updateVideoServer } = useUpdateVideoServer(() =>
+  const { mutateAsync: updateVideoServer } = useUpdateVideoServer(() => {
     setEditVideoServer(false)
-  )
+    window.location.reload()
+  })
 
   const { isFetched: isGetCoinpaymentFetched, data: coinPaymentData } =
     useGetCoinpayment()
 
-  const { mutateAsync: createCoinpayment } = useCreateCoinpayment(() => {
+  // const { mutateAsync: createCoinpayment } = useCreateCoinpayment(() => {
+  //   setEditCoinpayment(false)
+  // })
+  const { mutateAsync: updateCoinPayment } = useUpdateCoinpayment(() => {
     setEditCoinpayment(false)
+    window.location.reload()
   })
-  const { mutateAsync: updateCoinPayment } = useUpdateCoinpayment(() =>
-    setEditCoinpayment(false)
-  )
 
   const { mutateAsync: getAccountOTP } = useGetAccountOTP()
 
@@ -851,18 +860,18 @@ function Settings () {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50 text-sm`}
                       >
-                        Public Key
+                        IPN secret
                       </p>
                       <input
                         className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setCoinpayment(prev => ({
                             ...prev,
-                            publicKey: e.target.value
+                            ipnSecret: e.target.value
                           }))
                         }}
                         disabled={!editCoinpayment}
-                        defaultValue={coinPaymentData?.publicKey}
+                        defaultValue={coinPaymentData?.ipnSecret}
                       />
                     </div>
                     <div className='bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1'>

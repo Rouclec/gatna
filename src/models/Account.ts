@@ -3,10 +3,14 @@
 import mongoose, { Schema, Document, model } from "mongoose";
 
 interface IAccount extends Document {
-  userId: {
+  createdBy: {
     type: Schema.Types.ObjectId;
     ref: "User";
   }; // Reference to User model
+  updatedBy?: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  };
   companyName?: string;
   minimumWithdrawalAmount?: number;
   email?: string;
@@ -18,11 +22,14 @@ interface IAccount extends Document {
 
 const AccountSchema: Schema<IAccount> = new Schema(
   {
-    userId: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
+    },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     companyName: String,
     minimumWithdrawalAmount: Number,

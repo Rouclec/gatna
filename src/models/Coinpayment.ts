@@ -2,11 +2,15 @@ import mongoose, { Schema, Document, model } from "mongoose";
 import { encrypt, maskKey, decrypt } from "../util/encryption";
 
 interface ICoinpayment extends Document {
-  userId: {
+  createdBy: {
     type: Schema.Types.ObjectId;
     ref: "User";
-  }; //Reference to User model
-  publicKey?: string;
+  }; // Reference to User model
+  updatedBy?: {
+    type: Schema.Types.ObjectId;
+    ref: "User";
+  };
+  ipnSecret?: string;
   privateKey?: string;
   secretKey?: string;
   otp?: string;
@@ -15,13 +19,16 @@ interface ICoinpayment extends Document {
 // Define the Coinpayment Schema
 const CoinpaymentSchema: Schema<ICoinpayment> = new Schema(
   {
-    userId: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
-    publicKey: {
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    ipnSecret: {
       type: String,
       set: (value: string) => encrypt(value), // Encrypt value before saving
     },
@@ -45,16 +52,16 @@ const CoinpaymentSchema: Schema<ICoinpayment> = new Schema(
 
 // Decrypt sensitive fields before returning to the client
 CoinpaymentSchema.pre("find", function () {
-  this.select("publicKey privateKey secretKey otp");
+  this.select("ipnSecret privateKey secretKey otp");
 });
 
 CoinpaymentSchema.pre("findOne", function () {
-  this.select("publicKey privateKey secretKey otp");
+  this.select("ipnSecret privateKey secretKey otp");
 });
 
 // Decrypt fields when retrieving documents
-CoinpaymentSchema.methods.getPublicKey = function () {
-  const decryptedKey = decrypt(this.publicKey);
+CoinpaymentSchema.methods.getIpnSecret = function () {
+  const decryptedKey = decrypt(this.ipnSecret);
   return maskKey(decryptedKey); // Mask the key when returning
 };
 
@@ -71,6 +78,18 @@ CoinpaymentSchema.methods.getSecretKey = function () {
 CoinpaymentSchema.methods.getOtp = function () {
   const decryptedOtp = decrypt(this.otp);
   return maskKey(decryptedOtp); // Mask the OTP when returning
+};
+
+CoinpaymentSchema.methods.getDecryptedIpnSecret = function () {
+  return decrypt(this.ipnSecret);
+};
+
+CoinpaymentSchema.methods.getDecryptedPrivateKey = function () {
+  return decrypt(this.privateKey);
+};
+
+CoinpaymentSchema.methods.getDecryptedSecretKey = function () {
+  return decrypt(this.secretKey);
 };
 
 export default mongoose.models.Coinpayment ||

@@ -5,7 +5,9 @@ import Socials from "./Socials";
 import VideoServer from "./VideoServer";
 import Coinpayment from "./Coinpayment";
 import Course from "./Course";
-import Category from "./Category";
+import Package from "./Package";
+import Transaction from "./Transaction";
+import UserPackage from "./UserPackage";
 
 export {
   Account,
@@ -15,5 +17,7 @@ export {
   VideoServer,
   Coinpayment,
   Course,
-  Category,
+  Package,
+  Transaction,
+  UserPackage,
 };

@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
 import { Navbar } from '../components'
 import { useRouter } from 'next/router'
+import { useInitiatePayment } from '../hooks/payment'
+import { ClipLoader } from 'react-spinners'
 
 function SignUp () {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -82,6 +86,7 @@ function SignUp () {
     if (!validateForm()) return
 
     try {
+      setIsLoading(true)
       // Call your API route that handles signup with NextAuth
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -92,7 +97,20 @@ function SignUp () {
       })
 
       if (response.ok) {
-        router.push('/signin')
+        const data = await response.json()
+        if (typeof window !== 'undefined') {
+          const packageIdString = localStorage.getItem('@buying-course')
+          console.log({ packageIdString })
+          console.log({ data })
+          if (!!packageIdString) {
+            await mutateAsync({
+              userId: data.data._id,
+              packageId: JSON.parse(packageIdString)
+            })
+          } else {
+            router.replace('/signin')
+          }
+        }
       } else {
         const data = await response.json()
         setErrors(prev => ({
@@ -106,8 +124,16 @@ function SignUp () {
         ...prev,
         general: 'An unexpected error occurred. Please try again later.'
       }))
+    } finally {
+      setIsLoading(false)
     }
   }
+
+  const { mutateAsync } = useInitiatePayment(data => {
+    alert('You will be redirected to complete your payment')
+    window.open(data?.checkout_url, '_blank')
+    window.location.reload()
+  })
 
   return (
     <div className='grid'>
@@ -210,9 +236,10 @@ function SignUp () {
           </div>
           <div
             onClick={handleSubmit}
-            className='bg-gradient px-8 py-5 w-fit rounded-[10px] cursor-pointer'
+            className='bg-gradient px-8 py-5 w-fit rounded-[10px] cursor-pointer flex gap-[10px] items-center'
           >
             <p className={`${gilroyBold.className} text-lg`}>Create account</p>
+            {isLoading && <ClipLoader size={20} color='#fff' />}
           </div>
         </div>
       </div>

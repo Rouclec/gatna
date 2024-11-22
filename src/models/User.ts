@@ -17,6 +17,8 @@ interface IUser extends Document {
   lastLogin: Date;
   active: boolean;
   otp?: string;
+  walletBalance: number;
+  referalCode: string;
   comparePassword(password: string): Promise<boolean>;
   createResetToken(): string;
 }
@@ -67,6 +69,14 @@ const UserSchema: Schema<IUser> = new Schema(
       type: Boolean,
       default: true,
     },
+    walletBalance: {
+      type: Number,
+      default: 0,
+    },
+    referalCode: {
+      type: String,
+      default: () => crypto.randomBytes(4).toString("hex").toUpperCase(), // Generates 8 characters
+    },
     otp: {
       type: String,
       select: false,
@@ -89,26 +99,6 @@ UserSchema.pre<QueryWithHelpers<any, IUser>>(
     next();
   }
 );
-
-// // Pre-save hook to hash the password if it's new or modified
-// UserSchema.pre<IUser>("save", async function (next) {
-//   if (!this.isModified("password")) return next();
-
-//   // Hash the password
-//   this.password = await bcrypt.hash(this.password, 10);
-//   next();
-// });
-
-// // Pre-update hook for `findOneAndUpdate`, `updateOne`, and `findByIdAndUpdate`
-// UserSchema.pre<IUser>("findOneAndUpdate", async function (next) {
-//   if (!this.isModified("password")) return next();
-
-//   // Hash the password
-//   this.password = await bcrypt.hash(this.password, 10);
-//   next();
-
-//   next();
-// });
 
 // Middleware method to compare passwords
 UserSchema.methods.comparePassword = async function (

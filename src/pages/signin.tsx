@@ -38,6 +38,7 @@ function Signin () {
       } else {
         router.replace('/users/home') // Redirect to user home for regular users
       }
+      window.location.reload()
     }
   }
 

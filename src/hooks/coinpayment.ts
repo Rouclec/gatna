@@ -8,7 +8,7 @@ const API_URL_COINPAYMENT = "/api/admin/coinpayment";
 interface Coinpayment {
     _id: string;
     userId: string;
-    publicKey?: string;
+    ipnSecret?: string;
     privateKey?: string;
     secretKey?: string;
     otp?: string;
