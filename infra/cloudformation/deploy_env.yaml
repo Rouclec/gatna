@@ -78,12 +78,12 @@ Resources:
           Value: !Ref 'SystemId'
         - Key: EnvId
           Value: !Ref 'EnvId'
-      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/vpc-2azs.yaml"  ]]
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/vpc-2azs.yaml"  ]]
 
   # SecretsStack:
   #   Type: AWS::CloudFormation::Stack
   #   Properties: 
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/third_party_secrets.yaml"  ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/third_party_secrets.yaml"  ]]
   #     Parameters: 
   #       EnvId: !Ref 'EnvId'
   #       SystemId: !Ref 'SystemId'
@@ -113,7 +113,7 @@ Resources:
   #   Type: AWS::CloudFormation::Stack
   #   DependsOn: [VpcStack, WebCert]
   #   Properties: 
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/load_balancer.yaml"  ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/load_balancer.yaml"  ]]
   #     Parameters: 
   #       EnvId: !Ref 'EnvId'
   #       SystemId: !Ref 'SystemId'
@@ -148,7 +148,7 @@ Resources:
   #         Value: !Ref 'EnvId'
   #       - Key: SystemId
   #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ecs.yaml"  ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ecs.yaml"  ]]
   
   # S3BucketStack:
   #   Type: AWS::CloudFormation::Stack
@@ -161,7 +161,7 @@ Resources:
   #         Value: !Ref 'EnvId'
   #       - Key: SystemId
   #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/s3_buckets.yaml' ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/s3_buckets.yaml' ]]
  
   # S3BucketPolicies:
   #   DependsOn: [ S3BucketStack]
@@ -178,7 +178,7 @@ Resources:
   #         Value: !Ref 'EnvId'
   #       - Key: SystemId
   #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/s3_bucket_policies.yaml' ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/s3_bucket_policies.yaml' ]]
  
   # LogProcessorSqsQueueStack:
   #   Type: AWS::CloudFormation::Stack
@@ -191,7 +191,7 @@ Resources:
   #         Value: !Ref 'EnvId'
   #       - Key: SystemId
   #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/sqs_queue.yaml' ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/sqs_queue.yaml' ]]
  
   # SeSDomainIdentities:
   #   Type: AWS::CloudFormation::Stack
@@ -204,7 +204,7 @@ Resources:
   #         Value: !Ref 'EnvId'
   #       - Key: SystemId
   #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ses_identities.yaml"]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ses_identities.yaml"]]
   
   # AppStack:
   #   Type: AWS::CloudFormation::Stack
@@ -233,4 +233,4 @@ Resources:
   #         Value: !Ref 'EnvId'
   #       - Key: SystemId
   #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/app.yaml' ]]
+  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/app.yaml' ]]
