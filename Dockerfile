@@ -1,55 +1,36 @@
-# Install dependencies only when needed
-FROM node:20.9.0-alpine3.18 AS deps
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-
-WORKDIR /app
-
-# Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-
-RUN npm ci
-
-# Rebuild the source code only when needed
+# Stage 1: Install dependencies and build the app
 FROM node:20.9.0-alpine3.18 AS builder
 
+# Set working directory
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+# Copy package manager files to install dependencies
+COPY package.json yarn.lock ./ 
 
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Copy all source files
 COPY . .
 
-ENV NEXT_TELEMETRY_DISABLED 1
+# Build the Next.js app
+RUN yarn build
 
+# Stage 2: Prepare the production image
+FROM node:20.9.0-alpine3.18 AS runner
 
-EXPOSE 3000
-
-ENV PORT 3000
-
-# replce environment variables with dummy value gotten from hash of env variable names
-RUN node /app/set_dummy_env.js
-
-RUN npm run build
-
-# RUN rm -rf .next
-
-
-FROM node:20.9.0-alpine3.18 AS stable-build
-
+# Set working directory
 WORKDIR /app
 
-COPY ./public  /app/.next/standalone/public
+# Copy only the built application and node_modules from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 
-COPY --from=builder /app/.next/static /app/.next/static
+# Expose port 3000 for the app
+EXPOSE 3000
+ENV PORT=3000
 
-COPY --from=builder /app/.next/standalone /app
-
-COPY build_and_run.sh .env.example search_and_replace_env.js  /app/
-
-RUN apk add --no-cache git
-
-RUN npm install blueimp-md5@2.19.0 
-
-ENTRYPOINT ["/bin/sh"]
-CMD ["/app/build_and_run.sh"]
+# Start the app in production mode
+CMD ["yarn", "start"]
