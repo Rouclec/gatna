@@ -139,7 +139,6 @@ Resources:
         EnvId: !Ref EnvId
         SystemId: !Ref SystemId
         InstanceType: !If [IsProd, t2.small, t2.micro]
-        RdsClientSecurityGroupId: !GetAtt RdsStack.Outputs.ClientSecurityGroupId
         LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
         MinSize: 2
         DesiredCapacity: 2
