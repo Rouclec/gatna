@@ -80,18 +80,18 @@ Resources:
           Value: !Ref 'EnvId'
       TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/vpc-2azs.yaml"  ]]
 
-  # SecretsStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties: 
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/third_party_secrets.yaml"  ]]
-  #     Parameters: 
-  #       EnvId: !Ref 'EnvId'
-  #       SystemId: !Ref 'SystemId'
-  #     Tags: 
-  #       - Key: EnvId
-  #         Value: !Ref 'EnvId'
-  #       - Key: SystemId
-  #         Value: !Ref 'SystemId'
+  SecretsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/third_party_secrets.yaml"  ]]
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
 
   WebCert:
     Type: 'AWS::CertificateManager::Certificate'
