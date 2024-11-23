@@ -109,23 +109,24 @@ Resources:
         - Key: SystemId
           Value: !Ref 'SystemId'
 
-  # LoadBalancerStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   DependsOn: [VpcStack, WebCert]
-  #   Properties: 
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/load_balancer.yaml"  ]]
-  #     Parameters: 
-  #       EnvId: !Ref 'EnvId'
-  #       SystemId: !Ref 'SystemId'
-  #       VPC:  !GetAtt  VpcStack.Outputs.VPC
-  #       SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
-  #       SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
-  #       CertificateArn: !Ref WebCert
-  #     Tags: 
-  #       - Key: EnvId
-  #         Value: !Ref 'EnvId'
-  #       - Key: SystemId
-  #         Value: !Ref 'SystemId'
+  LoadBalancerStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack, WebCert]
+    Properties: 
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/load_balancer.yaml"  ]]
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
+        SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
+        CertificateArn: !Ref WebCert
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+
   # # Setup ECS Cluster
   # EcsStack:
   #   Type: AWS::CloudFormation::Stack
