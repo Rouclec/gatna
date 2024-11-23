@@ -127,29 +127,29 @@ Resources:
         - Key: SystemId
           Value: !Ref 'SystemId'
 
-  # # Setup ECS Cluster
-  # EcsStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   DependsOn: [VpcStack]
-  #   Properties: 
-  #     Parameters: 
-  #       VpcId: !GetAtt VpcStack.Outputs.VPC
-  #       PublicSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPublic, !GetAtt VpcStack.Outputs.SubnetBPublic]]
-  #       PrivateSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPrivate, !GetAtt VpcStack.Outputs.SubnetBPrivate]]
-  #       EnvId: !Ref EnvId
-  #       SystemId: !Ref SystemId
-  #       InstanceType: !If [IsProd, t2.small, t2.micro]
-  #       RdsClientSecurityGroupId: !GetAtt RdsStack.Outputs.ClientSecurityGroupId
-  #       LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
-  #       MinSize: 2
-  #       DesiredCapacity: 2
-  #       MaxSize: 2
-  #     Tags: 
-  #       - Key: EnvId
-  #         Value: !Ref 'EnvId'
-  #       - Key: SystemId
-  #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ecs.yaml"  ]]
+  # Setup ECS Cluster
+  EcsStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack]
+    Properties: 
+      Parameters: 
+        VpcId: !GetAtt VpcStack.Outputs.VPC
+        PublicSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPublic, !GetAtt VpcStack.Outputs.SubnetBPublic]]
+        PrivateSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPrivate, !GetAtt VpcStack.Outputs.SubnetBPrivate]]
+        EnvId: !Ref EnvId
+        SystemId: !Ref SystemId
+        InstanceType: !If [IsProd, t2.small, t2.micro]
+        RdsClientSecurityGroupId: !GetAtt RdsStack.Outputs.ClientSecurityGroupId
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        MinSize: 2
+        DesiredCapacity: 2
+        MaxSize: 2
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ecs.yaml"  ]]
   
   # S3BucketStack:
   #   Type: AWS::CloudFormation::Stack
