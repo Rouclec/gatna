@@ -22,8 +22,6 @@ Parameters:
     Type: CommaDelimitedList
     # Type: 'List<AWS::EC2::Subnet::Id>'
     Description: Subnet ids where private workloads should run. I.e. workloads that should not be accessible via the public internet.
-  RdsClientSecurityGroupId:
-    Type: String
   LoadBalancerSecurityGroupId:
     Type: String
 
@@ -101,7 +99,7 @@ Resources:
   Cluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Join ["-", ["omala", !Ref EnvId]]
+      ClusterName: !Join ["-", ["gatna", !Ref EnvId]]
 
   EC2Role:
     Type: "AWS::IAM::Role"
@@ -227,7 +225,6 @@ Resources:
       ImageId: !Ref LatestECSOptimizedAMI
       SecurityGroups:
         - !Ref EcsSecurityGroup
-        - !Ref RdsClientSecurityGroupId
       InstanceType: !Ref InstanceType
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref SshKeyPair
