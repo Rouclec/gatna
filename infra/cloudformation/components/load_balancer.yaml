@@ -18,7 +18,7 @@ Parameters:
     Default: 443
   DefaultHTTPPort:
     Type: Number
-    Default: 80 
+    Default: 3000 
   CertificateArn:
     Type: String
   SubnetA:
