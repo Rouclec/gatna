@@ -182,7 +182,7 @@ Resources:
         Type: AWS::ElasticLoadBalancingV2::TargetGroup
         Properties:
             HealthCheckIntervalSeconds: 10
-            HealthCheckPath: '/en'
+            HealthCheckPath: '/'
             HealthCheckTimeoutSeconds: 5
             UnhealthyThresholdCount: 2
             HealthyThresholdCount: 2
