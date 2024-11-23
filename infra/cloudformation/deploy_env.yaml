@@ -99,8 +99,8 @@ Resources:
       DomainName: !Join ["", [!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
       SubjectAlternativeNames:
         - !Join ["", ["www.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
-        - !Join ["", ["api.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
-        - !Join ["", ["pgadmin.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
+        # - !Join ["", ["api.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
+        # - !Join ["", ["pgadmin.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
 
       ValidationMethod: DNS
       Tags: 
