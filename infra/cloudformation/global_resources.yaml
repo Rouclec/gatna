@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata: 
+  License: Apache-2.0
+Description: 'Create the initial CI/CD user for Github Actions'
+Parameters:
+  UserName:
+    Type: String
+    Description: Username of the user
+    AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
+    ConstraintDescription: must be a valid user name.
+    Default: 'ci-user'
+  
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Join ["-", ["build-artifacts", !Ref 'AWS::AccountId' ]]
+
+  DevelopersIamGroup:
+    Type: AWS::IAM::Group
+    Properties: 
+      GroupName: developers
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Path: /
+      # Policies: 
+      #   - Policy
+
+
+Outputs:
+  ArtifactBucket:
+    Description: Artifact Bucket
+    Value: !Ref 'ArtifactBucket'
+    Export:
+      Name:
+        'Fn::Sub': '${AWS::StackName}-ArtifactBucket'

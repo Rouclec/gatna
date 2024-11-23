@@ -1,0 +1,31 @@
+Parameters:
+  RepoName:
+    Type: String
+    Description: Name of the ECR repository for the GATNA APP service
+  
+
+Resources:
+  EcrRepository: 
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Join ["-",[!Ref RepoName, "app"]]
+  # TODO: Add a policy to the ECR repository to allow the environment accounts 
+  # to pull images from the repository
+
+  InfraArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join ["-", ["infra-artifacts", !Ref "AWS::AccountId"]]
+
+## Output Values
+Outputs:
+  InfraArtifactsBucket:
+    Description: Artifact Bucket
+    Value: !Ref "InfraArtifactsBucket"
+    Export:
+      Name:
+        "Fn::Sub": "${AWS::StackName}-InfraArtifactsBucket"
+
+  EcrRepository:
+    Description: Name of the ECR Repository for the api
+    Value: !Ref EcrRepository

@@ -1,0 +1,70 @@
+# This sends an alert or alarm when AWS monthly billing exceeds the specified amount
+AWSTemplateFormatVersion: 2010-09-09
+Description: Monthly Billing Alerts for AWS Account
+Parameters:
+  SystemId:
+    Type: String
+    Description: System Id (used to namespace resources)
+    AllowedPattern: "[a-z][a-z0-9]{2,19}"
+    ConstraintDescription: Must be lower case letters between 3 and 20 characters.
+  EnvId:
+    Type: String
+    Description: Environment Id (used to namespace resources)
+    AllowedPattern: "[a-z][a-z0-9]{2,19}"
+    ConstraintDescription: Must be lower case letters between 3 and 20 characters. 
+  Email:
+    Type: String
+    Default: desmondtekum9@gmail.com
+    Description: Your email address to receive alarms per email
+  Phone:
+    Type: String
+    Default: "+237654198986"
+    Description: Your mobile phone number to receive SMS
+
+Mappings:
+  EstimatedCharges:
+    AlarmRange:     
+      "One": 40      # It will trigger an alarm if your billing gets higher than $40
+
+Resources:
+  BillingAlert:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmActions:
+        - !Ref BillingAlertTopic
+      AlarmDescription: !Join ["", [Billing Alert for $, !FindInMap [EstimatedCharges, AlarmRange, One]]]
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: Currency
+          Value: USD
+      EvaluationPeriods: 1
+      MetricName: EstimatedCharges
+      Namespace: !Sub "/${SystemId}/${EnvId}/AWS-Billing"
+      Period: 21600
+      TreatMissingData: breaching
+      Statistic: Maximum
+      Threshold: !FindInMap [EstimatedCharges, AlarmRange, One]
+
+  BillingAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Tags: 
+        - Key: SystemId
+          Value: !Ref SystemId
+        - Key: EnvId
+          Value: !Ref EnvId
+      TopicName: !Sub "${SystemId}-${EnvId}-sms-and-email-alarm-notification"
+
+  AlarmSubscriberEmail:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Ref Email
+      Protocol: email
+      TopicArn: !Ref BillingAlertTopic
+
+  AlarmSubscriberSMS:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Ref Phone
+      Protocol: sms
+      TopicArn: !Ref BillingAlertTopic

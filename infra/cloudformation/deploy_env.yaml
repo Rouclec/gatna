@@ -1,0 +1,376 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata: 
+  License: Apache-2.0
+Description: 'Deploy Itamba App'
+Parameters:
+  EnvId:
+    Type: String
+    Description: Environment Id (used to namespace resources)
+    AllowedPattern: '[a-z][a-z0-9]{2,19}'
+    ConstraintDescription: Must be lower case letters between 3 and 20 characters.
+  SystemId:
+    Type: String
+    Description: System Id (used to namespace resources)
+    AllowedPattern: '[a-z][a-z0-9]{2,19}'
+    ConstraintDescription: Must be lower case letters between 3 and 20 characters.
+  CloudformationArtifactId:
+    Type: String
+    Description: The id of the cloudformation templates to use for nested stacks. In CD this will be set to the git sha for the current commit.
+  DbAppUsername:
+    Type: String
+    Description: The user name the app should user to connect to the db (not the admin user).
+    Default: app
+  DbName:
+    Type: String
+    Description: The database name.
+    Default: itamba
+  SystemStackName:
+    Type: String
+    Description: The stack id of the system. (Used for cross stack references.)
+  DomainName:
+    Type: String
+    Description: The base domain name for the api. A subdomain will be added for the api domain.
+  IsDefaultEnv:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Description: If this is 'true', then no subdomain is added to the domain name
+  ApiImageTag:
+    Type: String
+    Description: The tag of the API image to be deployed
+  AppImageTag:
+    Type: String
+    Description: The tag of the NextJs App image to be deployed
+
+
+Mappings:
+  Region2S3WebsiteSuffix:
+    us-east-1:
+      Suffix: .s3-website-us-east-1.amazonaws.com
+    us-west-1:
+      Suffix: .s3-website-us-west-1.amazonaws.com
+    us-west-2:
+      Suffix: .s3-website-us-west-2.amazonaws.com
+    eu-west-1:
+      Suffix: .s3-website-eu-west-1.amazonaws.com
+    ap-northeast-1:
+      Suffix: .s3-website-ap-northeast-1.amazonaws.com
+    ap-northeast-2:
+      Suffix: .s3-website-ap-northeast-2.amazonaws.com
+    ap-southeast-1:
+      Suffix: .s3-website-ap-southeast-1.amazonaws.com
+    ap-southeast-2:
+      Suffix: .s3-website-ap-southeast-2.amazonaws.com
+    ap-south-1:
+      Suffix: .s3-website-ap-south-1.amazonaws.com
+    us-east-2:
+      Suffix: .s3-website-us-east-2.amazonaws.com
+    sa-east-1:
+      Suffix: .s3-website-sa-east-1.amazonaws.com
+    cn-north-1:
+      Suffix: .s3-website.cn-north-1.amazonaws.com.cn
+    eu-central-1:
+      Suffix: .s3-website.eu-central-1.amazonaws.com
+Conditions:
+  IsDefaultEnv: 
+    !Equals [!Ref IsDefaultEnv, "true"]
+  IsProd: 
+    !Equals [!Ref EnvId, "prod"]
+
+
+Resources:
+# @VpcStack set up VPC availability zones for Resources...
+  VpcStack:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+      Tags:
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/vpc-2azs.yaml"  ]]
+
+  SecretsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/third_party_secrets.yaml"  ]]
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+
+  WebCert:
+    Type: 'AWS::CertificateManager::Certificate'
+    Properties:
+      DomainName: !Join ["", [!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
+      SubjectAlternativeNames:
+        - !Join ["", ["www.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
+        - !Join ["", ["api.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
+        - !Join ["", ["pgadmin.",!If [IsDefaultEnv, "", !Sub "${EnvId}."], !Ref "DomainName" ]]
+
+      ValidationMethod: DNS
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+
+#  @RdsStack nested stack deploys the Rds instance..
+  RdsStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack]
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        ParentVPCStack: !GetAtt VpcStack.Outputs.StackName
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/rds.yaml"  ]]
+
+  LoadBalancerStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack, WebCert]
+    Properties: 
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/load_balancer.yaml"  ]]
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
+        SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
+        CertificateArn: !Ref WebCert
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+  # Setup ECS Cluster
+  EcsStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack]
+    Properties: 
+      Parameters: 
+        VpcId: !GetAtt VpcStack.Outputs.VPC
+        PublicSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPublic, !GetAtt VpcStack.Outputs.SubnetBPublic]]
+        PrivateSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPrivate, !GetAtt VpcStack.Outputs.SubnetBPrivate]]
+        EnvId: !Ref EnvId
+        SystemId: !Ref SystemId
+        InstanceType: !If [IsProd, t2.small, t2.micro]
+        RdsClientSecurityGroupId: !GetAtt RdsStack.Outputs.ClientSecurityGroupId
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        MinSize: 2
+        DesiredCapacity: 2
+        MaxSize: 2
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ecs.yaml"  ]]
+  
+  S3BucketStack:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        DomainName: !Ref DomainName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/s3_buckets.yaml' ]]
+ 
+  S3BucketPolicies:
+    DependsOn: [ S3BucketStack]
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        DomainName: !Ref DomainName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+        ProfilePictureBucket: !GetAtt S3BucketStack.Outputs.ProfilePictureBucket
+        ApiTaskRoleArn: !GetAtt ApiStack.Outputs.ApiTaskRoleArn
+        AppTaskRoleArn: !GetAtt AppStack.Outputs.AppTaskRoleArn
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/s3_bucket_policies.yaml' ]]
+ 
+  LogProcessorSqsQueueStack:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/sqs_queue.yaml' ]]
+ 
+  SeSDomainIdentities:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        DomainName: !Ref DomainName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ses_identities.yaml"]]
+
+  ApiStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack, SecretsStack]
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        DbSecretArn: !GetAtt RdsStack.Outputs.AdminSecretArn
+        ApiImageTag: !Ref ApiImageTag
+        LogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
+        GoogleSecretArn: !GetAtt SecretsStack.Outputs.GoogleSecretArn
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        LoadBalancerCanonicalHostedZoneID: !GetAtt LoadBalancerStack.Outputs.LoadBalancerCanonicalHostedZoneID
+        ClusterArn: !GetAtt EcsStack.Outputs.ClusterArn
+        SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
+        SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
+        DomainName: !Ref DomainName
+        ProfilePictureBucket: !GetAtt S3BucketStack.Outputs.ProfilePictureBucket
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+        LoadBalancerDNSName: !GetAtt LoadBalancerStack.Outputs.LoadBalancerDNSName
+        LoadBalancerArn: !GetAtt LoadBalancerStack.Outputs.LoadBalancerArn
+        HttpsListener: !GetAtt LoadBalancerStack.Outputs.HttpsListener
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/api.yaml' ]]
+      
+  AppStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack, SecretsStack]
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        AppImageTag: !Ref AppImageTag
+        LogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
+        FirebaseSecretArn: !GetAtt SecretsStack.Outputs.FirebaseSecretArn
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        LoadBalancerCanonicalHostedZoneID: !GetAtt LoadBalancerStack.Outputs.LoadBalancerCanonicalHostedZoneID
+        ClusterArn: !GetAtt EcsStack.Outputs.ClusterArn
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
+        SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
+        DomainName: !Ref DomainName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+        LoadBalancerDNSName: !GetAtt LoadBalancerStack.Outputs.LoadBalancerDNSName
+        LoadBalancerArn: !GetAtt LoadBalancerStack.Outputs.LoadBalancerArn
+        HttpsListener: !GetAtt LoadBalancerStack.Outputs.HttpsListener
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/app.yaml' ]]
+
+  PgAdminStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack, SecretsStack]
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        LogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
+        ClusterArn: !GetAtt EcsStack.Outputs.ClusterArn
+        DomainName: !Ref DomainName
+        LoadBalancerCanonicalHostedZoneID: !GetAtt LoadBalancerStack.Outputs.LoadBalancerCanonicalHostedZoneID
+        LoadBalancerDNSName: !GetAtt LoadBalancerStack.Outputs.LoadBalancerDNSName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+        HttpsListener: !GetAtt LoadBalancerStack.Outputs.HttpsListener
+        SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
+        SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/pgadmin.yaml' ]]
+
+  LogProcessorStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [LogProcessorSqsQueueStack]
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        DbSecretArn: !GetAtt RdsStack.Outputs.AdminSecretArn
+        ApiImageTag: !Ref ApiImageTag
+        ClusterArn: !GetAtt EcsStack.Outputs.ClusterArn
+        LogProcessorQueueName: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorQueueName
+        LogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
+        DomainName: !Ref DomainName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+        LogProcessorQueueArn: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorQueueArn
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/log_processor.yaml' ]]
+
+  LogProcessorSqsPolicies:
+    DependsOn: [LogProcessorStack]
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        LogProcessorQueueArn: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorQueueArn
+        LogProcessorQueueName: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorQueueName
+        LogProcessorTaskRoleArn: !GetAtt LogProcessorStack.Outputs.LogProcessorTaskRoleArn
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/sqs_policies.yaml' ]]
+  
+  LambdaFxnLogProcessorStack:
+    DependsOn: [LogProcessorStack,LogProcessorSqsQueueStack, LogProcessorSqsPolicies]
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        BucketName: !ImportValue 'ecr-repo-iknite-space-itamba-api-LogProcessorLambdaBucketName'
+        VersionID: !Ref ApiImageTag
+        EcsLogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
+        EcsLogGroupNameArn: !GetAtt EcsStack.Outputs.CloudWatchLogGroupArn
+        LogProcessorQueueURL: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorQueueURL
+        LogProcessorDeadLetterQueueArn: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorDeadLetterQueueArn
+        LogProcessorQueueArn: !GetAtt LogProcessorSqsQueueStack.Outputs.LogProcessorQueueArn
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'cf-template-bucket-ArtifactBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/components/log_processor_lambda_fxn.yaml' ]]

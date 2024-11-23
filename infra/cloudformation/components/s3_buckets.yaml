@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 bucket stacks configuration for VPN creds/developers credentials
+
+Parameters:
+  SystemId:
+    Type: String
+    Description: System ID (used to namespace resources)
+    AllowedPattern: "[a-z][a-z0-9]{2,19}"
+    ConstraintDescription: Must be lowercase letters between 3 and 20 characters.
+  EnvId:
+    Type: String
+    Description: Environment ID (used to namespace resources)
+    AllowedPattern: "[a-z][a-z0-9]{2,19}"
+    ConstraintDescription: Must be lowercase letters between 3 and 20 characters.
+
+Resources:
+  MylambdaBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub "${SystemId}-${EnvId}-lambda-bucket"
+Outputs:
+  MylambdaBucketName:
+   Value: !Ref MylambdaBucket
+
+  # OpenVpnDevCreds:
+  #   Type: "AWS::S3::Bucket"
+  #   Properties:
+  #     BucketName: !Sub "${SystemId}-${EnvId}-openvpn-dev-creds"
+  #   # Tags:
+    #   - Key: EnvId
+    #     Value: !Ref EnvId
+    #   - Key: SystemId
+    #     Value: !Ref SystemId
+
+  # OpenVpnDevCredsBucketPolicy:
+  #   Type: AWS::S3::BucketPolicy
+  #   Properties:
+  #     Bucket: !Ref OpenVpnDevCreds
+  #     PolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Action:
+  #             - "s3:*"
+  #           Effect: Allow
+  #           Resource: !GetAtt OpenVpnDevCreds.Arn
+  #           Principal:
+  #             AWS:
+  #               - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  #           # Condition:
+  #           #   StringLike:
+  #           #     'aws:Referer':
+  #           #       - 'http://www.example.com/*'
+  #           #       - 'http://example.net/*'
