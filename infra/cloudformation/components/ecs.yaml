@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: An example CloudFormation template for Fargate.
+
 Parameters:
   EnvId:
     Type: String
@@ -16,17 +17,14 @@ Parameters:
     Description: Select a VPC that allows instances to access the Internet.
   PublicSubnetIds:
     Type: CommaDelimitedList
-    # Type: 'List<AWS::EC2::Subnet::Id>'
     Description: Subnet ids where public workloads should run.
   PrivateSubnetIds:
     Type: CommaDelimitedList
-    # Type: 'List<AWS::EC2::Subnet::Id>'
     Description: Subnet ids where private workloads should run. I.e. workloads that should not be accessible via the public internet.
   LoadBalancerSecurityGroupId:
     Type: String
 
   ## Optional parameters.
-  # These parameters are optional and are treated more like variables.
   DesiredCapacity:
     Type: Number
     Default: "1"
@@ -204,14 +202,49 @@ Resources:
       ToPort: 61000
       SourceSecurityGroupId: !Ref LoadBalancerSecurityGroupId
 
+  # New Launch Template
+  ContainerInstancesLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: !Ref LatestECSOptimizedAMI
+        InstanceType: !Ref InstanceType
+        SecurityGroupIds:
+          - !Ref EcsSecurityGroup
+        KeyName: !Ref SshKeyPair
+        IamInstanceProfile:
+          Arn: !GetAtt EC2InstanceProfile.Arn
+        UserData:
+          "Fn::Base64":
+            "Fn::Join":
+              - ""
+              - - |
+                  #!/bin/bash -xe
+                - echo ECS_CLUSTER=
+                - !Ref Cluster
+                - |2
+                   >> /etc/ecs/ecs.config
+                - |
+                  echo ECS_RESERVED_MEMORY=32 >> /etc/ecs/ecs.config
+                - |
+                  yum install -y aws-cfn-bootstrap
+                - "/opt/aws/bin/cfn-signal -e $? "
+                - "         --stack "
+                - !Ref "AWS::StackName"
+                - "         --resource ECSAutoScalingGroup "
+                - "         --region "
+                - !Ref "AWS::Region"
+
   ECSAutoScalingGroup:
     Type: "AWS::AutoScaling::AutoScalingGroup"
     Properties:
       VPCZoneIdentifier: !Ref PublicSubnetIds
-      LaunchConfigurationName: !Ref ContainerInstances
       MinSize: !Ref MinSize
       MaxSize: !Ref MaxSize
       DesiredCapacity: !Ref DesiredCapacity
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ContainerInstancesLaunchTemplate
+        Version: !GetAtt ContainerInstancesLaunchTemplate.LatestVersionNumber
     CreationPolicy:
       ResourceSignal:
         Timeout: PT15M
@@ -219,41 +252,10 @@ Resources:
       AutoScalingReplacingUpdate:
         WillReplace: "true"
 
-  ContainerInstances:
-    Type: "AWS::AutoScaling::LaunchConfiguration"
-    Properties:
-      ImageId: !Ref LatestECSOptimizedAMI
-      SecurityGroups:
-        - !Ref EcsSecurityGroup
-      InstanceType: !Ref InstanceType
-      IamInstanceProfile: !Ref EC2InstanceProfile
-      KeyName: !Ref SshKeyPair
-      UserData: !Base64
-        "Fn::Join":
-          - ""
-          - - |
-              #!/bin/bash -xe
-            - echo ECS_CLUSTER=
-            - !Ref Cluster
-            - |2
-               >> /etc/ecs/ecs.config
-            - |
-              echo  ECS_RESERVED_MEMORY=32 >> /etc/ecs/ecs.config
-            - |
-              yum install -y aws-cfn-bootstrap
-            - "/opt/aws/bin/cfn-signal -e $? "
-            - "         --stack "
-            - !Ref "AWS::StackName"
-            - "         --resource ECSAutoScalingGroup "
-            - "         --region "
-            - !Ref "AWS::Region"
-            - |+
-
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Join ["/", ["", !Ref SystemId, !Ref EnvId]]
-
 
   CloudMapPrivateServiceDiscovery:
     Type: AWS::ServiceDiscovery::HttpNamespace
