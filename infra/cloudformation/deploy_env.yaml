@@ -206,31 +206,33 @@ Resources:
   #         Value: !Ref 'SystemId'
   #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', "/components/ses_identities.yaml"]]
   
-  # AppStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   DependsOn: [VpcStack, SecretsStack]
-  #   Properties: 
-  #     Parameters: 
-  #       EnvId: !Ref 'EnvId'
-  #       SystemId: !Ref 'SystemId'
-  #       VPC:  !GetAtt  VpcStack.Outputs.VPC
-  #       AppImageTag: !Ref AppImageTag
-  #       LogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
-  #       FirebaseSecretArn: !GetAtt SecretsStack.Outputs.FirebaseSecretArn
-  #       LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
-  #       LoadBalancerCanonicalHostedZoneID: !GetAtt LoadBalancerStack.Outputs.LoadBalancerCanonicalHostedZoneID
-  #       ClusterArn: !GetAtt EcsStack.Outputs.ClusterArn
-  #       LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
-  #       SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
-  #       SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
-  #       DomainName: !Ref DomainName
-  #       SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
-  #       LoadBalancerDNSName: !GetAtt LoadBalancerStack.Outputs.LoadBalancerDNSName
-  #       LoadBalancerArn: !GetAtt LoadBalancerStack.Outputs.LoadBalancerArn
-  #       HttpsListener: !GetAtt LoadBalancerStack.Outputs.HttpsListener
-  #     Tags: 
-  #       - Key: EnvId
-  #         Value: !Ref 'EnvId'
-  #       - Key: SystemId
-  #         Value: !Ref 'SystemId'
-  #     TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/app.yaml' ]]
+  AppStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [VpcStack, SecretsStack]
+    Properties: 
+      Parameters: 
+        EnvId: !Ref 'EnvId'
+        SystemId: !Ref 'SystemId'
+        VPC:  !GetAtt  VpcStack.Outputs.VPC
+        AppImageTag: !Ref AppImageTag
+        LogGroupName: !GetAtt EcsStack.Outputs.LogGroupName
+        FirebaseSecretArn: !GetAtt SecretsStack.Outputs.FirebaseSecretArn
+        GeneralSecretArn: !GetAtt SecretsStack.Outputs.GeneralSecretArn
+        MailSecretArn: !GetAtt SecretsStack.Outputs.MailSecretArn
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        LoadBalancerCanonicalHostedZoneID: !GetAtt LoadBalancerStack.Outputs.LoadBalancerCanonicalHostedZoneID
+        ClusterArn: !GetAtt EcsStack.Outputs.ClusterArn
+        LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
+        SubnetA: !GetAtt  VpcStack.Outputs.SubnetAPublic
+        SubnetB: !GetAtt  VpcStack.Outputs.SubnetBPublic
+        DomainName: !Ref DomainName
+        SubDomain: !If [IsDefaultEnv, "", !Sub "${EnvId}."]
+        LoadBalancerDNSName: !GetAtt LoadBalancerStack.Outputs.LoadBalancerDNSName
+        LoadBalancerArn: !GetAtt LoadBalancerStack.Outputs.LoadBalancerArn
+        HttpsListener: !GetAtt LoadBalancerStack.Outputs.HttpsListener
+      Tags: 
+        - Key: EnvId
+          Value: !Ref 'EnvId'
+        - Key: SystemId
+          Value: !Ref 'SystemId'
+      TemplateURL: !Join [ "", ["https://s3.amazonaws.com/", !ImportValue 'artifact-account-setup-InfraArtifactsBucket', "/cloudformation/", !Ref 'CloudformationArtifactId', '/services/app.yaml' ]]

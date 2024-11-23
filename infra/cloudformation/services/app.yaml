@@ -143,7 +143,20 @@ Resources:
                       - Name: NEXT_PUBLIC_MEASUREMENT_ID
                         ValueFrom: !Sub '${FirebaseSecretArn}:measurementId::'
                       - Name: NEXT_PUBLIC_GOOGLE_MAP_API
-                        ValueFrom: !Sub '${FirebaseSecretArn}:measurementId::'
+                        ValueFrom: !Sub '${GeneralSecretArn}:nextPublicGoogleMapApi::'
+                      - Name: MONGODB_URI
+                        ValueFrom: !Sub '${GeneralSecretArn}:mongoDbUri::'
+                      - Name: NEXTAUTH_SECRET
+                        ValueFrom: !Sub '${GeneralSecretArn}:nextAuthSecret::'
+                      - Name: ENCRYPTION_KEY
+                        ValueFrom: !Sub '${GeneralSecretArn}:encryptionKey::'
+                      - Name: MAIL_API_KEY
+                        ValueFrom: !Sub '${MailSecretArn}:mailApiKey::'
+                      - Name: EMAIL_FROM
+                        ValueFrom: !Sub '${MailSecretArn}:emailFrom::'
+                      - Name: CONTACT_EMAIL
+                        ValueFrom: !Sub '${MailSecretArn}:contactEmail::'
+                      
 
 
     AppService:
