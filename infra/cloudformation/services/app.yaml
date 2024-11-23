@@ -110,7 +110,7 @@ Resources:
             TaskRoleArn: !Ref AppTaskRole
             ContainerDefinitions:
                 - Name: App
-                  Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/iknite-space/itamba-app:${AppImageTag}'
+                  Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/rouclec/gatna-app:${AppImageTag}'
                   PortMappings:
                       - ContainerPort: !Ref ContainerPort
                   # Send logs to CloudWatch Logs
@@ -129,6 +129,7 @@ Resources:
                         Value: !Sub 'https://api.${SubDomain}${DomainName}'
                       - Name: NEXT_PUBLIC_APP_BASE_URL
                         Value: !Sub 'https://${SubDomain}${DomainName}'
+                      
                   Secrets:
                       - Name: NEXT_PUBLIC_API_KEY
                         ValueFrom: !Sub '${FirebaseSecretArn}:apiKey::'
@@ -148,7 +149,7 @@ Resources:
         Type: AWS::ECS::Service
         DependsOn: [AppTargetGroup, AppListenerRule]
         Properties:
-            ServiceName: !Sub '${SystemId}-${EnvId}-itamba-app-ec2'
+            ServiceName: !Sub '${SystemId}-${EnvId}-gatna-app-ec2'
             Cluster: !Ref ClusterArn
             TaskDefinition: !Ref AppTaskDefinition
             DeploymentConfiguration:
@@ -207,5 +208,5 @@ Resources:
 
 Outputs:
     AppTaskRoleArn:
-        Description: itamba app task role arn exported from app.yaml stack
+        Description: gatna app task role arn exported from app.yaml stack
         Value: !GetAtt AppTaskRole.Arn
