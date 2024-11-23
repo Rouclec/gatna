@@ -45,6 +45,10 @@ Parameters:
         Type: String
     FirebaseSecretArn:
         Type: String
+    GeneralSecretArn:
+        Type: String
+    MailSecretArn:
+        Type: String
 
 Resources:
     # A role needed by ECS to Start the NextJA App
@@ -78,6 +82,8 @@ Resources:
                                 - 'secretsmanager:ListSecrets'
                             Resource:
                                 - !Ref FirebaseSecretArn
+                                - !Ref GeneralSecretArn
+                                - !Ref MailSecretArn
 
     # A role for the containers
     AppTaskRole:
@@ -120,15 +126,6 @@ Resources:
                           awslogs-region: !Ref AWS::Region
                           awslogs-group: !Ref LogGroupName
                           awslogs-stream-prefix: ecs
-                  Environment:
-                      - Name: PORT
-                        Value: !Ref ContainerPort
-                      - Name: AWS_REGION
-                        Value: !Ref AWS::Region
-                      - Name: NEXT_PUBLIC_API_BASE_URL
-                        Value: !Sub 'https://api.${SubDomain}${DomainName}'
-                      - Name: NEXT_PUBLIC_APP_BASE_URL
-                        Value: !Sub 'https://${SubDomain}${DomainName}'
                       
                   Secrets:
                       - Name: NEXT_PUBLIC_API_KEY
@@ -143,6 +140,10 @@ Resources:
                         ValueFrom: !Sub '${FirebaseSecretArn}:messagingSenderId::'
                       - Name: NEXT_PUBLIC_APP_ID
                         ValueFrom: !Sub '${FirebaseSecretArn}:appId::'
+                      - Name: NEXT_PUBLIC_MEASUREMENT_ID
+                        ValueFrom: !Sub '${FirebaseSecretArn}:measurementId::'
+                      - Name: NEXT_PUBLIC_GOOGLE_MAP_API
+                        ValueFrom: !Sub '${FirebaseSecretArn}:measurementId::'
 
 
     AppService:
