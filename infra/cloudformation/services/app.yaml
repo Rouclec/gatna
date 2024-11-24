@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: The API service
+Description: The APP service
 Parameters:
     EnvId:
         Type: String
