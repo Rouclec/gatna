@@ -121,7 +121,7 @@ function Message () {
                         Nom
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                       />
                     </div>
                     <div className='bg-grey-bg rounded-lg h-[60px] sm:h-[70px] flex flex-col px-5 py-3 sm:py-4 gap-1'>
@@ -131,7 +131,7 @@ function Message () {
                         Addresse email
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                       />
                     </div>
                   </div>
@@ -143,7 +143,7 @@ function Message () {
                         Prenoms
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                       />
                     </div>
                     <div className='bg-grey-bg rounded-lg h-[60px] sm:h-[70px] flex flex-col px-5 py-3 sm:py-4 gap-1'>
@@ -174,7 +174,7 @@ function Message () {
                           ))}
                         </select>
                         <input
-                          className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                           placeholder='54 100 0003'
                         />
                       </div>

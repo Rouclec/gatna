@@ -76,7 +76,7 @@ const Input: FC<InputProps> = ({
         </select>
       ) : (
         <input
-          className='flex-grow h-full bg-transparent focus:outline-none'
+          className='flex-grow h-full text-neutral-10 bg-transparent focus:outline-none'
           placeholder={placeholder}
           onChange={onChange}
           value={value}

@@ -57,7 +57,7 @@ function Withdraw() {
                       Your balance
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className} pr-8`}
+                      className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} pr-8`}
                     />
                     <div className="w-[22px] h-[22px] items-center justify-center top[50%] absolute right-5">
                       <Crypto className="w-full h-full" />
@@ -70,7 +70,7 @@ function Withdraw() {
                       Enter your pin
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                      className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                       type={showPin ? "numeric" : "password"}
                       placeholder="********"
                     />
@@ -88,7 +88,7 @@ function Withdraw() {
                       Wallet USDT
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                      className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                       onChange={(e) => handleWalletInputChange(e)}
                       onBlur={handleWalletBlur}
                       onFocus={handleWalletFocus}
@@ -114,7 +114,7 @@ function Withdraw() {
                       Enter your password
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                      className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                       type={showPassword ? "text" : "password"}
                       placeholder="***********"
                     />
@@ -133,7 +133,7 @@ function Withdraw() {
                         Get OTP
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type="numeric"
                         placeholder="_ _ _ _ _ _"
                         maxLength={6}

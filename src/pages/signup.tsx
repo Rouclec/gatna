@@ -162,7 +162,7 @@ function SignUp () {
                   value={formData.first_name}
                   onChange={handleChange}
                   placeholder='First name'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base placeholder:text-neutral-B2'
+                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 <input
                   type='email'
@@ -170,7 +170,7 @@ function SignUp () {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder='Email address'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base placeholder:text-neutral-B2'
+                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 {errors.email && (
                   <p className='text-red-500 text-sm'>{errors.email}</p>
@@ -181,7 +181,7 @@ function SignUp () {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder='Password'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base placeholder:text-neutral-B2'
+                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 {errors.password && (
                   <p className='text-red-500 text-sm'>{errors.password}</p>
@@ -194,7 +194,7 @@ function SignUp () {
                   value={formData.last_name}
                   onChange={handleChange}
                   placeholder='Last name'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base placeholder:text-neutral-B2'
+                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 <input
                   type='text'
@@ -202,7 +202,7 @@ function SignUp () {
                   value={formData.phone_number}
                   onChange={handleChange}
                   placeholder='Phone number'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base placeholder:text-neutral-B2'
+                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 <input
                   type='password'
@@ -210,7 +210,7 @@ function SignUp () {
                   value={formData.confirm_password}
                   onChange={handleChange}
                   placeholder='Confirm password'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base placeholder:text-neutral-B2'
+                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 {errors.confirm_password && (
                   <p className='text-red-500 text-sm'>

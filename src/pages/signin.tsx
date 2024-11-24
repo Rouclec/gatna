@@ -5,6 +5,7 @@ import { Hide, Lock, Login, Message, Show } from 'react-iconly'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { getSession, signIn } from 'next-auth/react'
+import { ClipLoader } from 'react-spinners'
 
 function Signin () {
   const [showPassword, setShowPassword] = useState(false)
@@ -67,7 +68,7 @@ function Signin () {
                       placeholder='Email'
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      className={`h-[60px] w-full bg-neutral-1A bg-opacity-40 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base placeholder:text-neutral-B2`}
+                      className={`h-[60px] w-full bg-neutral-1A bg-opacity-40 text-neutral-10 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base placeholder:text-neutral-B2`}
                       required
                     />
                     <div className='flex items-center gap-2 absolute left-6 self-center'>
@@ -81,7 +82,7 @@ function Signin () {
                       placeholder='Password'
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      className={`h-[60px] w-full bg-neutral-1A bg-opacity-40 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base placeholder:text-neutral-B2`}
+                      className={`h-[60px] w-full bg-neutral-1A bg-opacity-40 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base text-neutral-10 placeholder:text-neutral-B2`}
                       required
                     />
                     <div className='flex items-center gap-2 absolute left-6 self-center'>
@@ -119,11 +120,17 @@ function Signin () {
             {error && <p className='text-red-500 mt-2'>{error}</p>}
             <button
               type='submit'
-              className='bg-gradient px-8 py-4 flex items-center justify-center gap-3 rounded-[10px] cursor-pointer mt-4'
+              className={`bg-gradient px-8 py-5 w-fit rounded-[10px] cursor-pointer flex gap-[10px] items-center ${
+                loading && 'opacity-60'
+              }`}
               disabled={loading}
             >
-              {loading ? 'Loading...' : 'Login'}
-              <Login primaryColor='#FFFFFF66' />
+              <p className={`${gilroyBold.className} text-lg`}>Login</p>
+              {loading ? (
+                <ClipLoader size={20} color='#fff' />
+              ) : (
+                <Login primaryColor='#FFFFFF66' />
+              )}
             </button>
           </form>
         </div>
