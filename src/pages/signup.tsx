@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
 import { Navbar } from '../components'
 import { useRouter } from 'next/router'
@@ -8,6 +8,7 @@ import { ClipLoader } from 'react-spinners'
 function SignUp () {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [packageId, setPackageId] = useState<string>()
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -59,7 +60,7 @@ function SignUp () {
     }
 
     // Validate password
-    if (formData.password.length < 6) {
+    if (formData.password.length > 0 && formData.password.length < 6) {
       newErrors.password = 'Password should be at least 6 characters long.'
       isValid = false
     }
@@ -98,18 +99,17 @@ function SignUp () {
 
       if (response.ok) {
         const data = await response.json()
-        if (typeof window !== 'undefined') {
-          const packageIdString = localStorage.getItem('@buying-course')
-          console.log({ packageIdString })
-          console.log({ data })
-          if (!!packageIdString) {
-            await mutateAsync({
-              userId: data.data._id,
-              packageId: JSON.parse(packageIdString)
-            })
-          } else {
-            router.replace('/signin')
-          }
+
+        console.log({ data })
+        console.log({ packageId })
+
+        if (!!packageId) {
+          await mutateAsync({
+            userId: data.data._id,
+            packageId
+          })
+        } else {
+          router.replace('/signin')
         }
       } else {
         const data = await response.json()
@@ -134,6 +134,15 @@ function SignUp () {
     window.open(data?.checkout_url, '_blank')
     // window.location.reload()
   })
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const packageIdString = localStorage.getItem('@buying-course')
+      if (packageIdString) {
+        setPackageId(JSON.parse(packageIdString))
+      }
+    }
+  }, [])
 
   return (
     <div className='grid'>
@@ -162,7 +171,7 @@ function SignUp () {
                   value={formData.first_name}
                   onChange={handleChange}
                   placeholder='First name'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 <input
                   type='email'
@@ -170,22 +179,24 @@ function SignUp () {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder='Email address'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 {errors.email && (
                   <p className='text-red-500 text-sm'>{errors.email}</p>
                 )}
-                <input
-                  type='password'
-                  name='password'
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder='Password'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
-                />
-                {errors.password && (
+                {/* {!packageId && (
+                  <input
+                    type='password'
+                    name='password'
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder='Password'
+                    className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  />
+                )} */}
+                {/* {errors.password && (
                   <p className='text-red-500 text-sm'>{errors.password}</p>
-                )}
+                )} */}
               </div>
               <div className='flex flex-col gap-3'>
                 <input
@@ -194,7 +205,7 @@ function SignUp () {
                   value={formData.last_name}
                   onChange={handleChange}
                   placeholder='Last name'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 <input
                   type='text'
@@ -202,21 +213,23 @@ function SignUp () {
                   value={formData.phone_number}
                   onChange={handleChange}
                   placeholder='Phone number'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
-                <input
-                  type='password'
-                  name='confirm_password'
-                  value={formData.confirm_password}
-                  onChange={handleChange}
-                  placeholder='Confirm password'
-                  className='h-[60px] w-full bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
-                />
-                {errors.confirm_password && (
+                {/* {!packageId && (
+                  <input
+                    type='password'
+                    name='confirm_password'
+                    value={formData.confirm_password}
+                    onChange={handleChange}
+                    placeholder='Confirm password'
+                    className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  />
+                )} */}
+                {/* {errors.confirm_password && (
                   <p className='text-red-500 text-sm'>
                     {errors.confirm_password}
                   </p>
-                )}
+                )} */}
               </div>
             </form>
             <div className='flex items-center gap-4'>

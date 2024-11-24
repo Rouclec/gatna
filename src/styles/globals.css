@@ -9,12 +9,31 @@
   --foreground: #ffffff;
 }
 
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #1D1B27;
     --foreground: #ededed;
   }
 } */
+/* textarea:-webkit-autofill,
+input:-webkit-autofill {
+  -webkit-text-fill-color: white !important;
+  color: white !important
+} */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: transparent !important;
+  -webkit-text-fill-color: #ffffff inset !important;
+}
 
 body {
   color: var(--foreground);
@@ -33,6 +52,14 @@ html {
       #8150ed -3.62%,
       #ffffff 93.14%
     ); */
+  }
+
+  .autofill-text:-webkit-autofill {
+    -webkit-text-fill-color: white;
+  }
+
+  .text-input {
+    @apply autofill-text; /* set text colour (white) */
   }
 
   .border-gradient-2 {

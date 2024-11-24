@@ -326,7 +326,7 @@ function Settings () {
                         Company name
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full text-input bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setAccount(prev => ({
                             ...prev,
@@ -344,7 +344,7 @@ function Settings () {
                         Addresse email
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full text-input bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         disabled={!editAccount}
                         onChange={e => {
                           setAccount(prev => ({
@@ -364,7 +364,7 @@ function Settings () {
                         Wallet USDT
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full text-input h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => handleWalletInputChange(e)}
                         onBlur={handleWalletBlur}
                         onFocus={handleWalletFocus}
@@ -383,7 +383,7 @@ function Settings () {
                         Minimum withdrawal amount (in USDT)
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         disabled={!editAccount}
                         onChange={e => {
                           setAccount(prev => ({
@@ -427,7 +427,7 @@ function Settings () {
                           ))}
                         </select>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                           placeholder='54 100 0003'
                           disabled={!editAccount}
                           onChange={e => {
@@ -448,7 +448,7 @@ function Settings () {
                           Get OTP
                         </p>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                           type='numeric'
                           placeholder='_ _ _ _ _ _'
                           maxLength={6}
@@ -544,7 +544,7 @@ function Settings () {
                         Facebook
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         disabled={!editSocials}
                         onChange={e => {
                           setSocials(prev => ({
@@ -561,7 +561,7 @@ function Settings () {
                         Instagram
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         disabled={!editSocials}
                         onChange={e => {
                           setSocials(prev => ({
@@ -599,7 +599,7 @@ function Settings () {
                           ))}
                         </select>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                           placeholder='54 100 0003'
                           disabled={!editSocials}
                           onChange={e => {
@@ -618,7 +618,7 @@ function Settings () {
                         TikTok
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         disabled={!editSocials}
                         onChange={e => {
                           setSocials(prev => ({
@@ -684,7 +684,7 @@ function Settings () {
                           Old password
                         </p>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                           type={showOldPassword ? 'text' : 'password'}
                           placeholder='********'
                           disabled={!editSecurity}
@@ -711,7 +711,7 @@ function Settings () {
                           New password
                         </p>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                           type={showNewPassword ? 'text' : 'password'}
                           placeholder='********'
                           disabled={!editSecurity}
@@ -738,7 +738,7 @@ function Settings () {
                           Confirm new password
                         </p>
                         <input
-                          className={`w-full h-full bg-transparent  text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                          className={`w-full h-full bg-transparent text-input  text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                           type={showConfirmNewPassword ? 'text' : 'password'}
                           placeholder='********'
                           disabled={!editSecurity}
@@ -765,7 +765,7 @@ function Settings () {
                           Get OTP
                         </p>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                           type='numeric'
                           placeholder='_ _ _ _ _ _'
                           maxLength={6}
@@ -863,7 +863,7 @@ function Settings () {
                         IPN secret
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setCoinpayment(prev => ({
                             ...prev,
@@ -881,7 +881,7 @@ function Settings () {
                         Private Key
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setCoinpayment(prev => ({
                             ...prev,
@@ -901,7 +901,7 @@ function Settings () {
                         Secret Key
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setCoinpayment(prev => ({
                             ...prev,
@@ -920,7 +920,7 @@ function Settings () {
                           Get OTP
                         </p>
                         <input
-                          className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                          className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                           type='numeric'
                           placeholder='_ _ _ _ _ _'
                           maxLength={6}
@@ -1016,7 +1016,7 @@ function Settings () {
                         Public Key
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setVideoServer(prev => ({
                             ...prev,
@@ -1034,7 +1034,7 @@ function Settings () {
                         Secret Key
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         onChange={e => {
                           setVideoServer(prev => ({
                             ...prev,

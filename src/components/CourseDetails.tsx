@@ -119,7 +119,10 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                     </div>
                   </div>
                 </div>
-                <div className='bg-gradient w-[254px] h-[70px] items-center self-center md:self-end justify-center flex rounded-[10px]'>
+                <div
+                  className='bg-gradient w-[254px] h-[70px] items-center self-center md:self-end justify-center flex rounded-[10px] cursor-pointer'
+                  onClick={handleClick}
+                >
                   <p className={`${gilroyBold.className}`}>
                     Acheter ma formation
                   </p>

@@ -188,7 +188,7 @@ function PendingActivation() {
             </div>
             <div className="flex items-center justify-between w-52 px-5 py-4 bg-neutral-C4 bg-opacity-10 rounded-[10px]">
               <input
-                className={`focus:ring-0 focus:outline-none text-neutral-10 bg-transparent w-full ${gilroyMedium.className}`}
+                className={`focus:ring-0 text-input focus:outline-none text-neutral-10 bg-transparent w-full ${gilroyMedium.className}`}
                 placeholder="Search"
               />
               <div className="flex-shrink-0 w-5">

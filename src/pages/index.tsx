@@ -352,7 +352,7 @@ export default function Home () {
                               Nom
                             </p>
                             <input
-                              className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                              className={`w-full h-full text-input bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                               onChange={e => setName(e.target.value)}
                               value={name}
                             />
@@ -364,7 +364,7 @@ export default function Home () {
                               Addresse email
                             </p>
                             <input
-                              className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                              className={`w-full h-full text-input bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                               onChange={e => setEmail(e.target.value)}
                               value={email}
                             />
@@ -378,7 +378,7 @@ export default function Home () {
                               Prenoms
                             </p>
                             <input
-                              className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                              className={`w-full h-full text-input bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                               onChange={e => setSurname(e.target.value)}
                               value={surname}
                             />
@@ -413,7 +413,7 @@ export default function Home () {
                                 ))}
                               </select>
                               <input
-                                className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                                className={`w-full h-full text-input bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                                 placeholder='54 100 0003'
                                 onChange={e => setPhoneNumber(e.target.value)}
                                 value={phoneNumber}
@@ -429,7 +429,7 @@ export default function Home () {
                           Votre message
                         </p>
                         <textarea
-                          className={`w-full h-full bg-transparent outline-none text-neutral-10 focus:ring-0 ${gilroyBold.className}`}
+                          className={`w-full h-full text-input bg-transparent outline-none text-neutral-10 focus:ring-0 ${gilroyBold.className}`}
                           onChange={e => setMessage(e.target.value)}
                           value={message}
                         />
@@ -540,7 +540,7 @@ export default function Home () {
 
               {/* Input with flex-grow to take remaining space */}
               <input
-                className={`flex-grow max-w-full focus:outline-none text-neutral-10 bg-transparent min-w-2 placeholder:text-white ${gilroyRegular.className}`}
+                className={`flex-grow max-w-full text-input focus:outline-none text-neutral-10 bg-transparent min-w-2 placeholder:text-white ${gilroyRegular.className}`}
                 placeholder='Your Email'
               />
 

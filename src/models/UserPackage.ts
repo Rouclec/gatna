@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, model } from "mongoose";
 
 interface IUserCourses extends Document {
@@ -30,6 +31,28 @@ const UserCoursesSchema: Schema<IUserCourses> = new Schema(
     timestamps: true, // Automatically manage createdAt and updatedAt fields
   }
 );
+
+// Pre-fetch middleware
+UserCoursesSchema.pre(/^find/, async function (next) {
+  const now = new Date();
+
+  // Explicitly type `this` to have access to the Mongoose `model` method
+  const query = this as mongoose.Query<any, IUserCourses>;
+
+  // Perform the update operation to deactivate expired documents
+  await query.model.updateMany(
+    {
+      expiration: { $lt: now }, // Expired records
+      active: true,             // Only update active ones
+    },
+    {
+      active: false,            // Set active to false
+    }
+  );
+
+  next();
+});
+
 
 export default mongoose.models.UserCourses ||
   model<IUserCourses>("UserCourses", UserCoursesSchema);

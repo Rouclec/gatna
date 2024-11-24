@@ -35,6 +35,9 @@ const courses: Course[] = [
 
 function Home () {
   const [selectedCourse, setSelectedCourse] = useState<Course>(courses[0])
+  // const session = useSession()
+
+  // const { data, isFetching } = useGetUserCourses()
 
   const handlePageChange = (page: number) => {
     console.log('Current page:', page)

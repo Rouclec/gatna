@@ -11,10 +11,13 @@ import { Calendar } from 'react-iconly'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import { useGetUserPackage } from '../hooks/package'
 
 const MainNav = () => {
   const router = useRouter()
   const session = useSession()
+
+  const { data } = useGetUserPackage()
 
   return (
     <div className='lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 md:pl-0 right-2 md:left-[120px] md:right-20 border-neutral-1A items-end flex z-10 bg-background'>
@@ -41,9 +44,9 @@ const MainNav = () => {
             <div className='flex items-center gap-1 px-2 py-1 sm:px-[10px] sm:py-[9px] rounded-full bg-primary-400'>
               <Gift className='w-3 h-3 sm:w-[14px] sm:h-[14px]' />
               <p
-                className={`${gilroySemiBold.className} text-[8px] sm:text-xs truncate`}
+                className={`${gilroySemiBold.className} text-[8px] mt-[2px] sm:text-xs truncate`}
               >
-                Gatna 4
+                {data?.package?.name ?? ''}
               </p>
             </div>
             <div className='flex gap-1 items-center px-2 sm:px-[10px] py-1 rounded-full bg-grey-bg'>
@@ -56,9 +59,9 @@ const MainNav = () => {
               />
               <div className='h-6 items-center justify-center flex'>
                 <p
-                  className={`${gilroyMedium.className} text-[8px] sm:text-xs truncate leading-normal`}
+                  className={`${gilroyMedium.className} text-[8px] mt-[2px] sm:text-xs truncate leading-normal`}
                 >
-                  {moment().format('DD-MM-YYYY')}
+                  {moment(data?.expiration).format('DD-MM-YYYY')}
                 </p>
               </div>
             </div>
@@ -68,9 +71,9 @@ const MainNav = () => {
             >
               <Crypto className='w-3 h-3 sm:w-[14px] sm:h-[14px]' />
               <p
-                className={`${gilroyBold.className} text-[8px] sm:text-xs truncate text-green`}
+                className={`${gilroyBold.className} mt-1 text-[8px] sm:text-xs truncate text-green`}
               >
-                $10 USDT
+                ${data?.user?.walletBalance ?? 0} USDT
               </p>
             </div>
           </div>

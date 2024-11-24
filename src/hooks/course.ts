@@ -64,6 +64,19 @@ export const useGetCourses = () => {
   });
 };
 
+// Get user's courses
+export const useGetUserCourses = () => {
+  return useQuery({
+    queryKey: ["courses", "user"],
+    queryFn: async () => {
+      const { data } = await axios.get(`${API_URL}/user`, {
+        withCredentials: true,
+      });
+      return data.data as Course[];
+    },
+  });
+};
+
 // Fetch a single course by ID
 export const useGetCourse = (id: string) => {
   return useQuery({

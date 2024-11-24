@@ -66,7 +66,7 @@ function Settings() {
                       Nom
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                      className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                     />
                   </div>
                   <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
@@ -76,7 +76,7 @@ function Settings() {
                       Addresse email
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                      className={`w-full h-full text-input bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
                     />
                   </div>
                   <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
@@ -86,7 +86,7 @@ function Settings() {
                       Wallet USDT
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent text-neutral-10  outline-none focus:ring-0 ${gilroyBold.className}`}
+                      className={`w-full h-full bg-transparent text-input text-neutral-10  outline-none focus:ring-0 ${gilroyBold.className}`}
                       onChange={(e) => handleWalletInputChange(e)}
                       onBlur={handleWalletBlur}
                       onFocus={handleWalletFocus}
@@ -106,7 +106,7 @@ function Settings() {
                       Prenoms
                     </p>
                     <input
-                      className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                      className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                     />
                   </div>
                   <div className="bg-grey-bg rounded-lg h-16 flex flex-col px-5 py-2 gap-1">
@@ -135,7 +135,7 @@ function Settings() {
                         ))}
                       </select>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className}`}
                         placeholder="54 100 0003"
                       />
                     </div>
@@ -193,7 +193,7 @@ function Settings() {
                         Pin code
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type={showPin ? "numeric" : "password"}
                         placeholder="********"
                       />
@@ -213,7 +213,7 @@ function Settings() {
                         Repeat pin
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type={showPin ? "numeric" : "password"}
                         placeholder="********"
                       />
@@ -233,7 +233,7 @@ function Settings() {
                         Get OTP
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type="numeric"
                         placeholder="_ _ _ _ _ _"
                         maxLength={6}
@@ -277,7 +277,7 @@ function Settings() {
                         Old password
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type={showPassword ? "text" : "password"}
                         placeholder="********"
                       />
@@ -297,7 +297,7 @@ function Settings() {
                         New password
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type={showPassword ? "text" : "password"}
                         placeholder="********"
                       />
@@ -317,7 +317,7 @@ function Settings() {
                         Get OTP
                       </p>
                       <input
-                        className={`w-full h-full bg-transparent text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
+                        className={`w-full h-full bg-transparent text-input text-neutral-10 outline-none focus:ring-0 ${gilroyBold.className} placeholder:${gilroyBold.className} placeholder:text-neutral-50`}
                         type="numeric"
                         placeholder="_ _ _ _ _ _"
                         maxLength={6}

@@ -76,7 +76,7 @@ const Input: FC<InputProps> = ({
         </select>
       ) : (
         <input
-          className='flex-grow h-full text-neutral-10 bg-transparent focus:outline-none'
+          className='flex-grow h-full text-input text-neutral-10 bg-transparent focus:outline-none'
           placeholder={placeholder}
           onChange={onChange}
           value={value}
@@ -288,7 +288,7 @@ function CreateCourse () {
                 </div>
                 <div className='w-full h-28 rounded-lg bg-black bg-opacity-15'>
                   <textarea
-                    className='w-full h-full bg-transparent focus:outline-none px-5 py-3'
+                    className='w-full h-full text-input bg-transparent focus:outline-none px-5 py-3'
                     placeholder='Description'
                     value={description}
                     onChange={e => setDescripton(e.target.value)}

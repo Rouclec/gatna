@@ -68,7 +68,7 @@ function Signin () {
                       placeholder='Email'
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      className={`h-[60px] w-full bg-neutral-1A bg-opacity-40 text-neutral-10 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base placeholder:text-neutral-B2`}
+                      className={`h-[60px] w-full text-input bg-neutral-1A bg-opacity-40 text-neutral-10 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base placeholder:text-neutral-B2`}
                       required
                     />
                     <div className='flex items-center gap-2 absolute left-6 self-center'>
@@ -82,7 +82,7 @@ function Signin () {
                       placeholder='Password'
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      className={`h-[60px] w-full bg-neutral-1A bg-opacity-40 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base text-neutral-10 placeholder:text-neutral-B2`}
+                      className={`h-[60px] w-full bg-neutral-1A text-input bg-opacity-40 rounded-xl px-4 pl-20 placeholder:${gilroyRegular.className} placeholder:text-base text-neutral-10 placeholder:text-neutral-B2`}
                       required
                     />
                     <div className='flex items-center gap-2 absolute left-6 self-center'>

@@ -1,5 +1,6 @@
 import { Role, User } from "@/src/models";
 import dbConnect from "@/src/util/db";
+import generateRandomPassword from "@/src/util/password";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -22,17 +23,23 @@ export default async function handler(
 
         const role = await Role.findOne({ code: "user" });
 
-        if (password !== confirm_password) {
-          return res
-            .status(400)
-            .json({ message: "Password and confirm password does not match" });
+        let setPassword = password;
+
+        if (!!setPassword) {
+          if (password !== confirm_password) {
+            return res.status(400).json({
+              message: "Password and confirm password does not match",
+            });
+          }
+        } else {
+          setPassword = generateRandomPassword(16);
         }
 
         const newUser = new User({
           firstName: first_name,
           lastName: last_name,
           email,
-          password,
+          password: setPassword,
           phoneNumber: phone_number,
           role: role?.id,
         });

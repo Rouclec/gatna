@@ -51,7 +51,7 @@ const Navbar: FC = () => {
         <div className='flex items-center gap-9 w-full'>
           <Link
             className='relative items-center bg-neutral-24 flex p-3 rounded-[14px] gap-4 w-[66px] cursor-pointer'
-            href={'#'}
+            href={'/#'}
           >
             <div className='w-2 h-2 rounded-full bg-primary-400 absolute -left-3' />
             <div className='w-4 h-4 items-center justify-center'>
@@ -61,12 +61,12 @@ const Navbar: FC = () => {
               Home
             </p>
           </Link>
-          <Link className='cursor-pointer' href={'#contact'}>
+          <Link className='cursor-pointer' href={'/#contact'}>
             <p className={`${gilroyMedium.className} text-neutral-10`}>
               Contact Us
             </p>
           </Link>
-          <Link className='cursor-pointer' href={'#courses'}>
+          <Link className='cursor-pointer' href={'/#courses'}>
             <p className={`${gilroyMedium.className} text-neutral-10`}>
               Courses
             </p>
@@ -74,28 +74,29 @@ const Navbar: FC = () => {
         </div>
         <div className='flex items-center justify-end lg:justify-normal gap-8 w-full'>
           <div
-            className='flex items-center gap-2 cursor-pointer'
+            className='flex button-primary px-6 py-4 items-center justify-center gap-2 cursor-pointer'
             onClick={() => router.push('/signin')}
           >
             <Profile className='w-6 h-6' />
             {/* <p className={`${gilroyMedium.className} text-neutral-10`}>Sign in</p> */}
             <p
               className={
-                `${gilroyMedium.className} text-neutral-10 relative after:content-[''] after:block after:w-full after:h-0.5 after:bg-primary-300 after:absolute after:left-0 after:bottom-0 after:transition-all`
+                `${gilroyBold.className} text-neutral-10 relative 
+                `
                 // hover:after:w-[50%]
               }
             >
               Sign in
             </p>
           </div>
-          <div
+          {/* <div
             className={`px-6 items-center flex justify-center py-4 rounded-[10px] bg-gradient cursor-pointer`}
             onClick={() => router.push('/signup')}
           >
             <p className={`${gilroyBold.className} text-sm text-neutral-10`}>
               Create account
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className='cursor-pointer md:hidden' onClick={() => setIsOpen(true)}>

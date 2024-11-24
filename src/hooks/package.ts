@@ -42,6 +42,19 @@ export const useGetPackage = (id: string) => {
   });
 };
 
+// Fetch a single package by ID
+export const useGetUserPackage = () => {
+  return useQuery({
+    queryKey: ["package", "user"],
+    queryFn: async () => {
+      const { data } = await axios.get(`${API_URL}/user`, {
+        withCredentials: true,
+      });
+      return data.data;
+    },
+  });
+};
+
 // Create a new package
 export const useCreatePacakge = (
   onSuccess?: (data?: Package) => void,
