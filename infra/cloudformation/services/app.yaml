@@ -109,8 +109,8 @@ Resources:
             RequiresCompatibilities:
                 - EC2
             # CPU value is basically ignored on ec2 instances.
-            Cpu: 256
-            Memory: 128
+            Cpu: 512
+            Memory: 1024
             ExecutionRoleArn: !Ref AppExecutionRole
             # "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that grants containers in the task permission to call AWS APIs on your behalf."
             TaskRoleArn: !Ref AppTaskRole
