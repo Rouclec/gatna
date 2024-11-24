@@ -138,7 +138,8 @@ Resources:
         PrivateSubnetIds: !Join [",", [!GetAtt VpcStack.Outputs.SubnetAPrivate, !GetAtt VpcStack.Outputs.SubnetBPrivate]]
         EnvId: !Ref EnvId
         SystemId: !Ref SystemId
-        InstanceType: !If [IsProd, t2.small, t2.micro]
+        # InstanceType: !If [IsProd, t2.medium, t2.micro]
+        InstanceType: t2.small
         LoadBalancerSecurityGroupId: !GetAtt LoadBalancerStack.Outputs.LoadBalancerSecurityGroupId
         MinSize: 2
         DesiredCapacity: 2
