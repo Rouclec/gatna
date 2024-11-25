@@ -12,7 +12,6 @@ import { Modal } from '@/src/components'
 import { ClipLoader } from 'react-spinners'
 import { useGetUserOTP } from '@/src/hooks/auth'
 import { useInitiateWithdrawal } from '@/src/hooks/payment'
-import { title } from 'process'
 
 function Withdraw () {
   const [walletValue, setWalletValue] = useState('')
@@ -20,7 +19,6 @@ function Withdraw () {
   const [otp, setOtp] = useState<string>()
   const [pin, setPin] = useState<string>()
   const [password, setPassword] = useState<string>()
-  const [acceptedTerms, setAcceptedTerms] = useState<string>()
   const [walletDisplayValue, setWalletDisplayValue] = useState('')
   const [isWalletFocused, setIsWalletFocused] = useState(false)
   const [showPin, setShowPin] = useState(false)
@@ -78,6 +76,7 @@ function Withdraw () {
         otp: otp ?? ''
       })
     } catch (error) {
+      console.error({ error })
     } finally {
       setIsRequesting(false)
     }

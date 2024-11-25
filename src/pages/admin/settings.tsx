@@ -553,6 +553,7 @@ function Settings () {
                               setIsAccountLoading(true)
                               getAccountOTP()
                             } catch (error) {
+                              console.error({error})
                               setErrorHeading("Error sending otp");
                               setServerError("An error occured while sending the otp")
                             } finally {
@@ -871,6 +872,7 @@ function Settings () {
                               setIsSecurityLoading(true)
                               getUserOTP()
                             } catch (error) {
+                              console.error({error})
                              setErrorHeading("Error sending otp");
                              setServerError("An error occured while sending the otp")
                             } finally {
@@ -1027,6 +1029,7 @@ function Settings () {
                               setIsCounPaymentLoding(true)
                               getCointPaymentOTP()
                             } catch (error) {
+                              console.error({error})
                               setErrorHeading("Error sending otp");
                               setServerError("An error occured while sending the otp")
                             } finally {

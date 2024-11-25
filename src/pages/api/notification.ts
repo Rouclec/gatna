@@ -1,4 +1,4 @@
-import { Notification, Role } from "@/src/models";
+import { Notification } from "@/src/models";
 
 import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";

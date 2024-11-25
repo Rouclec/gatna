@@ -173,7 +173,7 @@ export default function Home () {
         localStorage.setItem('@referal', JSON.stringify(query?.referal))
       }
     }
-  }, [])
+  }, [query])
 
   const { mutateAsync: contactUs } = useContactUs()
 

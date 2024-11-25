@@ -25,7 +25,6 @@ export default async function handler(
       .json({ message: "You must be logged in to access this resource." });
   }
 
-  const userId = token.id; // ID of the logged-in user
   const isAdmin = token.role === "admin"; // Check if user is admin
 
   if (!isAdmin) {
