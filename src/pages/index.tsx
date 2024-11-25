@@ -153,7 +153,7 @@ export default function Home () {
         name,
         surname,
         email,
-        phoneNumber: phoneNumber + countryCode,
+        phoneNumber: countryCode + phoneNumber,
         message
       })
     } catch (error) {

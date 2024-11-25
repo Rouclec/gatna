@@ -4,9 +4,15 @@ import { Navbar } from '../components'
 import { useRouter } from 'next/router'
 import { useInitiatePayment } from '../hooks/payment'
 import { ClipLoader } from 'react-spinners'
+import { getCountries, getCountryCallingCode } from 'react-phone-number-input'
 
 function SignUp () {
   const router = useRouter()
+  const countries = getCountries()
+  const [country, setCountry] = useState<string>('Cameroon')
+
+  const [countryCode, setCountryCode] = useState<string>('+237')
+
   const [isLoading, setIsLoading] = useState(false)
   const [packageId, setPackageId] = useState<string>()
 
@@ -15,6 +21,7 @@ function SignUp () {
     last_name: '',
     email: '',
     phone_number: '',
+    country_code: '+237',
     password: '',
     confirm_password: '',
     termsAccepted: false
@@ -88,13 +95,19 @@ function SignUp () {
 
     try {
       setIsLoading(true)
+      const bodyData = {
+        ...formData,
+        countryCode
+      }
+
+      console.log({ bodyData })
       // Call your API route that handles signup with NextAuth
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(bodyData)
       })
 
       if (response.ok) {
@@ -171,7 +184,7 @@ function SignUp () {
                   value={formData.first_name}
                   onChange={handleChange}
                   placeholder='First name'
-                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full text-input focus:outline-none bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 <input
                   type='email'
@@ -179,7 +192,7 @@ function SignUp () {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder='Email address'
-                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full text-input focus:outline-none bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
                 {errors.email && (
                   <p className='text-red-500 text-sm'>{errors.email}</p>
@@ -205,16 +218,43 @@ function SignUp () {
                   value={formData.last_name}
                   onChange={handleChange}
                   placeholder='Last name'
-                  className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
+                  className='h-[60px] w-full focus:outline-none text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
                 />
-                <input
+                {/* <input
                   type='text'
                   name='phone_number'
                   value={formData.phone_number}
                   onChange={handleChange}
                   placeholder='Phone number'
                   className='h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'
-                />
+                /> */}
+                <div className='flex items-center gap-2 h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'>
+                  <select
+                    value={country}
+                    onChange={event => {
+                      setCountry(event.target.value)
+                      setCountryCode(event.target.value)
+                    }}
+                    className={`w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
+                  >
+                    <option value=''>+{getCountryCallingCode('CM')}</option>
+                    {countries.map(countryCode => (
+                      <option
+                        key={countryCode}
+                        value={`+${getCountryCallingCode(countryCode)}`}
+                      >
+                        +{getCountryCallingCode(countryCode)}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    className={` w-full focus:outline-none text-input bg-transparent placeholder:text-base text-neutral-10 placeholder:text-neutral-B2`}
+                    placeholder='Phone'
+                    name='phone_number'
+                    value={formData.phone_number}
+                    onChange={handleChange}
+                  />
+                </div>
                 {/* {!packageId && (
                   <input
                     type='password'

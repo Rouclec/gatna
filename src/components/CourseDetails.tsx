@@ -62,7 +62,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
-              <div className='flex flex-col gap-16 col-span-1'>
+              <div className='flex flex-col gap-16 col-span-1 order-2 lg:order-1'>
                 <div className='flex flex-col gap-3 items-center md:items-end'>
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
@@ -128,26 +128,28 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   </p>
                 </div>
               </div>
-              <div
-                className={`w-fit lg:w-[526px] mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex ${
-                  inverted ? 'mr-10' : 'ml-10'
-                }`}
-              >
-                {isLoading ? (
-                  <ClipLoader color='#fff' />
-                ) : (
-                  <iframe
-                    src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
-                    style={{
-                      border: 0,
-                      borderRadius: 32,
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    allow='encrypted-media'
-                    allowFullScreen
-                  />
-                )}
+              <div className='w-full order-1 md:order-2 flex items-center justify-center md:justify-start'>
+                <div
+                  className={`w-fit md:w-[526px] h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex ${
+                    inverted ? 'mr-10' : 'ml-10'
+                  }`}
+                >
+                  {isLoading ? (
+                    <ClipLoader color='#fff' />
+                  ) : (
+                    <iframe
+                      src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
+                      style={{
+                        border: 0,
+                        borderRadius: 32,
+                        width: '100%',
+                        height: '100%'
+                      }}
+                      allow='encrypted-media'
+                      allowFullScreen
+                    />
+                  )}
+                </div>
               </div>
             </div>
             <div className='relative flex items-center justify-center ml-16'>
@@ -188,24 +190,26 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
               </p>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
-              <div
-                className={`w-fit lg:w-[526px] mx-auto h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex mr-10`}
-              >
-                {isLoading ? (
-                  <ClipLoader color='#fff' />
-                ) : (
-                  <iframe
-                    src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
-                    style={{
-                      border: 0,
-                      borderRadius: 32,
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    allow='encrypted-media'
-                    allowFullScreen
-                  />
-                )}
+              <div className='w-full flex items-center justify-center md:justify-end'>
+                <div
+                  className={`w-fit md:w-[526px] h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex mr-10`}
+                >
+                  {isLoading ? (
+                    <ClipLoader color='#fff' />
+                  ) : (
+                    <iframe
+                      src={`https://player.vdocipher.com/v2/?otp=${data?.otp}&playbackInfo=${data?.playbackInfo}`}
+                      style={{
+                        border: 0,
+                        borderRadius: 32,
+                        width: '100%',
+                        height: '100%'
+                      }}
+                      allow='encrypted-media'
+                      allowFullScreen
+                    />
+                  )}
+                </div>
               </div>
               <div className='flex flex-col gap-16 col-span-1'>
                 <div className='flex flex-col gap-3 items-center md:items-start'>

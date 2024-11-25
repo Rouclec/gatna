@@ -7,6 +7,7 @@ interface User {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
+  countryCode?: string;
   walletBalance?: string;
   referalCode?: string;
   createdAt?: string;

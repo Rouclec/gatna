@@ -2,6 +2,7 @@
 import mongoose, { Schema, Document, model, QueryWithHelpers } from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import { decrypt, encrypt, maskKey } from "../util/encryption";
 
 interface IUser extends Document {
   firstName: string;
@@ -9,6 +10,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   phoneNumber: string;
+  countryCode: string;
   role: {
     type: Schema.Types.ObjectId;
     ref: "Role";
@@ -19,6 +21,7 @@ interface IUser extends Document {
   otp?: string;
   walletBalance: number;
   referalCode: string;
+  withdrawalPin?: string;
   comparePassword(password: string): Promise<boolean>;
   createResetToken(): string;
 }
@@ -57,6 +60,10 @@ const UserSchema: Schema<IUser> = new Schema(
       type: String,
       required: true,
     },
+    countryCode: {
+      type: String,
+      default: "+237",
+    },
     role: {
       type: Schema.Types.ObjectId,
       ref: "Role",
@@ -76,6 +83,12 @@ const UserSchema: Schema<IUser> = new Schema(
     referalCode: {
       type: String,
       default: () => crypto.randomBytes(4).toString("hex").toUpperCase(), // Generates 8 characters
+    },
+    withdrawalPin: {
+      type: String,
+      length: 6,
+      set: (value: string) => bcrypt.hashSync(value, 10), // Encrypt the secretKey before saving
+      select: false,
     },
     otp: {
       type: String,
@@ -105,6 +118,12 @@ UserSchema.methods.comparePassword = async function (
   password: string
 ): Promise<boolean> {
   return bcrypt.compare(password, this.password);
+};
+
+UserSchema.methods.compareWithdrawalPin = async function (
+  pin: string
+): Promise<boolean> {
+  return bcrypt.compare(pin, this.withdrawalPin);
 };
 
 export default mongoose.models.User || model<IUser>("User", UserSchema);

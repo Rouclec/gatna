@@ -36,7 +36,7 @@ export default async function handler(
           .setHtml(
             `
             <h3>New Contact Form Submission</h3>
-            <p><strong>Name:</strong> ${name + surname}</p>
+            <p><strong>Name:</strong> ${name + " " + surname}</p>
             <p><strong>Phone number: </strong>${phoneNumber}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Message:</strong></p>

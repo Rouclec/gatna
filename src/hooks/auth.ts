@@ -8,6 +8,13 @@ interface UpdatePasswordPayload {
   oldPassword?: string;
   newPassword?: string;
   confirmNewPassword?: string;
+  otp?: string;
+}
+
+interface UpdatePinPayload {
+  pinCode?: string;
+  repeatPinCode?: string;
+  otp?: string;
 }
 
 const API_URL = "/api/auth";
@@ -38,6 +45,27 @@ export const useUpdatePassword = (
       const { data } = await axios.post(`${API_URL}/update-password`, payload, {
         withCredentials: true,
       });
+      return data.data as { message: string };
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+// Hook for updating the user's pin
+export const useUpdateWithdrawalPin = (
+  onSuccess?: (data?: { message: string }) => void,
+  onError?: (error?: { message: string }) => void
+) => {
+  return useMutation({
+    mutationFn: async (payload: UpdatePinPayload) => {
+      const { data } = await axios.post(
+        `${API_URL}/update-withdrawal-pin`,
+        payload,
+        {
+          withCredentials: true,
+        }
+      );
       return data.data as { message: string };
     },
     onSuccess,
