@@ -54,8 +54,6 @@ export default async function handler(
     const rawBody = await getRawBody(req);
     const hmacHeader = req.headers["hmac"] as string;
 
-    console.log({ rawBody });
-
     if (!hmacHeader) {
       return res.status(400).json({ error: "HMAC header missing" });
     }
@@ -86,7 +84,7 @@ export default async function handler(
     }
 
     // Step 5: Parse the raw body into JSON
-    const { txn_id, status, status_text } = JSON.parse(rawBody);
+    const { txn_id, status, status_text } = req.body;
 
     // Step 6: Find the corresponding transaction
     const transaction = await Transaction.findOne({ transactionId: txn_id });
