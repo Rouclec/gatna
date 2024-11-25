@@ -2,17 +2,37 @@ import { Role } from "@/src/models";
 
 import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getToken } from "next-auth/jwt";
 
 interface RoleFilter {
   code?: string;
   name?: string;
 }
 
+const secret = process.env.NEXTAUTH_SECRET;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   await dbConnect(); // Ensure a connection to the database
+
+  const token = await getToken({ req, secret });
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "You must be logged in to access this resource." });
+  }
+
+  const userId = token.id; // ID of the logged-in user
+  const isAdmin = token.role === "admin"; // Check if user is admin
+
+  if (!isAdmin) {
+    return res
+      .status(403)
+      .json({ message: "You do not have permission to perform this action" });
+  }
 
   switch (req.method) {
     case "POST": // Handle POST request to create a new role

@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Coinpayments from "coinpayments";
 import {
   Coinpayment,
+  Notification,
   Package,
   Transaction,
   User,
@@ -60,11 +61,9 @@ export default async function handler(
         });
 
         if (!!existingUserPackage) {
-          return res
-            .status(500)
-            .json({
-              message: `User with id ${userId} already has this package: ${packageId}`,
-            });
+          return res.status(500).json({
+            message: `User with id ${userId} already has this package: ${packageId}`,
+          });
         }
 
         const transaction = await coinpaymentsClient.createTransaction({
@@ -93,6 +92,13 @@ export default async function handler(
         });
 
         await newUserPackage.save();
+
+        const notification = new Notification({
+          title: `Payment initiated`,
+          body: `${user?.email} has initiated payment for the package ${pack.name}`,
+        });
+
+        await notification.save();
 
         return res.status(200).json({ data: transaction });
       } catch (error) {

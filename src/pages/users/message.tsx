@@ -22,6 +22,7 @@ import { useGetUser } from '@/src/hooks/user'
 import { useContactUs } from '@/src/hooks/useContact'
 import { ClipLoader } from 'react-spinners'
 import { useGetPublicSocials } from '@/src/hooks/socials'
+import { Modal } from '@/src/components'
 
 function Message () {
   const countries = getCountries()
@@ -33,6 +34,7 @@ function Message () {
   const [phoneNumber, setPhoneNumber] = useState<string>()
   const [message, setMessage] = useState('')
   const [isSendingMessage, setIsSendingMessage] = useState(false)
+  const [serverError, setServerError] = useState<string>()
 
   const { data } = useGetUser()
 
@@ -57,7 +59,20 @@ function Message () {
     }
   }
 
-  const { mutateAsync: contactUs } = useContactUs()
+  const { mutateAsync: contactUs } = useContactUs(
+    () => {},
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setServerError(error?.response?.data.message)
+        } else {
+          setServerError('An unknown server error occured')
+        }
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    }
+  )
 
   return (
     <Sidebar>
@@ -275,6 +290,14 @@ function Message () {
           </div>
         </main>
       </div>
+      {!!serverError && (
+        <Modal
+          type='error'
+          heading='Error sending message'
+          body={serverError}
+          onClose={() => setServerError(undefined)}
+        />
+      )}
     </Sidebar>
   )
 }

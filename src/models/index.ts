@@ -8,6 +8,7 @@ import Course from "./Course";
 import Package from "./Package";
 import Transaction from "./Transaction";
 import UserPackage from "./UserPackage";
+import Notification from "./Notification";
 
 export {
   Account,
@@ -20,4 +21,5 @@ export {
   Package,
   Transaction,
   UserPackage,
+  Notification,
 };

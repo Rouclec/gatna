@@ -38,7 +38,7 @@ export const useGetUserOTP = (
 // Hook for updating the user's password
 export const useUpdatePassword = (
   onSuccess?: (data?: { message: string }) => void,
-  onError?: (error?: { message: string }) => void
+  onError?: (error?: any) => void
 ) => {
   return useMutation({
     mutationFn: async (payload: UpdatePasswordPayload) => {
@@ -55,7 +55,7 @@ export const useUpdatePassword = (
 // Hook for updating the user's pin
 export const useUpdateWithdrawalPin = (
   onSuccess?: (data?: { message: string }) => void,
-  onError?: (error?: { message: string }) => void
+  onError?: (error?: any) => void
 ) => {
   return useMutation({
     mutationFn: async (payload: UpdatePinPayload) => {

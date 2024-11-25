@@ -8,6 +8,7 @@ interface ITransaction extends Document {
   amount: number; // Amount paid in USD
   currency1: string; // Original currency (e.g., USD)
   currency2: string; // Cryptocurrency used for payment (e.g., BTC)
+  type?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,6 +35,11 @@ const TransactionSchema: Schema<ITransaction> = new Schema(
       enum: ["pending", "completed", "failed", "expired", "refunded"], // CoinPayments-like statuses
       default: "pending",
     },
+    type: {
+      type: String,
+      enum: ["transfer", "withdrawal"],
+      default: "transfer",
+    },
     amount: {
       type: Number,
       required: true,
@@ -44,7 +50,7 @@ const TransactionSchema: Schema<ITransaction> = new Schema(
     },
     currency2: {
       type: String, // Cryptocurrency used
-      default: "USDT.TRC20"
+      default: "USDT.TRC20",
     },
   },
   {
@@ -52,4 +58,5 @@ const TransactionSchema: Schema<ITransaction> = new Schema(
   }
 );
 
-export default mongoose.models.Transaction || model<ITransaction>("Transaction", TransactionSchema);
+export default mongoose.models.Transaction ||
+  model<ITransaction>("Transaction", TransactionSchema);

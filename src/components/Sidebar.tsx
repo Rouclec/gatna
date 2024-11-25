@@ -13,7 +13,7 @@ import MainNav from './MainNav'
 import AdminNav from './AdminNav'
 import Footer from './Footer'
 import { signOut } from 'next-auth/react'
-import { Category } from 'react-iconly'
+import { Category, Wallet } from 'react-iconly'
 
 type Props = {
   children: React.ReactNode
@@ -33,10 +33,10 @@ const NAV_ITEMS = [
     logo: <Email className='w-8 h-8' />
   },
   {
-    name: 'gatna.io',
-    route: '/',
-    logoActive: <ArrowCircle className='w-6 h-6' />,
-    logo: <ArrowCircle className='w-8 h-8' />
+    name: 'Withdraw',
+    route: '/users/withdraw',
+    logoActive: <Wallet size={24} />,
+    logo: <Wallet size={32} />
   }
 ]
 

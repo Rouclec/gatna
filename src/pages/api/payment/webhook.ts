@@ -1,7 +1,13 @@
 import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
-import { Coinpayment, Transaction, User, UserPackage } from "@/src/models";
+import {
+  Coinpayment,
+  Notification,
+  Transaction,
+  User,
+  UserPackage,
+} from "@/src/models";
 import generateRandomPassword from "@/src/util/password";
 import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
 
@@ -80,7 +86,6 @@ export default async function handler(
           //   confirms,
         } = req.body;
 
-
         //Step 5: Find the transaction with that id
         const transaction = await Transaction.findOne({
           transactionId: txn_id,
@@ -121,7 +126,7 @@ export default async function handler(
           const userPackage = await UserPackage.findOne({
             user: transaction.user,
             package: transaction.package,
-          });
+          }).populate("package");
 
           const today = new Date();
           const nextYear = new Date(today);
@@ -156,6 +161,13 @@ export default async function handler(
             .setText("Welcome to Gatna.io");
 
           await mailerSend.email.send(emailParams);
+
+          const notification = new Notification({
+            title: `Payment completed`,
+            body: `${userFound?.email} has completed payment for the package ${userPackage.package.name}`,
+          });
+
+          await notification.save();
 
           res.status(200).json({ message: "IPN validated successfully" });
         } else {

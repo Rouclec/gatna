@@ -1,6 +1,6 @@
 export default function generateRandomPassword(length = 8) {
     if (length < 8) {
-      throw new Error('Password length must be at least 8 characters.');
+      throw 'Password length must be at least 8 characters.';
     }
   
     const lowerCase = 'abcdefghijklmnopqrstuvwxyz';

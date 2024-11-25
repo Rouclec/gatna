@@ -16,7 +16,7 @@ import Image from 'next/image'
 import { MapProvider } from '../providers/map-provider'
 import { MapComponent } from '../components/Map'
 import { Call, Message, Send } from 'react-iconly'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   getCountries,
   getCountryCallingCode
@@ -144,6 +144,10 @@ export default function Home () {
   const [email, setEmail] = useState<string>('')
   const router = useRouter()
 
+  const { query } = router
+
+  console.log({ query })
+
   const { data: coursesData, isFetched: isCoursesDataFetched } = useGetCourses()
 
   const handleContactUs = async () => {
@@ -162,6 +166,14 @@ export default function Home () {
       setIsSendingMessage(false)
     }
   }
+
+  useEffect(() => {
+    if (query?.referal) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('@referal', JSON.stringify(query?.referal))
+      }
+    }
+  }, [])
 
   const { mutateAsync: contactUs } = useContactUs()
 
@@ -251,7 +263,9 @@ export default function Home () {
                 )
               })
             ) : (
-              <ClipLoader />
+              <div className='mx-auto'>
+                <ClipLoader size={32} color='#fff' />
+              </div>
             )}
           </div>
         </section>

@@ -77,8 +77,7 @@ export async function getEntityOTP<T extends Document>(
       return updatedEntity;
     }
   } catch (error) {
-    console.error("Error in createOrUpdateEntity:", error);
-    throw new Error("Could not create or update entity");
+    throw error;
   }
 }
 
@@ -92,11 +91,7 @@ export async function getEntityOTP<T extends Document>(
  */
 export async function verifyEntityOTP<
   T extends { userId: string; otp: string }
->(
-  model: Model<T>,
-  otp: string,
-  _id?: string
-): Promise<boolean | null> {
+>(model: Model<T>, otp: string, _id?: string): Promise<boolean | null> {
   try {
     // Find and update the entity if it exists
     let entity: IfAny<
@@ -112,7 +107,11 @@ export async function verifyEntityOTP<
     }
 
     if (!entity) {
-      throw new Error(`No ${model} found`);
+      throw `No ${model} found`;
+    }
+
+    if (!entity?.otp) {
+      throw `Invalid token, token must have expired`;
     }
 
     const decryptedTokenString = decrypt(entity.otp);
@@ -128,7 +127,6 @@ export async function verifyEntityOTP<
     await model.findByIdAndUpdate(entity._id, { otp: null });
     return true;
   } catch (error) {
-    console.error("Error in createOrUpdateEntity:", error);
-    throw new Error("Could not create or update entity");
+    throw error;
   }
 }

@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
-import { Navbar } from '../components'
+import { Modal, Navbar } from '../components'
 import { Hide, Lock, Login, Message, Show } from 'react-iconly'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -29,7 +29,7 @@ function Signin () {
     setLoading(false)
 
     if (result?.error) {
-      setError('Invalid email or password')
+      setError('Incorrect email and password combination')
     } else {
       // Get the updated session with user details
       const session = await getSession()
@@ -117,7 +117,7 @@ function Signin () {
                 </Link>
               </div>
             </div>
-            {error && <p className='text-red-500 mt-2'>{error}</p>}
+            {/* {error && <p className='text-red-500 mt-2'>{error}</p>} */}
             <button
               type='submit'
               className={`bg-gradient px-8 py-5 w-fit rounded-[10px] cursor-pointer flex gap-[10px] items-center ${
@@ -135,6 +135,14 @@ function Signin () {
           </form>
         </div>
       </div>
+      {!!error && (
+        <Modal
+          type='error'
+          heading='Sign in error'
+          body={error}
+          onClose={() => setError(null)}
+        />
+      )}
     </div>
   )
 }

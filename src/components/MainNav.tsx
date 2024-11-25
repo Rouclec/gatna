@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-import profile1 from '@/public/assets/images/profile1.png'
+import avatar from '@/public/assets/images/avatar.png'
 import CheckMark from '@/public/assets/icons/checkmark.svg'
 import Gift from '@/public/assets/icons/gift.svg'
 import Crypto from '@/public/assets/icons/crypto.svg'
@@ -24,7 +24,9 @@ const MainNav = () => {
       <div className='flex items-center gap-1 sm:gap-4'>
         <div className='w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] rounded-full bg-grey-9333 items-center justify-center flex'>
           <Image
-            src={profile1}
+            src={!!data?.user?.profilePic ? data?.user?.profilePic : avatar}
+            height={40}
+            width={40}
             className='w-10 h-10 sm:w-12 sm:h-12 rounded-full'
             alt='profile'
           />

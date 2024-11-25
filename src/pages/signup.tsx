@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
-import { Navbar } from '../components'
+import { Modal, Navbar } from '../components'
 import { useRouter } from 'next/router'
-import { useInitiatePayment } from '../hooks/payment'
+import { PaymentResponse, useInitiatePayment } from '../hooks/payment'
 import { ClipLoader } from 'react-spinners'
 import { getCountries, getCountryCallingCode } from 'react-phone-number-input'
 
@@ -15,6 +15,10 @@ function SignUp () {
 
   const [isLoading, setIsLoading] = useState(false)
   const [packageId, setPackageId] = useState<string>()
+  const [serverError, setServerError] = useState<string>()
+
+  const [paymentResponse, setPaymentResponse] = useState<PaymentResponse>()
+  const [showModal, setShowModal] = useState(false)
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -142,11 +146,24 @@ function SignUp () {
     }
   }
 
-  const { mutateAsync } = useInitiatePayment(data => {
-    alert('You will be redirected to complete your payment')
-    window.open(data?.checkout_url, '_blank')
-    // window.location.reload()
-  })
+  const { mutateAsync } = useInitiatePayment(
+    data => {
+      setShowModal(true)
+      setPaymentResponse(data)
+      // window.location.reload()
+    },
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setServerError(error?.response?.data.message)
+        } else {
+          setServerError('An unknown server error occured')
+        }
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    }
+  )
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -296,6 +313,38 @@ function SignUp () {
           </div>
         </div>
       </div>
+      {!!errors?.general && (
+        <Modal
+          type='error'
+          heading='Signup error'
+          body={errors?.general}
+          onClose={() =>
+            setErrors(prev => ({
+              ...prev,
+              general: ''
+            }))
+          }
+        />
+      )}
+      {!!serverError && (
+        <Modal
+          type='error'
+          heading='Error initiating payment'
+          body={serverError}
+          onClose={() => setServerError(undefined)}
+        />
+      )}
+      {showModal && (
+        <Modal
+          type='info'
+          heading='Complete payment'
+          body='You will be redirected to another page to complete your payment'
+          onConfirm={() => {
+            window.open(paymentResponse?.checkout_url, '_blank')
+            setShowModal(false)
+          }}
+        />
+      )}
     </div>
   )
 }

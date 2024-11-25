@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 // Define API URL for initiating payment
-const API_URL = "/api/payment/initiate";
+const API_URL = "/api/payment";
 
 export interface PaymentResponse {
   amount: string;
@@ -22,8 +22,28 @@ export const useInitiatePayment = (
 ) => {
   return useMutation({
     mutationFn: async (body: { userId: string; packageId: string }) => {
-      const { data } = await axios.post(API_URL, body);
+      const { data } = await axios.post(`${API_URL}/initiate`, body);
       return data.data as PaymentResponse; // You can adjust the response structure as needed
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+export const useInitiateWithdrawal = (
+  onSuccess?: (data?: any) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (body: {
+      amount: string | number;
+      walletId: string;
+      pin: string;
+      password: string;
+      otp: string;
+    }) => {
+      const { data } = await axios.post(`${API_URL}/initiate-withdrawal`, body);
+      return data.data;
     },
     onSuccess,
     onError,

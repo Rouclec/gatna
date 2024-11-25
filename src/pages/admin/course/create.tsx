@@ -24,6 +24,7 @@ import { storage } from '@/src/util/firebase'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { ClipLoader, FadeLoader } from 'react-spinners'
 import { useGetPackages } from '@/src/hooks/package'
+import { Modal } from '@/src/components'
 
 interface InputProps {
   leftIcon?: React.ReactNode
@@ -100,6 +101,8 @@ function CreateCourse () {
   const [downloadURL, setDownloadURL] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [serverError, setServerError] = useState<string>()
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0])
@@ -123,7 +126,7 @@ function CreateCourse () {
         console.log(`Upload is ${progress}% done`)
       },
       error => {
-        console.error('Upload failed:', error)
+        setServerError(error.message)
       },
       async () => {
         // Get the download URL after the upload completes
@@ -167,9 +170,22 @@ function CreateCourse () {
     }
   }
 
-  const { mutateAsync } = useSaveCourse(() => {
-    window.location.reload()
-  })
+  const { mutateAsync } = useSaveCourse(
+    () => {
+      window.location.reload()
+    },
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setServerError(error?.response?.data.message)
+        } else {
+          setServerError('An unknown server error occured')
+        }
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    }
+  )
 
   return (
     <Sidebar>
@@ -581,6 +597,14 @@ function CreateCourse () {
           </div>
         </div>
       </div>
+      {!!serverError && (
+        <Modal
+          type='error'
+          heading='Error creating course'
+          body={serverError}
+          onClose={() => setServerError(undefined)}
+        />
+      )}
     </Sidebar>
   )
 }

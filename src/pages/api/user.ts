@@ -36,8 +36,36 @@ export default async function handler(
       } catch (error) {
         return res.status(500).json({ message: error });
       }
+    case "PUT":
+      try {
+        const {
+          firstName,
+          lastName,
+          countryCode,
+          phoneNumber,
+          walletId,
+          profilePic,
+        } = req.body;
+
+        const user = await User.findByIdAndUpdate(
+          userId,
+          {
+            firstName,
+            lastName,
+            countryCode,
+            phoneNumber,
+            walletId,
+            profilePic,
+          },
+          { new: true }
+        );
+
+        return res.status(200).json({ data: user });
+      } catch (error) {
+        return res.status(500).json({ message: error });
+      }
     default: // Handle unsupported methods
-      res.setHeader("Allow", ["GET"]); // Set allowed methods in the response header
+      res.setHeader("Allow", ["GET", "PUT"]); // Set allowed methods in the response header
       return res.status(405).end(`Method ${req.method} Not Allowed`); // Respond with 405 if method is not allowed
   }
 }

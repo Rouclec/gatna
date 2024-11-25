@@ -38,6 +38,7 @@ import {
   useGetCoinpaymentOTP,
   useUpdateCoinpayment
 } from '@/src/hooks/coinpayment'
+import { Modal } from '@/src/components'
 
 function Settings () {
   const session = useSession()
@@ -63,6 +64,9 @@ function Settings () {
   const [editSecurity, setEditSecurity] = useState(false)
   const [editCoinpayment, setEditCoinpayment] = useState(false)
   const [editVideoServer, setEditVideoServer] = useState(false)
+
+  const [serverError, setServerError] = useState<string>()
+  const [errorHeading, setErrorHeading] = useState<string>()
 
   const [account, setAccount] = useState<{
     companyName?: string
@@ -203,6 +207,17 @@ function Settings () {
   const { mutateAsync: updateAccount } = useUpdateAccount(() => {
     setEditAccount(false)
     window.location.reload()
+  },   error => {
+    setErrorHeading('Error updating profile')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
 
   const { isFetched: isGetUserSocialsFetched, data: userSocials } =
@@ -211,15 +226,48 @@ function Settings () {
   const { mutateAsync: createSocials } = useCreateSocials(() => {
     setEditSocials(false)
     window.location.reload()
+  },  error => {
+    setErrorHeading('Error creating socials')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
   const { mutateAsync: updateSocials } = useUpdateSocials(() => {
     setEditSocials(false)
     window.location.reload()
+  },   error => {
+    setErrorHeading('Error updating socials')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
   const { mutateAsync: updatePassword } = useUpdatePassword(() => {
     setEditSecurity(false)
     setSecurity(undefined)
     window.location.reload()
+  },  error => {
+    setErrorHeading('Error updating password')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
 
   const { isFetched: isGetVideoServerFetched, data: videoServerData } =
@@ -230,10 +278,32 @@ function Settings () {
       setEditVideoServer(false)
       window.location.reload()
     }
+  },  error => {
+    setErrorHeading('Error saving video server info')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
   const { mutateAsync: updateVideoServer } = useUpdateVideoServer(() => {
     setEditVideoServer(false)
     window.location.reload()
+  },  error => {
+    setErrorHeading('Error updating video server info')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
 
   const { isFetched: isGetCoinpaymentFetched, data: coinPaymentData } =
@@ -245,6 +315,17 @@ function Settings () {
   const { mutateAsync: updateCoinPayment } = useUpdateCoinpayment(() => {
     setEditCoinpayment(false)
     window.location.reload()
+  },   error => {
+    setErrorHeading('Error updating coinpayment info')
+    if (!!error?.response?.data?.message) {
+      if (typeof error?.response?.data.message === 'string') {
+        setServerError(error?.response?.data.message)
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    } else {
+      setServerError('An unknown server error occured')
+    }
   })
 
   const { mutateAsync: getAccountOTP } = useGetAccountOTP()
@@ -472,7 +553,8 @@ function Settings () {
                               setIsAccountLoading(true)
                               getAccountOTP()
                             } catch (error) {
-                              console.error({ error })
+                              setErrorHeading("Error sending otp");
+                              setServerError("An error occured while sending the otp")
                             } finally {
                               setIsAccountLoading(false)
                             }
@@ -789,7 +871,8 @@ function Settings () {
                               setIsSecurityLoading(true)
                               getUserOTP()
                             } catch (error) {
-                              console.error({ error })
+                             setErrorHeading("Error sending otp");
+                             setServerError("An error occured while sending the otp")
                             } finally {
                               setIsSecurityLoading(false)
                             }
@@ -944,7 +1027,8 @@ function Settings () {
                               setIsCounPaymentLoding(true)
                               getCointPaymentOTP()
                             } catch (error) {
-                              console.error({ error })
+                              setErrorHeading("Error sending otp");
+                              setServerError("An error occured while sending the otp")
                             } finally {
                               setIsCounPaymentLoding(false)
                             }
@@ -1070,6 +1154,17 @@ function Settings () {
           </div>
         </main>
       </div>
+      {!!serverError && !!errorHeading && (
+        <Modal
+          type='error'
+          heading={errorHeading}
+          body={serverError}
+          onClose={() => {
+            setServerError(undefined)
+            setErrorHeading(undefined)
+          }}
+        />
+      )}
     </Sidebar>
   )
 }

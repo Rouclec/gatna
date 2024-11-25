@@ -22,6 +22,8 @@ interface IUser extends Document {
   walletBalance: number;
   referalCode: string;
   withdrawalPin?: string;
+  profilePic?: string;
+  walletId?: string;
   comparePassword(password: string): Promise<boolean>;
   createResetToken(): string;
 }
@@ -94,6 +96,8 @@ const UserSchema: Schema<IUser> = new Schema(
       type: String,
       select: false,
     },
+    profilePic: String,
+    walletId: String,
   },
   {
     timestamps: true,
@@ -123,6 +127,7 @@ UserSchema.methods.comparePassword = async function (
 UserSchema.methods.compareWithdrawalPin = async function (
   pin: string
 ): Promise<boolean> {
+  console.log({ pin });
   return bcrypt.compare(pin, this.withdrawalPin);
 };
 

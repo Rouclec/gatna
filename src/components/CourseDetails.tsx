@@ -92,7 +92,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course?.videos?.length ?? 0} videos
+                        {course?.videos?.length ?? 0} video{course?.videos?.length > 1 && 's'}
                       </p>
                     </div>
                     {course?.pdfs && (
@@ -240,7 +240,8 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course?.videos?.length ?? 0} videos
+                        {course?.videos?.length ?? 0} video
+                        {course?.videos?.length > 1 && 's'}
                       </p>
                     </div>
                     {course.pdfs && (

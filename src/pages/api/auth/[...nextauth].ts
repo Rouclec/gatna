@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
         await dbConnect();
 
         if (!credentials) {
-          throw new Error("No credentials provided");
+          throw "No credentials provided";
         }
 
         // Find user in database
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
         // Verify password
         const isValid = await user.comparePassword(credentials.password);
         if (!isValid || !user) {
-          throw new Error("Incorrect email and password combination");
+          throw "Incorrect email and password combination";
         }
 
         // Return user object on successful authentication
