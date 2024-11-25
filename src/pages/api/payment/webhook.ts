@@ -83,6 +83,7 @@ export default async function handler(
       return res.status(400).json({ error: "Invalid HMAC signature" });
     }
 
+    console.log("request body: ", req.body);
     // Step 5: Parse the raw body into JSON
     const { txn_id, status, status_text } = req.body;
 
