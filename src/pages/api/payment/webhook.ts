@@ -1,16 +1,18 @@
-import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
+import dbConnect from "@/src/util/db";
 import {
   Coinpayment,
-  Notification,
   Transaction,
   User,
   UserPackage,
+  Notification,
 } from "@/src/models";
 import generateRandomPassword from "@/src/util/password";
 import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
+import { IncomingMessage } from "http";
 
+// Transaction status mappings
 const TRANSACTION_STATUSES = {
   "0": "pending",
   "-1": "failed",
@@ -18,169 +20,164 @@ const TRANSACTION_STATUSES = {
   "100": "completed",
 } as const;
 
+// Disable automatic body parsing for this route
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+/**
+ * Helper function to capture raw request body
+ */
+async function getRawBody(req: IncomingMessage): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  await dbConnect(); // Ensure database connection
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 
-  switch (req.method) {
-    case "POST": // Handle POST request to login
-      try {
-        //Step 0: Setup email sender;
-        const mailerSend = new MailerSend({
-          apiKey: process.env.MAIL_API_KEY as string,
-        });
+  await dbConnect(); // Connect to the database
 
-        const sentFrom = new Sender(
-          process.env.EMAIL_FROM as string,
-          "Gatna.io"
-        );
+  try {
+    // Step 1: Get the raw request body
+    const rawBody = await getRawBody(req);
+    const hmacHeader = req.headers["hmac"] as string;
 
-        const coinPaymentInfo = await Coinpayment.findOne();
+    console.log({ rawBody });
 
-        if (!coinPaymentInfo) {
-          return res
-            .status(404)
-            .json({ message: "No coinpayment info found on server" });
-        }
+    if (!hmacHeader) {
+      return res.status(400).json({ error: "HMAC header missing" });
+    }
 
-        // Step 1: Retrieve IPN secret and HMAC from the request
-        const ipnSecret = coinPaymentInfo.getDecryptedIpnSecret(); // Your secret from the CoinPayments dashboard
-        const hmacHeader = req.headers["hmac"]; // HMAC signature from the request header
+    console.log({ hmacHeader });
 
-        console.log({ ipnSecret });
-        console.log({ hmacHeader });
+    // Step 2: Fetch the IPN secret from the database
+    const coinPaymentInfo = await Coinpayment.findOne();
 
-        if (!hmacHeader) {
-          return res.status(400).json({ error: "HMAC header missing" });
-        }
+    if (!coinPaymentInfo) {
+      return res
+        .status(404)
+        .json({ message: "No CoinPayment info found on server" });
+    }
 
-        // Step 2: Compute the HMAC using your IPN secret
-        const requestBody = JSON.stringify(req.body);
+    const ipnSecret = coinPaymentInfo.getDecryptedIpnSecret();
 
-        console.log({ requestBody });
+    // Step 3: Compute the HMAC using the raw body
+    const computedHmac = crypto
+      .createHmac("sha512", ipnSecret)
+      .update(rawBody)
+      .digest("hex");
 
-        const computedHmac = crypto
-          .createHmac("sha512", ipnSecret as string)
-          .update(requestBody)
-          .digest("hex");
+    console.log({ computedHmac });
+    // Step 4: Validate the HMAC
+    if (hmacHeader !== computedHmac) {
+      return res.status(400).json({ error: "Invalid HMAC signature" });
+    }
 
-        console.log({ computedHmac });
-        // Step 3: Compare the computed HMAC with the one sent by CoinPayments
-        if (hmacHeader !== computedHmac) {
-          return res.status(400).json({ error: "Invalid HMAC signature" });
-        }
+    // Step 5: Parse the raw body into JSON
+    const { txn_id, status, status_text } = JSON.parse(rawBody);
 
-        // Step 4: Parse the IPN body
-        const {
-          txn_id,
-          status,
-          status_text,
-          //   amount1,
-          //   currency1,
-          //   amount2,
-          //   currency2,
-          //   custom,
-          //   address,
-          //   confirms,
-        } = req.body;
+    // Step 6: Find the corresponding transaction
+    const transaction = await Transaction.findOne({ transactionId: txn_id });
 
-        //Step 5: Find the transaction with that id
-        const transaction = await Transaction.findOne({
-          transactionId: txn_id,
-        });
+    if (!transaction) {
+      return res.status(404).json({ error: "Transaction not found" });
+    }
 
-        console.log({ transaction });
+    // Step 7: Find the user associated with the transaction
+    const userFound = await User.findById(transaction.user);
 
-        if (!transaction) {
-          return res.status(404).json({ error: "Transaction not found" });
-        }
+    if (!userFound) {
+      return res.status(404).json({
+        message: `No user found for this transaction with id: ${transaction.user}`,
+      });
+    }
 
-        //Step 6: Find the user
-        const userFound = await User.findById(transaction.user);
+    // Step 8: Determine the transaction status
+    const transactionStatus =
+      TRANSACTION_STATUSES[
+        (status?.toString() as keyof typeof TRANSACTION_STATUSES) ?? "0"
+      ] || "failed";
 
-        if (!userFound) {
-          return res.status(404).json({
-            message: `No user found for this transaction with id: ${transaction.user}`,
-          });
-        }
+    // Update the transaction status in the database
+    await Transaction.findByIdAndUpdate(transaction._id, {
+      status: transactionStatus,
+    });
 
-        console.log({ userFound });
+    // Step 9: Handle completed transactions
+    if (transactionStatus === "completed") {
+      const userPackage = await UserPackage.findOne({
+        user: transaction.user,
+        package: transaction.package,
+      }).populate("package");
 
-        //Step 7: Check the transaction status
-        const transactionStatus =
-          TRANSACTION_STATUSES[
-            (
-              (status as number) ?? 0
-            ).toString() as keyof typeof TRANSACTION_STATUSES
-          ] || "failed";
+      const today = new Date();
+      const nextYear = new Date(today);
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
 
-        console.log({ transactionStatus });
+      const newPassword = generateRandomPassword(10);
 
-        await Transaction.findByIdAndUpdate(transaction._id, {
-          status: transactionStatus,
-        });
+      // Update user's password
+      await User.findByIdAndUpdate(userFound._id, {
+        password: newPassword,
+      });
 
-        if (transactionStatus === "completed") {
-          const userPackage = await UserPackage.findOne({
-            user: transaction.user,
-            package: transaction.package,
-          }).populate("package");
+      // Activate the user's package and set the expiration date
+      await UserPackage.findByIdAndUpdate(userPackage?.id, {
+        active: true,
+        expiration: nextYear,
+      });
 
-          const today = new Date();
-          const nextYear = new Date(today);
-          nextYear.setFullYear(nextYear.getFullYear() + 1);
+      // Send confirmation email to the user
+      const mailerSend = new MailerSend({
+        apiKey: process.env.MAIL_API_KEY as string,
+      });
 
-          console.log(`Today's date: ${today}`);
-          console.log(`Date one year from today: ${nextYear}`);
+      const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
 
-          const newPassword = generateRandomPassword(10);
+      const recipients = [new Recipient(userFound.email, userFound.firstName)];
 
-          await User.findByIdAndUpdate(userFound._id, {
-            password: newPassword,
-          });
+      const emailParams = new EmailParams()
+        .setFrom(sentFrom)
+        .setTo(recipients)
+        .setReplyTo(sentFrom)
+        .setSubject("Welcome to Gatna.io")
+        .setHtml(
+          `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>.<br />Feel free to change the password in the settings section of your account</p>`
+        )
+        .setText("Welcome to Gatna.io");
 
-          await UserPackage.findByIdAndUpdate(userPackage.id, {
-            active: true,
-            expiration: nextYear,
-          });
+      await mailerSend.email.send(emailParams);
 
-          const recipients = [
-            new Recipient(userFound.email, userFound.firstName),
-          ];
+      // Save a notification for the admin
+      const notification = new Notification({
+        title: `Payment completed`,
+        body: `${userFound?.email} has completed payment for the package ${userPackage?.package?.name}`,
+      });
 
-          const emailParams = new EmailParams()
-            .setFrom(sentFrom)
-            .setTo(recipients)
-            .setReplyTo(sentFrom)
-            .setSubject("Welcome to Gatna.io")
-            .setHtml(
-              `<p>Welcome to gatna.io <br /> Your password is <strong>${newPassword}</strong>.<br />Feel free to change the password in the settings section of your account</p>`
-            )
-            .setText("Welcome to Gatna.io");
+      await notification.save();
 
-          await mailerSend.email.send(emailParams);
-
-          const notification = new Notification({
-            title: `Payment completed`,
-            body: `${userFound?.email} has completed payment for the package ${userPackage.package.name}`,
-          });
-
-          await notification.save();
-
-          res.status(200).json({ message: "IPN validated successfully" });
-        } else {
-          return res.status(200).json({
-            message: `Transaction failed with status: ${status_text}`,
-          });
-        }
-      } catch (error) {
-        console.error("Error validating IPN:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-    default: // Handle unsupported methods
-      res.setHeader("Allow", ["POST"]); // Set allowed methods in the response header
-      return res.status(405).end(`Method ${req.method} Not Allowed`); // Respond with 405 if method is not allowed
+      res
+        .status(200)
+        .json({ message: "IPN validated and processed successfully" });
+    } else {
+      res.status(200).json({
+        message: `Transaction failed with status: ${status_text}`,
+      });
+    }
+  } catch (error) {
+    console.error("Error validating IPN:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
