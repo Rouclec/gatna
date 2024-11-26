@@ -146,7 +146,6 @@ export default function Home () {
 
   const { query } = router
 
-  console.log({ query })
 
   const { data: coursesData, isFetched: isCoursesDataFetched } = useGetCourses()
 

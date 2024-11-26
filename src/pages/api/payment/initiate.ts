@@ -102,7 +102,7 @@ export default async function handler(
 
         return res.status(200).json({ data: transaction });
       } catch (error) {
-        console.log({ error }, "initiating payment");
+        console.error({ error }, "initiating payment");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods

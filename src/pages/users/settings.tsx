@@ -113,7 +113,6 @@ function Settings () {
     try {
       setIsUpdatingProfile(true)
       const profileUrl = await handleUpload()
-      console.log({ profileUrl })
       await updateProfile({
         phoneNumber: phoneNumber ?? userProfile?.phoneNumber ?? '',
         countryCode: countryCode ?? userProfile?.countryCode ?? '',
@@ -313,7 +312,6 @@ function Settings () {
                       <select
                         value={country}
                         onChange={event => {
-                          // console.log(event.target.value)
                           setCountry(event.target.value)
                           setCountryCode(event.target.value)
                         }}
@@ -347,7 +345,6 @@ function Settings () {
                     <select
                       value={country}
                       onChange={event => {
-                        console.log(event.target.value)
                         setCountry(event.target.value)
                       }}
                       className={`w-full h-full p-0 bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}

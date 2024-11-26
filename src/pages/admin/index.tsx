@@ -1,5 +1,5 @@
 import Sidebar from '@/src/components/Sidebar'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Users from '@/public/assets/icons/users.svg'
 import AddUser from '@/public/assets/icons/add-user.svg'
@@ -21,6 +21,8 @@ import moment from 'moment'
 import CircularProgressBar from '@/src/components/CircularProgressBar'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next'
+import { useGetStats } from '@/src/hooks/stats'
+import { useGetTransactions } from '@/src/hooks/transactions'
 
 const colors = {
   high: {
@@ -37,30 +39,30 @@ const colors = {
   }
 }
 
-const cards = [
+const initialStats = [
   {
     title: 'Total users.',
-    quantity: 312,
+    quantity: 0,
     icon: <Users className='w-10' />
   },
   {
     title: 'Total subscribers.',
-    quantity: 54,
+    quantity: 0,
     icon: <AddUser className='w-10' />
   },
   {
     title: 'Total videos.',
-    quantity: 45,
+    quantity: 0,
     icon: <Airplay className='w-10' />
   },
   {
     title: 'Pending requests.',
-    quantity: 65,
+    quantity: 0,
     icon: <CalenderDone className='w-10' />
   },
   {
     title: 'Total sales',
-    quantity: `$23.00k`,
+    quantity: `$${0}`,
     icon: <BankCard className='w-10' />
   }
 ]
@@ -160,7 +162,20 @@ const data = [
 ]
 
 function Index () {
-  function calculateProgress (startDate: string, endDate: string): number {
+  const [stats, setStats] = useState<
+    {
+      title: string
+      quantity: number | string
+      icon: React.JSX.Element
+    }[]
+  >(initialStats)
+
+  function calculateProgress (
+    startDate: string,
+    endDate: string | null | undefined
+  ): number {
+    if (!endDate) return 0
+
     const start = new Date(startDate) // e.g. '2024-10-18'
     const end = new Date(endDate) // e.g. '2024-10-22'
     const today = new Date()
@@ -184,11 +199,53 @@ function Index () {
     return parseFloat(Math.min(Math.max(percentage, 0), 100).toFixed(2))
   }
 
+  const { data: adminStats, isFetched } = useGetStats()
+
+  const { data: transactions, isFetched: isTransactionsFetched } =
+    useGetTransactions()
+
+  useEffect(() => {
+    if (adminStats && isFetched) {
+      const sales =
+        (adminStats?.sales ?? 0) > 1000
+          ? `${((adminStats?.sales ?? 0) / 1000).toFixed(2)}k`
+          : `${adminStats.sales ?? 0}`
+
+      setStats([
+        {
+          title: 'Total users.',
+          quantity: adminStats?.users ?? 0,
+          icon: <Users className='w-10' />
+        },
+        {
+          title: 'Total subscribers.',
+          quantity: adminStats?.subscribers ?? 0,
+          icon: <AddUser className='w-10' />
+        },
+        {
+          title: 'Total videos.',
+          quantity: adminStats?.videos ?? 0,
+          icon: <Airplay className='w-10' />
+        },
+        {
+          title: 'Pending requests.',
+          quantity: adminStats?.pendingRequests ?? 0,
+          icon: <CalenderDone className='w-10' />
+        },
+        {
+          title: 'Total sales',
+          quantity: `$${sales}`,
+          icon: <BankCard className='w-10' />
+        }
+      ])
+    }
+  }, [isFetched, adminStats])
+
   return (
     <Sidebar>
       <div className='ml-12 mr-20 mt-8 flex flex-col gap-8'>
         <div className='grid mx-auto md:mx-0 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-center gap-8'>
-          {cards.map((card, index) => {
+          {stats.map((card, index) => {
             return <AdminInfoCard item={card} key={card.title} index={index} />
           })}
         </div>
@@ -200,7 +257,7 @@ function Index () {
                 Users list
               </p>
             </div>
-            <div className='flex px-3 py-4 items-center gap-4 bg-neutral-C4 bg-opacity-10 rounded-[10px]'>
+            {/* <div className='flex px-3 py-4 items-center gap-4 bg-neutral-C4 bg-opacity-10 rounded-[10px]'>
               <p className={`${gilroyMedium.className} text-sm text-white`}>
                 Show
               </p>
@@ -217,7 +274,7 @@ function Index () {
                   cursor: 'pointer'
                 }}
               />
-            </div>
+            </div> */}
             <div className='flex items-center justify-between w-52 px-5 py-4 bg-neutral-C4 bg-opacity-10 rounded-[10px]'>
               <input
                 className={`focus:ring-0 text-input focus:outline-none text-neutral-10 bg-transparent w-full ${gilroyMedium.className}`}
@@ -227,12 +284,12 @@ function Index () {
                 <Filter className='w-full' />
               </div>
             </div>
-            <div className='button-primary px-4 py-3 gap-4'>
+            {/* <div className='button-primary px-4 py-3 gap-4'>
               <Plus className={'w-5'} />
               <p className={`${gilroyBold.className} text-sm text-white`}>
                 Add new
               </p>
-            </div>
+            </div> */}
           </div>
           <table className='min-w-full w-full table-auto mt-7'>
             <thead className='bg-neutral-CF bg-opacity-10 rounded-lg'>
@@ -376,7 +433,7 @@ function Index () {
                     <p
                       className={`${gilroyBold.className} text-sm text-neutral-50`}
                     >
-                      Course
+                      Package
                     </p>
                   </div>
                 </th>
@@ -508,8 +565,11 @@ function Index () {
               </tr>
             </thead>
             <tbody>
-              {data.map((item, index) => {
-                const progress = calculateProgress(item.date, item.expiry_date)
+              {transactions?.map((item, index) => {
+                const progress = calculateProgress(
+                  item?.updatedAt,
+                  item?.expiryDate
+                )
                 return (
                   <tr key={index}>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
@@ -519,43 +579,43 @@ function Index () {
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {item.id}
+                        #{item?.transactionId?.slice(0, 4)}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {moment(item.date).format('DD-MM-YYYY')}
+                        {moment(item?.updatedAt).format('DD-MM-YYYY')}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {item.first_name}
+                        {item?.user?.firstName}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {item.last_name}
+                        {item?.user?.lastName}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {item.email}
+                        {item?.user?.email}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {item.course.charAt(0).toUpperCase() +
-                          item.course.slice(1)}
+                        {item?.package?.name?.charAt(0).toUpperCase() +
+                          item?.package?.name?.slice(1)}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
@@ -569,8 +629,7 @@ function Index () {
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        {item.method.charAt(0).toUpperCase() +
-                          item.method.slice(1)}
+                        {`Crypto`}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
@@ -578,7 +637,9 @@ function Index () {
                         <p
                           className={`${gilroyMedium.className} text-sm text-neutral-10`}
                         >
-                          {moment(item.expiry_date).format('DD-MM-YYYY')}
+                          {item?.expiryDate
+                            ? moment(item?.expiryDate).format('DD-MM-YYYY')
+                            : 'N/A'}
                         </p>
                         <div className='w-5 h-5 flex-shrink-0 flex items-center justify-center'>
                           <CircularProgressBar
@@ -598,7 +659,7 @@ function Index () {
                       </div>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28 underline text-success cursor-pointer'>
-                      {item.transcation_id}
+                      {item.transactionId}
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <div className='flex items-center gap-3'>
@@ -675,8 +736,6 @@ export async function getServerSideProps (context: GetServerSidePropsContext) {
       }
     }
   }
-
-  console.log(session.user.role)
 
   // Check if the user has the admin role
   if (session.user.role !== 'admin') {

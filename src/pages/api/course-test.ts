@@ -36,8 +36,6 @@ export default async function handler(
           }
         );
 
-        console.log({ courses });
-
         return res.status(200).json({ data: courses.data.folderList });
       } catch (error) {
         console.error("Error fetching courses:", error);

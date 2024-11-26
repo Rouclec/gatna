@@ -29,7 +29,7 @@ export default async function handler(
 
         return res.status(200).json({ data: user });
       } catch (error) {
-        console.log({ error }, "in login");
+        console.error({ error }, "in login");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods

@@ -52,7 +52,7 @@ function Withdraw () {
   const { mutateAsync: getUserOTP } = useGetUserOTP(
     () => {},
     error => {
-      console.log({ error })
+      console.error({ error })
     }
   )
 

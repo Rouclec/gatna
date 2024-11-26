@@ -54,7 +54,7 @@ export default async function handler(
 
         return res.status(200).json({ message: "Pin code updated" });
       } catch (error) {
-        console.log({ error }, "updating pin code");
+        console.error({ error }, "updating pin code");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods

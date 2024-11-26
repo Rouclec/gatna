@@ -649,8 +649,6 @@ export async function getServerSideProps (context: GetServerSidePropsContext) {
     }
   }
 
-  console.log(session.user.role)
-
   // Check if the user has the admin role
   if (session.user.role !== 'admin') {
     return {

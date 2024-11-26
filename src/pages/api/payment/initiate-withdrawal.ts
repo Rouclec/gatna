@@ -41,7 +41,6 @@ export default async function handler(
           "+password +withdrawalPin"
         );
 
-        console.log({ userFound });
 
         if (!userFound) {
           //Check if a user exists with that email and if the password is correct
@@ -108,7 +107,7 @@ export default async function handler(
 
         return res.status(200).json({ data: transaction });
       } catch (error) {
-        console.log( error , "initiating withdrawal");
+        console.error( error , "initiating withdrawal");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods

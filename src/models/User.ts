@@ -127,7 +127,6 @@ UserSchema.methods.comparePassword = async function (
 UserSchema.methods.compareWithdrawalPin = async function (
   pin: string
 ): Promise<boolean> {
-  console.log({ pin });
   return bcrypt.compare(pin, this.withdrawalPin);
 };
 

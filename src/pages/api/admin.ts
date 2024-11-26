@@ -11,7 +11,6 @@ export default async function handler(
       try {
         // Get the session information to check if the user is logged in and has the required role
         const session = await getSession({ req });
-        console.log({ session });
 
 
         // const sessionTokenCookie = req.cookies.get("next-auth.session-token");
@@ -25,7 +24,7 @@ export default async function handler(
 
         return res.status(200).json({ data: "OK" });
       } catch (error) {
-        console.log({ error }, "updating password");
+        console.error({ error }, "updating password");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods

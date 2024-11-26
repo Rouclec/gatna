@@ -62,7 +62,7 @@ export default async function handler(
 
         return res.status(200).json({ message: "Password updated" });
       } catch (error) {
-        console.log({ error }, "updating password");
+        console.error({ error }, "updating password");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods
