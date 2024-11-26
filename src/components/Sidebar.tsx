@@ -53,12 +53,12 @@ const ADMIN_NAV_ITEMS = [
     logoActive: <Reels className='w-6 h-6' />,
     logo: <Reels className='w-8 h-8' />
   },
-  {
-    name: 'Activations',
-    route: '/admin/pending-activations',
-    logoActive: <ArrowCircle className='w-6 h-6' />,
-    logo: <ArrowCircle className='w-8 h-8' />
-  },
+  // {
+  //   name: 'Activations',
+  //   route: '/admin/pending-activations',
+  //   logoActive: <ArrowCircle className='w-6 h-6' />,
+  //   logo: <ArrowCircle className='w-8 h-8' />
+  // },
   {
     name: 'gatna.io',
     route: '/',
