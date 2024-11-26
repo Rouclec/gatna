@@ -6,7 +6,7 @@ import AddUser from '@/public/assets/icons/add-user.svg'
 import Airplay from '@/public/assets/icons/airplay.svg'
 import CalenderDone from '@/public/assets/icons/calendar-done.svg'
 import BankCard from '@/public/assets/icons/bank-card.svg'
-import Plus from '@/public/assets/icons/plus.svg'
+// import Plus from '@/public/assets/icons/plus.svg'
 import DocumentVerified from '@/public/assets/icons/document-verified.svg'
 import Filter from '@/public/assets/icons/filter.svg'
 import Loading from '@/public/assets/icons/loading.svg'
@@ -67,100 +67,6 @@ const initialStats = [
   }
 ]
 
-const data = [
-  {
-    id: '#GOAI13',
-    date: '2024-05-23',
-    first_name: 'Diana',
-    last_name: 'Miller',
-    email: 'whiteryan@warren.org',
-    amount: '$250.00',
-    course: 'Planning and development surveyor',
-    method: 'cash',
-    expiry_date: '2024-03-20',
-    transcation_id: '3c96eb40-b851-47d0-a4c5-9d507adccb62',
-    status: 'completed'
-  },
-  {
-    id: '#AOITHW',
-    date: '2024-06-21',
-    first_name: 'Dennis',
-    last_name: 'Good',
-    email: 'fwilkinson@colon-bishop.info',
-    amount: '$250.00',
-    course: 'Actuary',
-    method: 'cash',
-    expiry_date: '2024-06-26',
-    transcation_id: '0eb9a0ab-07be-47c7-8126-ea29a814eda9',
-    status: 'pending'
-  },
-  {
-    id: '#AIB918',
-    date: '2024-10-18',
-    first_name: 'Elizabeth',
-    last_name: 'Marshall',
-    amount: '$250.00',
-    email: 'lgibbs@vaughn.biz',
-    course: 'Information systems manager',
-    method: 'mobile pay',
-    expiry_date: '2024-11-30',
-    transcation_id: '521bfaae-95b8-4f0d-ba9c-21dc981d010a',
-    status: 'failed'
-  },
-  {
-    id: '#19DHAG',
-    date: '2024-10-15',
-    first_name: 'Eric',
-    last_name: 'Contreras',
-    amount: '$250.00',
-    email: 'lisamason@yahoo.com',
-    course: 'Hospital doctor',
-    method: 'mobile pay',
-    expiry_date: '2024-12-10',
-    transcation_id: 'bbffd019-e78d-4198-bca5-10b23b7cbff5',
-    status: 'failed'
-  },
-  {
-    id: '#ABJ917',
-    date: '2024-9-12',
-    first_name: 'Cathy',
-    amount: '$250.00',
-    last_name: 'Velasquez',
-    email: 'bobbycampos@ramirez-may.org',
-    course: 'Theatre director',
-    method: 'mobile pay',
-    expiry_date: '2024-10-04',
-    transcation_id: '756e9f32-809e-489f-9450-36b7706b904c',
-    status: 'completed'
-  },
-  {
-    id: '#BY918S',
-    date: '2024-9-23',
-    first_name: 'Jenna',
-    last_name: 'Duncan',
-    amount: '$250.00',
-    email: 'gonzalezmonica@stewart.com',
-    course: 'Physiological scientist',
-    method: 'cash',
-    expiry_date: '2024-12-18',
-    transcation_id: 'ad25da56-b6b3-40b4-8f83-5188aae47854',
-    status: 'completed'
-  },
-  {
-    id: '#BH9A19',
-    date: '2024-10-12',
-    first_name: 'Nancy',
-    amount: '$250.00',
-    last_name: 'Howard',
-    email: 'keith09@hotmail.com',
-    course: 'Designer, blown glass/stained glass',
-    method: 'mobile pay',
-    expiry_date: '2025-02-09',
-    transcation_id: 'c64441e9-f50b-4190-ba2f-87fa3f8d678e',
-    status: 'pending'
-  }
-]
-
 function Index () {
   const [stats, setStats] = useState<
     {
@@ -201,8 +107,7 @@ function Index () {
 
   const { data: adminStats, isFetched } = useGetStats()
 
-  const { data: transactions, isFetched: isTransactionsFetched } =
-    useGetTransactions()
+  const { data: transactions } = useGetTransactions()
 
   useEffect(() => {
     if (adminStats && isFetched) {
