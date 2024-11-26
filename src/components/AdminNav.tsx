@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Email from '@/public/assets/icons/email.svg'
-import NotebookCheck from '@/public/assets/icons/notebook-check.svg'
+// import Email from '@/public/assets/icons/email.svg'
+// import NotebookCheck from '@/public/assets/icons/notebook-check.svg'
 import Bell from '@/public/assets/icons/bell.svg'
 import { gilroyBold, gilroyRegular } from '../pages'
 import { useSession } from 'next-auth/react'
@@ -24,7 +24,7 @@ const AdminNav = () => {
           </p>
         </div>
         <div className='flex w-fit items-center gap-2 sm:gap-[10px]'>
-          <div className='relative w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center flex bg-grey-bg'>
+          {/* <div className='relative w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center flex bg-grey-bg'>
             <NotebookCheck className='w-4 sm:w-5' />
             <div className='absolute w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] rounded-full flex items-center justify-center bg-primary-400 -top-[1px] -right-2'>
               <p
@@ -33,8 +33,8 @@ const AdminNav = () => {
                 12
               </p>
             </div>
-          </div>
-          <div className='relative w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center flex bg-grey-bg'>
+          </div> */}
+          {/* <div className='relative w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center flex bg-grey-bg'>
             <Email className='w-4 sm:w-5' />
             <div className='absolute w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] rounded-full flex items-center justify-center bg-primary-400 -top-[1px] -right-2'>
               <p
@@ -43,8 +43,8 @@ const AdminNav = () => {
                 4
               </p>
             </div>
-          </div>
-          <div className='relative w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center flex bg-grey-bg'>
+          </div> */}
+          <div className='relative w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center flex bg-grey-bg cursor-pointer'>
             <Bell className='w-4 sm:w-5' />
             <div className='absolute w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] rounded-full flex items-center justify-center bg-primary-400 -top-[1px] -right-2'>
               <p
