@@ -42,7 +42,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("Received request:", { method: req.method, headers: req.headers });
+  console.log("Received request:", {
+    method: req.method,
+    headers: req.headers,
+  });
 
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
@@ -105,6 +108,12 @@ export default async function handler(
     }
     console.log("Transaction found:", transaction);
 
+    if (transaction.status === "completed") {
+      return res
+        .status(200)
+        .json({ message: "Transaction already completed!" });
+    }
+
     console.log("Finding user associated with transaction...");
     const userFound = await User.findById(transaction.user);
     if (!userFound) {
@@ -158,10 +167,7 @@ export default async function handler(
       const mailerSend = new MailerSend({
         apiKey: process.env.MAIL_API_KEY as string,
       });
-      const sentFrom = new Sender(
-        process.env.EMAIL_FROM as string,
-        "Gatna.io"
-      );
+      const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
       const recipients = [new Recipient(userFound.email, userFound.firstName)];
       const emailParams = new EmailParams()
         .setFrom(sentFrom)
