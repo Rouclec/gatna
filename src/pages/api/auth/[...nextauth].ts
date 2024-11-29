@@ -70,21 +70,11 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`, // Secure name in production
+      name: "next-auth.session-token",
       options: {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: process.env.NODE_ENV === "production", // Ensure secure in prod
-        domain: process.env.NEXTAUTH_URL,
-      },
-    },
-    csrfToken: {
-      name: `__Host-next-auth.csrf-token`, // Secure, host-bound
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/", // Required for `__Host-` prefix
         secure: process.env.NODE_ENV === "production",
       },
     },
