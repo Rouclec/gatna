@@ -40,10 +40,10 @@ export default async function handler(
 
         const user = await User.findById(userId);
 
-        if (!user || !user.active) {
+        if (!user) {
           return res
             .status(404)
-            .json({ message: `No active user with found with id: ${userId}` });
+            .json({ message: `No user with found with id: ${userId}` });
         }
 
         const pack = await Package.findById(packageId);
