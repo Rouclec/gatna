@@ -35,11 +35,11 @@ export default async function handler(
 
         const userFound = await User.findById(userId).select("+withdrawalPin");
 
-        if (!userFound) {
+        if (!userFound || !userFound.active) {
           //Check if a user exists with that email and if the password is correct
           return res
             .status(404)
-            .json({ message: `No user found with id: ${userId}` });
+            .json({ message: `No acitve user found with id: ${userId}` });
         }
 
         if (pinCode !== repeatPinCode) {

@@ -26,9 +26,15 @@ export default async function handler(
       try {
         const userFound = await User.findById(userId);
 
+        if (!userFound.active) {
+          return res.status(404).json({
+            message: `No active user with id: ${userId}`,
+          });
+        }
+
         if (!userFound) {
           return res.status(404).json({
-            message: `No user with id: ${userId}`,
+            message: `No active user with id: ${userId}`,
           });
         }
 
@@ -46,6 +52,14 @@ export default async function handler(
           walletId,
           profilePic,
         } = req.body;
+
+        const userFound = await User.findById(userId);
+
+        if (!userFound.active) {
+          return res.status(404).json({
+            message: `No active user with id: ${userId}`,
+          });
+        }
 
         const user = await User.findByIdAndUpdate(
           userId,

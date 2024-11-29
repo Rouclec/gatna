@@ -14,9 +14,7 @@ export default async function handler(
 
     const { email } = req.query;
 
-    console.log({ email });
-
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, active: true });
 
     if (!user) {
       return res.status(404).json({ message: "Error sending otp" });

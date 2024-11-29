@@ -13,8 +13,9 @@ export default async function handler(
       try {
         const { email, password } = req.body; // Extract email and password from request body
 
-        const userFound = await User.findOne({ email }).select("+password");
-
+        const userFound = await User.findOne({ email, active: true }).select(
+          "+password"
+        );
 
         if (!(userFound && (await userFound.comparePassword(password)))) {
           //Check if a user exists with that email and if the password is correct

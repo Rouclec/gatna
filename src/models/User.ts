@@ -76,7 +76,7 @@ const UserSchema: Schema<IUser> = new Schema(
     },
     active: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     walletBalance: {
       type: Number,

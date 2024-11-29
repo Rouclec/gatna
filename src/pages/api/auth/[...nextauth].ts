@@ -25,9 +25,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Find user in database
-        const user = await User.findOne({ email: credentials.email }).select(
-          "+password"
-        );
+        const user = await User.findOne({
+          email: credentials.email,
+          active: true,
+        }).select("+password");
 
         // Verify password
         const isValid = await user.comparePassword(credentials.password);

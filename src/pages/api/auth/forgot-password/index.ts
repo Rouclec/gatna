@@ -21,10 +21,10 @@ export default async function handler(
         const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
         const signin_url = `${protocol}://${host}/signin?email=${email}`;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email, active: true });
 
-        if (!user) {
-          return res.status(200).json({ message: "user not found" });
+        if (!user || !user.active) {
+          return res.status(500).json({ message: "An unknown error occured" });
         }
 
         const validOTP = await verifyEntityOTP(User, otp, user._id as string);

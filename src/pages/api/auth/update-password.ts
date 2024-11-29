@@ -37,11 +37,11 @@ export default async function handler(
 
         const userFound = await User.findById(userId).select("+password");
 
-        if (!userFound) {
+        if (!userFound || !userFound.active) {
           //Check if a user exists with that email and if the password is correct
           return res
             .status(404)
-            .json({ message: `No user found with id: ${userId}` });
+            .json({ message: `No active user found with id: ${userId}` });
         }
 
         const passwordMatch = await userFound.comparePassword(oldPassword);
