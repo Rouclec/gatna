@@ -156,8 +156,8 @@ Resources:
                         ValueFrom: !Sub '${GeneralSecretArn}:mongoDbUri::'
                       - Name: NEXTAUTH_SECRET
                         ValueFrom: !Sub '${GeneralSecretArn}:nextAuthSecret::'
-                    #   - Name: NEXTAUTH_URL
-                        # ValueFrom: !Sub '${GeneralSecretArn}:nextAuthUrl::'
+                      - Name: NEXTAUTH_URL
+                        ValueFrom: !Sub '${SubDomain}${DomainName}'
                       - Name: ENCRYPTION_KEY
                         ValueFrom: !Sub '${GeneralSecretArn}:encryptionKey::'
                       - Name: MAIL_API_KEY
