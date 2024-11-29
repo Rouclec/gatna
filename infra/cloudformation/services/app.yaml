@@ -129,8 +129,8 @@ Resources:
                   Environment:
                       - Name: NODE_ENV
                         Value: production
-                    #   - Name: NEXTAUTH_URL
-                    #     Value: "https://dev.gatna.io"
+                      - Name: NEXTAUTH_URL
+                        Value: !Sub '${SubDomain}${DomainName}'"
                       - Name: VIDEO_SERVER_API
                         Value: "https://dev.vdocipher.com/api"
 
@@ -156,8 +156,6 @@ Resources:
                         ValueFrom: !Sub '${GeneralSecretArn}:mongoDbUri::'
                       - Name: NEXTAUTH_SECRET
                         ValueFrom: !Sub '${GeneralSecretArn}:nextAuthSecret::'
-                      - Name: NEXTAUTH_URL
-                        ValueFrom: !Sub '${SubDomain}${DomainName}'
                       - Name: ENCRYPTION_KEY
                         ValueFrom: !Sub '${GeneralSecretArn}:encryptionKey::'
                       - Name: MAIL_API_KEY
