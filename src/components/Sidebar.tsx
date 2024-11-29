@@ -232,7 +232,7 @@ const Sidebar: FC<Props> = ({ children }) => {
             </div>
             <div
               className='self-center flex bg-error w-[60px] h-[54px] rounded-xl items-center justify-center cursor-pointer'
-              onClick={() => signOut({ callbackUrl: '/' })}
+              onClick={() => signOut({ callbackUrl: '/', redirect: true })}
             >
               <Logout className='w-6 h-6' />
             </div>
