@@ -118,7 +118,7 @@ function Signin () {
                   ?
                 </p>
                 <Link
-                  href={'/'}
+                  href={'/forgot-password'}
                   className={`${gilroyBold.className} text-primary-450`}
                 >
                   Reset here
