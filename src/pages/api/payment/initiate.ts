@@ -21,7 +21,7 @@ export default async function handler(
       try {
         const protocol = req.headers["x-forwarded-proto"] || "https"; // Use "https" in production
         const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
-        const successUrl = `${protocol}://${host}/signin`;
+        const successUrl = `${protocol}://${host}/payment-successful`;
 
         const { userId, packageId } = req.body;
 

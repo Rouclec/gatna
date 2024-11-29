@@ -4,7 +4,7 @@ import { CloseSquare } from 'react-iconly'
 interface ModalProps {
   type: 'success' | 'error' | 'info' // Modal type determines styles
   heading: string // Heading text
-  body: string // Body text
+  body: React.ReactNode | string // Body text
   onClose?: () => void // Function to close the modal
   onConfirm?: () => void // Optional confirm action
   onCancel?: () => void // Optional cancel action
@@ -36,6 +36,18 @@ const Modal: React.FC<ModalProps> = ({
 
   const styles = typeStyles[type]
 
+  const renderBody = () => {
+    if (typeof body === 'string') {
+      return (
+        <div
+          className='text-gray-700 mt-4'
+          dangerouslySetInnerHTML={{ __html: body }}
+        />
+      )
+    }
+    return <div className='text-gray-700 mt-4'>{body}</div>
+  }
+
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md'>
       <div
@@ -54,7 +66,7 @@ const Modal: React.FC<ModalProps> = ({
             </button>
           )}
         </div>
-        <p className='text-gray-700 mt-4'>{body}</p>
+        {renderBody()}
 
         {/* Render action buttons if onConfirm or onCancel is provided */}
         {(onConfirm || onCancel) && (

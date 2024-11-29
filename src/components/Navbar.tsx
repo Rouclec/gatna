@@ -130,26 +130,19 @@ const Navbar: FC = () => {
             Courses
           </p>
           <div
-            className='flex mt-10 items-center gap-2 cursor-pointer'
+            className='flex button-primary px-6 py-4 items-center justify-center gap-2 cursor-pointer'
             onClick={() => router.push('/signin')}
           >
-            <Profile className='w-12 h-12' key={'profile-sidebar'} />
+            <Profile className='w-6 h-6' />
             {/* <p className={`${gilroyMedium.className} text-neutral-10`}>Sign in</p> */}
             <p
               className={
-                `${gilroyMedium.className} text-neutral-10 relative after:content-[''] after:block after:w-full after:h-0.5 after:bg-primary-300 after:absolute after:left-0 after:bottom-0 after:transition-all`
+                `${gilroyBold.className} text-neutral-10 relative 
+                `
                 // hover:after:w-[50%]
               }
             >
               Sign in
-            </p>
-          </div>
-          <div
-            className={`px-6 mt-4 items-center flex justify-center py-4 rounded-[10px] bg-gradient cursor-pointer`}
-            onClick={() => router.push('/signup')}
-          >
-            <p className={`${gilroyBold.className} text-sm text-neutral-10`}>
-              Create account
             </p>
           </div>
         </div>
