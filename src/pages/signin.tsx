@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
 import { Modal, Navbar } from '../components'
 import { Hide, Lock, Login, Message, Show } from 'react-iconly'
@@ -8,12 +8,14 @@ import { getSession, signIn } from 'next-auth/react'
 import { ClipLoader } from 'react-spinners'
 
 function Signin () {
+  const router = useRouter()
+  const { query } = router
+
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleSignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -22,7 +24,7 @@ function Signin () {
 
     const result = await signIn('credentials', {
       redirect: false, // prevent automatic redirection
-      email,
+      email: email ?? query?.email,
       password
     })
 
@@ -42,6 +44,12 @@ function Signin () {
       // window.location.reload()
     }
   }
+
+  useEffect(() => {
+    if (query?.email) {
+      setEmail(query.email as string)
+    }
+  }, [query])
 
   return (
     <div className='grid'>

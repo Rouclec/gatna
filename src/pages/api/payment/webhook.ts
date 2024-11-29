@@ -42,6 +42,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const protocol = req.headers["x-forwarded-proto"] || "https"; // Use "https" in production
+  const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
+  const signin_url = `${protocol}://${host}/signin`;
+
   console.log("Received request:", {
     method: req.method,
     headers: req.headers,
@@ -150,7 +154,6 @@ export default async function handler(
 
       console.log("Generating new password...");
       const newPassword = generateRandomPassword(10);
-      console.log("New password generated:", newPassword);
 
       console.log("Updating user password...");
       await User.findByIdAndUpdate(userFound._id, {
@@ -175,7 +178,7 @@ export default async function handler(
         .setReplyTo(sentFrom)
         .setSubject("Welcome to Gatna.io")
         .setHtml(
-          `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>.<br />Feel free to change the password in the settings section of your account</p>`
+          `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`
         )
         .setText("Welcome to Gatna.io");
 

@@ -72,3 +72,31 @@ export const useUpdateWithdrawalPin = (
     onError,
   });
 };
+
+export const useGetForgotPasswordOTP = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const { data } = await axios.get(`${API_URL}/forgot-password/${email}`);
+      return data.data as string;
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+export const useForgotPassword = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (body: { email: string; otp: string }) => {
+      const { data } = await axios.post(`${API_URL}/forgot-password`, body);
+      return data.data as string;
+    },
+    onSuccess,
+    onError,
+  });
+};
