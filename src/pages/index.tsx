@@ -167,9 +167,9 @@ export default function Home () {
   }
 
   useEffect(() => {
-    if (query?.referal) {
+    if (query?.referral) {
       if (typeof window !== 'undefined') {
-        localStorage.setItem('@referal', JSON.stringify(query?.referal))
+        localStorage.setItem('@referral', JSON.stringify(query?.referral))
       }
     }
   }, [query])

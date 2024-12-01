@@ -23,6 +23,7 @@ import {
   useUpdateWithdrawalPin
 } from '@/src/hooks/auth'
 import { Modal } from '@/src/components'
+import ReferralLink from '@/src/components/ReferalLink'
 
 function Settings () {
   const countries = getCountries()
@@ -229,6 +230,8 @@ function Settings () {
     }
   }, [userProfile, isFetched])
 
+  console.log({ userProfile })
+
   return (
     <Sidebar>
       <div className='mr-6 ml-4 md:ml-10 md:mr-28 overflow-x-hidden overflow-y-hidden'>
@@ -362,6 +365,8 @@ function Settings () {
                   </div>
                 </div>
               </div>
+              {/* <Link href={'/'}>Copy your referal link</Link> */}
+              <ReferralLink referralLink={userProfile?.referralLink} />
             </div>
             <button
               className={`bg-gradient flex items-center gap-[10px] px-8 py-5 w-fit rounded-[10px] cursor-pointer ${

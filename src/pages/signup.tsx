@@ -11,11 +11,11 @@ function SignUp () {
   const countries = getCountries()
   const [country, setCountry] = useState<string>('Cameroon')
 
-  const [countryCode, setCountryCode] = useState<string>('+237')
 
   const [isLoading, setIsLoading] = useState(false)
   const [packageId, setPackageId] = useState<string>()
   const [serverError, setServerError] = useState<string>()
+  const [referredBy, setReferredBy] = useState<string>()
 
   const [paymentResponse, setPaymentResponse] = useState<PaymentResponse>()
   const [showModal, setShowModal] = useState(false)
@@ -38,7 +38,7 @@ function SignUp () {
     general: ''
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -101,8 +101,9 @@ function SignUp () {
       setIsLoading(true)
       const bodyData = {
         ...formData,
-        countryCode
+        referred_by: referredBy
       }
+
 
       // Call your API route that handles signup with NextAuth
       const response = await fetch('/api/auth/signup', {
@@ -164,8 +165,12 @@ function SignUp () {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const packageIdString = localStorage.getItem('@buying-course')
+      const referralString = localStorage.getItem('@referral')
       if (packageIdString) {
         setPackageId(JSON.parse(packageIdString))
+      }
+      if (referralString) {
+        setReferredBy(JSON.parse(referralString))
       }
     }
   }, [])
@@ -244,9 +249,10 @@ function SignUp () {
                 <div className='flex items-center gap-2 h-[60px] w-full text-input bg-neutral-1A rounded-xl px-4 bg-opacity-40 placeholder:text-base text-neutral-10 placeholder:text-neutral-B2'>
                   <select
                     value={country}
+                    name='country_code'
                     onChange={event => {
                       setCountry(event.target.value)
-                      setCountryCode(event.target.value)
+                      handleChange(event)
                     }}
                     className={`w-16 h-full bg-transparent outline-none focus:ring-0 ${gilroyBold.className}`}
                   >

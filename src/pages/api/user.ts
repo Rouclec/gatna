@@ -38,7 +38,16 @@ export default async function handler(
           });
         }
 
-        return res.status(200).json({ data: userFound });
+        const protocol = req.headers["x-forwarded-proto"] || "https"; // Use "https" in production
+        const host = req.headers.host;
+        const referralLink = `${protocol}://${host}?referral=${userFound.referalCode}`;
+
+        return res.status(200).json({
+          data: {
+            ...userFound._doc,
+            referralLink,
+          },
+        });
       } catch (error) {
         return res.status(500).json({ message: error });
       }

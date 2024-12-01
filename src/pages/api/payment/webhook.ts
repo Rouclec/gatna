@@ -104,6 +104,7 @@ export default async function handler(
 
     const { txn_id, status, status_text } = parsedBody;
 
+
     console.log("Finding transaction with ID:", txn_id);
     const transaction = await Transaction.findOne({ transactionId: txn_id });
     if (!transaction) {
@@ -128,7 +129,6 @@ export default async function handler(
         message: `No user found for this transaction with id: ${transaction.user}`,
       });
     }
-    console.log("User found:", userFound);
 
     const transactionStatus =
       TRANSACTION_STATUSES[status as keyof typeof TRANSACTION_STATUSES] ||
@@ -158,6 +158,7 @@ export default async function handler(
       console.log("Updating user password...");
       await User.findByIdAndUpdate(userFound._id, {
         password: newPassword,
+        active: true
       });
 
       console.log("Activating user package...");
@@ -165,6 +166,12 @@ export default async function handler(
         active: true,
         expiration: nextYear,
       });
+
+      await User.findOneAndUpdate(
+        { referalCode: userFound.referredBy },
+        { $inc: { walletBalance: 10 } }, // Increment wallet balance by 10
+        { new: true } // Return the updated document
+      );
 
       console.log("Sending confirmation email...");
       const mailerSend = new MailerSend({

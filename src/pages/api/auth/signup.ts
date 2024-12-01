@@ -19,6 +19,8 @@ export default async function handler(
           password,
           confirm_password,
           phone_number,
+          referred_by,
+          country_code,
         } = req.body; // Extract values from request body
 
         const role = await Role.findOne({ code: "user" });
@@ -42,6 +44,8 @@ export default async function handler(
           password: setPassword,
           phoneNumber: phone_number,
           role: role?.id,
+          referredBy: referred_by,
+          countryCode: country_code,
         });
 
         await newUser.save();

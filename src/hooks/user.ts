@@ -11,6 +11,8 @@ interface User {
   countryCode: string;
   walletBalance: number;
   referalCode: string;
+  referralLink: string;
+  referredBy?: string;
   walletId?: string;
   profilePic?: string;
   createdAt: string;
@@ -44,6 +46,8 @@ export const useUpdateMe = (
         | "updatedAt"
         | "walletBalance"
         | "referalCode"
+        | "referralLink"
+        | "referredBy"
       >
     ) => {
       const { data } = await axios.put(API_URL, body);

@@ -21,6 +21,7 @@ interface IUser extends Document {
   otp?: string;
   walletBalance: number;
   referalCode: string;
+  referredBy?: string;
   withdrawalPin?: string;
   profilePic?: string;
   walletId?: string;
@@ -86,6 +87,7 @@ const UserSchema: Schema<IUser> = new Schema(
       type: String,
       default: () => crypto.randomBytes(4).toString("hex").toUpperCase(), // Generates 8 characters
     },
+    referredBy: String,
     withdrawalPin: {
       type: String,
       length: 6,
