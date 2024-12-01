@@ -1,7 +1,6 @@
 import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";
-import Coinpayments from "coinpayments";
-import { Coinpayment, Notification, Transaction, User } from "@/src/models";
+import { Notification, User, Withdrawal } from "@/src/models";
 import { getToken } from "next-auth/jwt";
 import { verifyEntityOTP } from "@/src/util/otp";
 
@@ -26,10 +25,7 @@ export default async function handler(
   switch (req.method) {
     case "POST": // Handle POST request to login
       try {
-        const protocol = req.headers["x-forwarded-proto"] || "https"; // Use "https" in production
-        const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
-        const ipn_url = `${protocol}://${host}/api/hello`;
-
+        
         const { amount, walletId, password, pin, otp } = req.body;
 
         const validOTP = await verifyEntityOTP(User, otp, userId as string);
@@ -40,7 +36,6 @@ export default async function handler(
         const userFound = await User.findById(userId).select(
           "+password +withdrawalPin"
         );
-
 
         if (!userFound || !userFound.active) {
           //Check if a user exists with that email and if the password is correct
@@ -61,40 +56,45 @@ export default async function handler(
           return res.status(500).json({ message: "Incorrect pin" });
         }
 
-        const coinPaymentInfo = await Coinpayment.findOne();
+        // const coinPaymentInfo = await Coinpayment.findOne();
 
-        if (!coinPaymentInfo) {
-          return res
-            .status(404)
-            .json({ message: "No coinpayment info found on server" });
-        }
+        // if (!coinPaymentInfo) {
+        //   return res
+        //     .status(404)
+        //     .json({ message: "No coinpayment info found on server" });
+        // }
 
-        const coinpaymentsClient = new Coinpayments({
-          key: coinPaymentInfo.getDecryptedPrivateKey() as string,
-          secret: coinPaymentInfo.getDecryptedSecretKey() as string,
-        });
+        // const coinpaymentsClient = new Coinpayments({
+        //   key: coinPaymentInfo.getDecryptedPrivateKey() as string,
+        //   secret: coinPaymentInfo.getDecryptedSecretKey() as string,
+        // });
 
         if (userFound?.walletBalance < amount) {
           return res.status(500).json({ message: "Insufficient balance" });
         }
 
-        const transaction = await coinpaymentsClient.createWithdrawal({
-          currency: "USDT.TRC20",
-          currency2: "USD",
-          // amount: Package.price, //TODO: revert this to use the Package's price
-          amount: 1,
-          address: walletId,
-          ipn_url,
-        });
+        // const transaction = await coinpaymentsClient.createWithdrawal({
+        //   currency: "USDT.TRC20",
+        //   currency2: "USD",
+        //   // amount: Package.price, //TODO: revert this to use the Package's price
+        //   amount: 1,
+        //   address: walletId,
+        //   ipn_url,
+        // });
 
-        const dbTransaction = new Transaction({
-          transactionId: transaction.id,
-          package: null,
+        const dbWithdrawal = new Withdrawal({
           user: userId,
           amount: amount,
-          currency1: "USDT.TRC20",
+          walletId,
+          currency: "USDT.TRC20",
           type: "withdrawal",
         });
+
+        await User.findByIdAndUpdate(
+          userId,
+          { $inc: { walletBalance: -amount } }, // Decrement the user's wallet balance by 10
+          { new: true } // Return the updated document
+        );
 
         const notification = new Notification({
           title: `Withdrawal request`,
@@ -103,11 +103,11 @@ export default async function handler(
 
         await notification.save();
 
-        await dbTransaction.save();
+        await dbWithdrawal.save();
 
-        return res.status(200).json({ data: transaction });
+        return res.status(200).json({ data: dbWithdrawal });
       } catch (error) {
-        console.error( error , "initiating withdrawal");
+        console.error(error, "initiating withdrawal");
         return res.status(500).json({ message: error });
       }
     default: // Handle unsupported methods

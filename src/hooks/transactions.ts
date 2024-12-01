@@ -5,11 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Package } from "./package";
 
-interface Transaction {
+export interface Transaction {
   user: {
     firstName: string;
     lastName: string;
     email: string;
+    referalCode: string;
+    referredBy?: string;
   };
   package: Package;
   transactionId: string;

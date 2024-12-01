@@ -9,6 +9,7 @@ import Package from "./Package";
 import Transaction from "./Transaction";
 import UserPackage from "./UserPackage";
 import Notification from "./Notification";
+import Withdrawal from "./Withdrawal";
 
 export {
   Account,
@@ -22,4 +23,5 @@ export {
   Transaction,
   UserPackage,
   Notification,
+  Withdrawal,
 };

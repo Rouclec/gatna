@@ -22,7 +22,7 @@ import CircularProgressBar from '@/src/components/CircularProgressBar'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next'
 import { useGetStats } from '@/src/hooks/stats'
-import { useGetTransactions } from '@/src/hooks/transactions'
+import { Transaction, useGetTransactions } from '@/src/hooks/transactions'
 
 const colors = {
   high: {
@@ -75,6 +75,10 @@ function Index () {
       icon: React.JSX.Element
     }[]
   >(initialStats)
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    Transaction[]
+  >([])
+  const [filter, setFilter] = useState<string>()
 
   function calculateProgress (
     startDate: string,
@@ -146,6 +150,27 @@ function Index () {
     }
   }, [isFetched, adminStats])
 
+  useEffect(() => {
+    if (!filter) {
+      setFilteredTransactions(transactions ?? [])
+    } else {
+      const lowercasedValue = filter.toLowerCase()
+      const filtered =
+        transactions?.filter(({ user }) => {
+          const searchableObject = user
+          delete searchableObject.referredBy
+          return Object.values(searchableObject).some(field => {
+            return (
+              typeof field === 'string' &&
+              field.toLowerCase().includes(lowercasedValue)
+            )
+          })
+        }) ?? []
+
+      setFilteredTransactions(filtered)
+    }
+  }, [filter, transactions])
+
   return (
     <Sidebar>
       <div className='ml-12 mr-20 mt-8 flex flex-col gap-8'>
@@ -184,6 +209,7 @@ function Index () {
               <input
                 className={`focus:ring-0 text-input focus:outline-none text-neutral-10 bg-transparent w-full ${gilroyMedium.className}`}
                 placeholder='Search'
+                onChange={e => setFilter(e.target.value)}
               />
               <div className='flex-shrink-0 w-5'>
                 <Filter className='w-full' />
@@ -470,7 +496,7 @@ function Index () {
               </tr>
             </thead>
             <tbody>
-              {transactions?.map((item, index) => {
+              {filteredTransactions?.map((item, index) => {
                 const progress = calculateProgress(
                   item?.updatedAt,
                   item?.expiryDate
@@ -484,7 +510,7 @@ function Index () {
                       <p
                         className={`${gilroyMedium.className} text-sm text-neutral-10`}
                       >
-                        #{item?.transactionId?.slice(0, 4)}
+                        {item?.user?.referalCode}
                       </p>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
