@@ -1,7 +1,6 @@
 // src/models/Role.ts
 import mongoose, { Schema, Document, model } from "mongoose";
 import slugify from "slugify";
-import uniqueValidator from "mongoose-unique-validator";
 
 interface IRole extends Document {
   name: string;
@@ -25,9 +24,6 @@ const RoleSchema: Schema = new Schema(
   }
 );
 
-RoleSchema.plugin(uniqueValidator, {
-  message: "{PATH} {VALUE} already in use, please try another!",
-}); //enable beautifying on this schema
 
 RoleSchema.pre<IRole>("save", function (next) {
   this.code = slugify(this.name, { lower: true });

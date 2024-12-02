@@ -8,6 +8,8 @@ interface ModalProps {
   onClose?: () => void // Function to close the modal
   onConfirm?: () => void // Optional confirm action
   onCancel?: () => void // Optional cancel action
+  confirmTxt?: string
+  cancelTxt?: string
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,21 +18,26 @@ const Modal: React.FC<ModalProps> = ({
   body,
   onClose,
   onConfirm,
-  onCancel
+  onCancel,
+  confirmTxt = 'OK',
+  cancelTxt = 'Cancel'
 }) => {
   // Define styles based on modal type
   const typeStyles = {
     success: {
       headingColor: 'text-green',
-      borderColor: 'border-green'
+      borderColor: 'border-green',
+      backgroundColor: 'bg-green'
     },
     error: {
       headingColor: 'text-red-600',
-      borderColor: 'border-red-600'
+      borderColor: 'border-red-600',
+      backgroundColor: 'bg-red-600'
     },
     info: {
       headingColor: 'text-primary-300',
-      borderColor: 'border-primary-300'
+      borderColor: 'border-primary-300',
+      backgroundColor: 'bg-primary-300'
     }
   }
 
@@ -71,20 +78,20 @@ const Modal: React.FC<ModalProps> = ({
         {/* Render action buttons if onConfirm or onCancel is provided */}
         {(onConfirm || onCancel) && (
           <div className='flex justify-center mt-6 space-x-4'>
+            {onConfirm && (
+              <button
+                onClick={onConfirm}
+                className={`px-4 py-2 ${styles.backgroundColor} text-white rounded hover:bg-blue-700 focus:outline-none`}
+              >
+                {confirmTxt}
+              </button>
+            )}
             {onCancel && (
               <button
                 onClick={onCancel}
                 className='px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 focus:outline-none'
               >
-                Cancel
-              </button>
-            )}
-            {onConfirm && (
-              <button
-                onClick={onConfirm}
-                className='px-4 py-2 bg-primary-300 text-white rounded hover:bg-blue-700 focus:outline-none'
-              >
-                OK
+                {cancelTxt}
               </button>
             )}
           </div>

@@ -31,12 +31,12 @@ const colors = {
 
 const CourseCard: FC<Props> = ({ course, index, onClick, isSelected }) => {
   const percentage = Math.round(
-    (+(course.minutesWatched ?? 0) * 100) / +(course.duration ?? 1)
+    (+(0) * 100) / +(course?.length ?? 1)
   );
 
   return (
     <div
-      className={`w-full h-auto rounded-[20px] p-4 md:p-5 flex flex-col sm:flex-row justify-between items-center ${
+      className={`w-full h-fit my-auto rounded-[20px] p-4 md:p-5 flex flex-col sm:flex-row justify-between items-center ${
         isSelected
           ? "bg-gradient-to-r from-[#462FCF14] to-[#462FCF14] border-2 border-blue"
           : "bg-neutral-1A40"
@@ -54,13 +54,13 @@ const CourseCard: FC<Props> = ({ course, index, onClick, isSelected }) => {
             </p>
           </div>
           <div className="flex items-center flex-wrap gap-2">
-            {!!course.pdf && (
+            {!!course.link && (
               <div className="px-3 py-2 flex gap-2 rounded-full items-center bg-grey-bg">
                 <Document className="w-4 h-4" />
                 <p className={`${gilroySemiBold.className} text-xs`}>PDF</p>
               </div>
             )}
-            {!!course.duration && (
+            {!!course.length && (
               <div
                 className={`px-3 py-2 flex gap-2 rounded-full items-center ${
                   isSelected ? "bg-blue" : "bg-grey-bg"
@@ -70,11 +70,11 @@ const CourseCard: FC<Props> = ({ course, index, onClick, isSelected }) => {
                 <p className={`${gilroySemiBold.className} text-xs`}>Video</p>
               </div>
             )}
-            {!!course.duration && (
+            {!!course.length && (
               <div className="px-3 py-2 flex gap-2 rounded-full items-center bg-grey-bg">
                 <CircleClock className="w-4 h-4" />
                 <p className={`${gilroySemiBold.className} text-xs`}>
-                  {Math.floor(+course.duration / 60)} : {+course.duration % 60} mins
+                  {Math.floor(+course.length / 60)} : {+course.length % 60} mins
                 </p>
               </div>
             )}
@@ -86,7 +86,7 @@ const CourseCard: FC<Props> = ({ course, index, onClick, isSelected }) => {
           </div>
         </div>
         {/* Show progress bar below text on xs screens and alongside on sm and up */}
-        {!course.pdf && (
+        {!course.length && (
           <div className="sm:ml-4 mt-4 sm:mt-0">
             <CircularProgressBar
               percentage={percentage}

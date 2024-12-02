@@ -16,6 +16,9 @@ export interface Package {
     description: string;
     fileType: string;
   };
+  totalVideos?: number;
+  totalPDFs?: number;
+  totalDuration?: number;
 }
 
 const API_URL = "/api/package";

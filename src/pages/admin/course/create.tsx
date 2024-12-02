@@ -1,5 +1,5 @@
 import Sidebar from '@/src/components/Sidebar'
-import React, { ChangeEvent, FC, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useState } from 'react'
 
 import DocumentVerified from '@/public/assets/icons/document-verified.svg'
 import Filter from '@/public/assets/icons/filter.svg'
@@ -16,15 +16,19 @@ import Reels from '@/public/assets/icons/reels.svg'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next'
 import {
+  Course,
   CreateCourseRequest,
+  useDeleteCourse,
   useGetCourses,
-  useSaveCourse
+  useSaveCourse,
+  useUpdateCourse
 } from '@/src/hooks/course'
 import { storage } from '@/src/util/firebase'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { ClipLoader, FadeLoader } from 'react-spinners'
 import { useGetPackages } from '@/src/hooks/package'
 import { Modal } from '@/src/components'
+import { FaTrash } from 'react-icons/fa'
 
 interface InputProps {
   leftIcon?: React.ReactNode
@@ -95,10 +99,17 @@ function CreateCourse () {
   const [courseTitle, setCourseTitle] = useState<string>()
   const [videoID, setVideoID] = useState<string>()
   const [description, setDescripton] = useState<string>()
+  const [published, setPublished] = useState(true)
+  const [selectedCourse, setSelectedCourse] = useState<Course>()
+  const [downloadURL, setDownloadURL] = useState<string>()
+  const [deletingItem, setDeletingItem] = useState<{
+    id: string
+    title: string
+  }>()
 
   const [file, setFile] = useState<File | null>(null)
   // const [progress, setProgress] = useState(0);
-  const [downloadURL, setDownloadURL] = useState('')
+  // const [downloadURL, setDownloadURL] = useState('')
   const [loading, setLoading] = useState(false)
 
   const [serverError, setServerError] = useState<string>()
@@ -109,31 +120,44 @@ function CreateCourse () {
     }
   }
 
-  const handleUpload = () => {
-    if (!file) return
+  const handleUpload = (): Promise<string> => {
+    if (!file) return Promise.resolve('')
 
-    // Create a storage reference
-    const storageRef = ref(storage, `uploads/${file.name}`)
+    // setDownloadURL('')
+    setServerError(undefined)
 
-    // Start the file upload
-    const uploadTask = uploadBytesResumable(storageRef, file)
+    return new Promise((resolve, reject) => {
+      // Create a storage reference
+      const storageRef = ref(storage, `uploads/${file.name}`)
 
-    // Monitor upload progress
-    uploadTask.on(
-      'state_changed',
-      snapshot => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        console.log(`Upload is ${progress}% done`)
-      },
-      error => {
-        setServerError(error.message)
-      },
-      async () => {
-        // Get the download URL after the upload completes
-        const url = await getDownloadURL(uploadTask.snapshot.ref)
-        setDownloadURL(url)
-      }
-    )
+      // Start the file upload
+      const uploadTask = uploadBytesResumable(storageRef, file)
+
+      // Monitor upload progress
+      uploadTask.on(
+        'state_changed',
+        snapshot => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          console.log(`Upload is ${progress}% done`)
+        },
+        error => {
+          setServerError(error.message)
+          reject(error) // Reject the promise on error
+        },
+        async () => {
+          try {
+            // Get the download URL after the upload completes
+            const url = await getDownloadURL(uploadTask.snapshot.ref)
+            // setDownloadURL(url)
+            resolve(url) // Resolve the promise with the download URL
+          } catch (error) {
+            setServerError('Error uploading file')
+            reject(error) // Reject the promise if getting the URL fails
+          }
+        }
+      )
+    })
   }
 
   const { data: packages, isFetching: isPackagesFetching } = useGetPackages({})
@@ -141,30 +165,51 @@ function CreateCourse () {
 
   const handleCreate = async () => {
     try {
+      let course: CreateCourseRequest
+
       setLoading(true)
       if (courseType === 'pdf') {
-        handleUpload()
-        const course: CreateCourseRequest = {
+        let url: string | undefined
+        url = await handleUpload()
+        if (!url) {
+          url = downloadURL
+        }
+        if (!url) {
+          setServerError('Please select a valid PDF file')
+          return
+        }
+        course = {
+          id: selectedCourse?._id,
           package: packages![selectedType]._id,
           videoID: null,
           title: courseTitle!,
           description: description!,
-          pdf: downloadURL
+          pdf: url ?? '',
+          published
         }
-        await mutateAsync(course)
       } else {
-        const course: CreateCourseRequest = {
+        if (!videoID) {
+          setServerError('Please enter a video ID')
+          return
+        }
+        course = {
+          id: selectedCourse?._id,
           package: packages![selectedType]._id,
           videoID: videoID!,
           title: courseTitle!,
           description: description!,
-          pdf: null
+          pdf: null,
+          published
         }
+      }
+
+      if (!!course?.id) {
+        await updateCourse(course)
+      } else {
         await mutateAsync(course)
       }
     } catch (error) {
       console.error(`Error uploading course: ${error}`)
-      alert(`Error uploading course: ${error}`)
     } finally {
       setLoading(false)
     }
@@ -186,6 +231,57 @@ function CreateCourse () {
       }
     }
   )
+
+  const { mutateAsync: updateCourse } = useUpdateCourse(
+    () => {
+      window.location.reload()
+    },
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setServerError(error?.response?.data.message)
+        } else {
+          setServerError('An unknown server error occured')
+        }
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    }
+  )
+
+  const { mutateAsync: deleteCourse } = useDeleteCourse(
+    () => {
+      setDeletingItem(undefined)
+      window.location.reload()
+    },
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setServerError(error?.response?.data.message)
+        } else {
+          setServerError('An unknown server error occured')
+        }
+      } else {
+        setServerError('An unknown server error occured')
+      }
+    }
+  )
+
+  useEffect(() => {
+    setCourseType(
+      selectedCourse?.video?.fileType ?? selectedCourse?.pdf?.fileType
+    )
+    setCourseTitle(selectedCourse?.video?.title ?? selectedCourse?.pdf?.title)
+    if (selectedCourse?.video) {
+      setVideoID(selectedCourse?.video.id)
+    } else {
+      setDownloadURL(selectedCourse?.pdf.link)
+    }
+    setDescripton(
+      selectedCourse?.video?.description ?? selectedCourse?.pdf?.description
+    )
+    setPublished(!!selectedCourse?.published)
+  }, [selectedCourse])
 
   return (
     <Sidebar>
@@ -310,6 +406,15 @@ function CreateCourse () {
                     onChange={e => setDescripton(e.target.value)}
                   />
                 </div>
+                <div className='w-full flex gap-4 items-center'>
+                  <input
+                    className='checkbox-custom'
+                    type='checkbox'
+                    checked={published}
+                    onChange={() => setPublished(!published)}
+                  />
+                  <p>Publish</p>
+                </div>
               </div>
               <button
                 className={`w-fit button-primary flex px-8 py-5 items-center gap-[10px] justify-center ${
@@ -374,7 +479,7 @@ function CreateCourse () {
                   <th className='text-left px-3 py-5 whitespace-nowrap rounded-l-lg'>
                     <input className='checkbox-custom' type='checkbox' />
                   </th>
-                  <th className='text-left px-3 py-5 whitespace-nowrap rounded-l-lg'>
+                  <th className='text-left px-3 py-5 whitespace-nowrap'>
                     <div className='flex gap-1 items-center'>
                       <p
                         className={`${gilroyBold.className} text-sm text-neutral-50`}
@@ -511,87 +616,103 @@ function CreateCourse () {
                 </tr>
               </thead>
               <tbody>
-                {coursesData
-                  ?.flatMap(course => [
-                    ...(course.videos ?? []),
-                    ...(course.pdfs ?? [])
-                  ])
-                  ?.map((item, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <input className='checkbox-custom' type='checkbox' />
-                        </td>
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <p
-                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                          >
-                            {item._id}
-                          </p>
-                        </td>
+                {coursesData?.length
+                  ? coursesData
+                      .filter(
+                        item =>
+                          !!packages &&
+                          item?.package._id === packages[selectedType]._id
+                      )
+                      ?.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <input
+                                className='checkbox-custom'
+                                type='checkbox'
+                                checked={item.published}
+                              />
+                            </td>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <p
+                                className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                              >
+                                {item._id}
+                              </p>
+                            </td>
 
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <p
-                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                          >
-                            {item.title}
-                          </p>
-                        </td>
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <p
-                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                          >
-                            {item.description}
-                          </p>
-                        </td>
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <p
-                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                          >
-                            {item.fileType.charAt(0).toUpperCase() +
-                              item.fileType.slice(1)}
-                          </p>
-                        </td>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <p
+                                className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                              >
+                                {item?.video?.title ?? item?.pdf?.title ?? ''}
+                              </p>
+                            </td>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <p
+                                className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                              >
+                                {item?.video?.description ??
+                                  item?.pdf?.description ??
+                                  ''}
+                              </p>
+                            </td>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <p
+                                className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                              >
+                                {(item?.video?.fileType ?? item?.pdf?.fileType)
+                                  .charAt(0)
+                                  .toUpperCase() +
+                                  (
+                                    item?.video?.fileType ?? item?.pdf?.fileType
+                                  ).slice(1)}
+                              </p>
+                            </td>
 
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <p
-                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                          >
-                            {item?.length
-                              ? `${Math.floor(
-                                  item.length / (60 * 60)
-                                )}:${Math.round(item.length / 60)}`
-                              : 'N/A'}
-                          </p>
-                        </td>
-                        <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                          <div className='flex items-center gap-3'>
-                            <div
-                              className={`w-6 h-6 rounded-md flex items-center justify-center`}
-                              style={{
-                                backgroundColor:
-                                  // item.status === 'completed'
-                                  //   ?
-                                  '#14A42B33'
-                                // : '#D1416333'
-                              }}
-                            >
-                              {/* {item.status === 'completed' ? ( */}
-                              <Completed className='w-3' />
-                              {/* ) : (
-                                <Failed className='w-3' />
-                              )} */}
-                            </div>
-                            <div
-                              className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-info`}
-                            >
-                              <EditSquare primaryColor='#ffffff' size={12} />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <p
+                                className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                              >
+                                {item?.video?.length
+                                  ? `${Math.floor(
+                                      item.video.length / (60 * 60)
+                                    )}:${Math.round(item.video.length / 60)}`
+                                  : 'N/A'}
+                              </p>
+                            </td>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                              <div className='flex items-center gap-3'>
+                                <div
+                                  className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-info hover:scale-125 transition-transform duration-500`}
+                                  onClick={() => setSelectedCourse(item)}
+                                >
+                                  <EditSquare
+                                    primaryColor='#ffffff'
+                                    size={12}
+                                  />
+                                </div>
+                                <div
+                                  className={`w-6 h-6 rounded-md flex items-center bg-error bg-opacity-40 justify-center cursor-pointer hover:scale-125 transition-transform duration-500`}
+                                  onClick={() => {
+                                    setDeletingItem({
+                                      id: item._id ?? '',
+                                      title:
+                                        item?.video?.title ?? item?.pdf?.title
+                                    })
+                                  }}
+                                >
+                                  <FaTrash
+                                    className='w-[10px]'
+                                    color='#E03A31'
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })
+                  : null}
               </tbody>
             </table>
           </div>
@@ -603,6 +724,16 @@ function CreateCourse () {
           heading='Error creating course'
           body={serverError}
           onClose={() => setServerError(undefined)}
+        />
+      )}
+      {!!deletingItem && (
+        <Modal
+          onConfirm={async () => await deleteCourse(deletingItem?.id)}
+          type='error'
+          heading='Confirm delete'
+          body={`Are you sure you want to delete the course: ${deletingItem?.title}?`}
+          onCancel={() => setDeletingItem(undefined)}
+          confirmTxt='Yes, Delete'
         />
       )}
     </Sidebar>

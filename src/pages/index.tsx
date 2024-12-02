@@ -24,9 +24,9 @@ import {
 import Footer from '../components/Footer'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useGetCourses } from '../hooks/course'
 import { ClipLoader } from 'react-spinners'
 import { useContactUs } from '../hooks/useContact'
+import { useGetPackages } from '../hooks/package'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -147,7 +147,7 @@ export default function Home () {
   const { query } = router
 
 
-  const { data: coursesData, isFetched: isCoursesDataFetched } = useGetCourses()
+  const { data: packages, isFetched: isPackagesFetched } = useGetPackages({})
 
   const handleContactUs = async () => {
     try {
@@ -249,12 +249,12 @@ export default function Home () {
         </section>
         <section id='courses'>
           <div className='grid my-16 lg:my-64 gap-10 lg:gap-48'>
-            {isCoursesDataFetched ? (
-              coursesData?.map((course, index) => {
+            {isPackagesFetched ? (
+              packages?.map((pack, index) => {
                 return (
-                  <div key={course?._id}>
+                  <div key={pack?._id}>
                     <CourseDetails
-                      course={course}
+                      pack={pack}
                       inverted={index % 2 !== 0}
                       pinColor={colors[index % 5]}
                     />

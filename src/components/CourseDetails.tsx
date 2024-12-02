@@ -2,13 +2,13 @@ import React, { FC } from 'react'
 import Pin from '@/public/assets/icons/pin.svg'
 import { gilroyBlack, gilroyBold, gilroyHeavy, gilroyRegular } from '../pages'
 import { Paper, TimeSquare, Video } from 'react-iconly'
-import { Course } from '../hooks/course'
 import { useGetVideoPlaybackInfo } from '../hooks/video'
 import { ClipLoader } from 'react-spinners'
 import { useRouter } from 'next/router'
+import { Package } from '../hooks/package'
 
 interface Props {
-  course: Course
+  pack: Package
   inverted?: boolean
   pinColor: string
 }
@@ -20,23 +20,22 @@ const CURRENCY_SYMBOL = {
   XAF: 'XAF'
 } as const // `as const` ensures the keys and values are readonly
 
-function getCurrencySymbol (currency: string): string {
+function getCurrencySymbol (currency: string | undefined): string {
+  if (!currency) return CURRENCY_SYMBOL.XAF
   if (currency in CURRENCY_SYMBOL) {
     return CURRENCY_SYMBOL[currency as keyof typeof CURRENCY_SYMBOL]
   }
   return currency
 }
 
-const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
+const CourseDetails: FC<Props> = ({ pack, inverted, pinColor }) => {
   const router = useRouter()
 
-  const { data, isLoading } = useGetVideoPlaybackInfo(
-    course?.package.previewVideo?.id
-  )
+  const { data, isLoading } = useGetVideoPlaybackInfo(pack.previewVideo?.id)
 
   const handleClick = () => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('@buying-course', JSON.stringify(course.package._id))
+      localStorage.setItem('@buying-course', JSON.stringify(pack._id))
       router.push('/signup')
     }
   }
@@ -57,7 +56,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             <p
               className={`block lg:hidden ${gilroyHeavy.className} text-6xl mx:text-8xl text-center leading-none text-white text-opacity-[2%] whitespace-nowrap`}
             >
-              {course.package.name}
+              {pack.name}
             </p>
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
@@ -67,35 +66,37 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
                     <p className={`${gilroyRegular.className} text-lg`}>
-                      {course.package.tag} /{' '}
+                      {pack.tag} /{' '}
                       <span className={`${gilroyBold.className}`}>
-                        {getCurrencySymbol(course.package.currency)}
-                        {course.package.price}
+                        {getCurrencySymbol(pack.currency)}
+                        {pack.price}
                       </span>
                     </p>
                   </div>
                   <p
                     className={`leading-[52px] text-3xl md:text-[40px] ${gilroyBlack.className} text-center md:text-right`}
                   >
-                    {course?.package.previewVideo?.title ?? course?.package.tag}
+                    {pack.previewVideo?.title ?? pack.tag}
                   </p>
                   <p
                     className={`${gilroyRegular.className} text-lg text-center md:text-right`}
                   >
-                    {course?.package.previewVideo?.description ??
-                      course?.package.tag}
+                    {pack.previewVideo?.description ?? pack.tag}
                   </p>
                   <div className='grid grid-cols-2 md:grid-cols-3 items-center gap-3'>
-                    {!course.pdfs && <div className='hidden md:block' />}
+                    {(pack?.totalPDFs ?? 0) > 0 && (
+                      <div className='hidden md:block' />
+                    )}
                     <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
                       <Video size={24} style={{ opacity: 0.4 }} />
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course?.videos?.length ?? 0} video{course?.videos?.length > 1 && 's'}
+                        {pack?.totalVideos ?? 0} video
+                        {(pack?.totalVideos ?? 0) > 1 && 's'}
                       </p>
                     </div>
-                    {course?.pdfs && (
+                    {(pack?.totalPDFs ?? 0) > 0 && (
                       <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
                         <Paper size={24} style={{ opacity: 0.4 }} />
                         <p
@@ -110,11 +111,13 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course?.duration && course.duration > 3600
+                        {pack?.totalDuration && pack.totalDuration > 3600
                           ? `${Math.round(
-                              (course.duration ?? 0) / (60 * 60)
+                              (pack.totalDuration ?? 0) / (60 * 60)
                             )} hours`
-                          : `${Math.round((course.duration ?? 0) / 60)} mins`}
+                          : `${Math.round(
+                              (pack.totalDuration ?? 0) / 60
+                            )} mins`}
                       </p>
                     </div>
                   </div>
@@ -161,7 +164,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   transform: 'translate(-50%, -50%) rotate(90deg)'
                 }}
               >
-                {course.package.name}
+                {pack.name}
               </p>
             </div>
           </div>
@@ -173,7 +176,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
             <p
               className={`block lg:hidden ${gilroyHeavy.className} text-6xl mx:text-8xl text-center leading-none text-white text-opacity-[2%] whitespace-nowrap`}
             >
-              {course.package.name}
+              {pack.name}
             </p>
           </div>
           <div className='pl-0 mx:px-16 lg:px-28 flex flex-col md:flex-row gap-4'>
@@ -186,7 +189,7 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   transform: 'translate(-50%, -50%) rotate(90deg)'
                 }}
               >
-                {course.package.name}
+                {pack.name}
               </p>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
@@ -216,23 +219,22 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                   <div className='flex bg-dark-4D p-4 w-fit items-center rounded-[10px]'>
                     <Pin className='w-6 h-6' fill={pinColor} />
                     <p className={`${gilroyRegular.className} text-lg`}>
-                      {course.package.tag} /{' '}
+                      {pack.tag} /{' '}
                       <span className={`${gilroyBold.className}`}>
-                        {getCurrencySymbol(course.package.currency)}
-                        {course.package.price}
+                        {getCurrencySymbol(pack.currency)}
+                        {pack.price}
                       </span>
                     </p>
                   </div>
                   <p
                     className={`leading-[52px] text-3xl md:text-[40px] ${gilroyBlack.className} text-center md:text-left`}
                   >
-                    {course?.package.previewVideo?.title ?? course?.package.tag}
+                    {pack.previewVideo?.title ?? pack.tag}
                   </p>
                   <p
                     className={`${gilroyRegular.className} text-lg text-center md:text-left`}
                   >
-                    {course?.package.previewVideo?.description ??
-                      course?.package.tag}
+                    {pack.previewVideo?.description ?? pack.tag}
                   </p>
                   <div className='grid grid-cols-2 md:grid-cols-3 items-center gap-3'>
                     <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
@@ -240,11 +242,11 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course?.videos?.length ?? 0} video
-                        {course?.videos?.length > 1 && 's'}
+                        {pack?.totalVideos ?? 0} video
+                        {(pack?.totalVideos ?? 0) > 1 && 's'}
                       </p>
                     </div>
-                    {course.pdfs && (
+                    {(pack?.totalPDFs ?? 0) > 0 && (
                       <div className='flex items-center justify-center rounded-lg bg-grey-bg gap-[6px] px-[14px] py-3'>
                         <Paper size={24} style={{ opacity: 0.4 }} />
                         <p
@@ -259,11 +261,11 @@ const CourseDetails: FC<Props> = ({ course, inverted, pinColor }) => {
                       <p
                         className={`${gilroyRegular.className} text-neutral-50`}
                       >
-                        {course?.duration && course.duration > 3600
+                        {pack?.totalDuration && pack.totalDuration > 3600
                           ? `${Math.round(
-                              (course.duration ?? 0) / (60 * 60)
+                              (pack.totalDuration ?? 0) / (60 * 60)
                             )} hours`
-                          : `${Math.round((course.duration ?? 0) / 60)} mins`}
+                          : `${Math.round((pack.totalDuration ?? 0) / 60)} mins`}
                       </p>
                     </div>
                   </div>

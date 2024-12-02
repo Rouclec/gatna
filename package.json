@@ -27,7 +27,6 @@
     "mailersend": "^2.3.0",
     "moment": "^2.30.1",
     "mongoose": "^8.8.0",
-    "mongoose-unique-validator": "^4.0.1",
     "next": "14.2.13",
     "next-auth": "^4.24.10",
     "path": "^0.12.7",

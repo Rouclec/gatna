@@ -21,22 +21,23 @@ export interface Course {
     };
     parent?: string;
   };
-  videos: {
+  video: {
     _id: string;
     id: string;
     length: number;
     title: string;
     description: string;
     fileType: string;
-  }[];
-  pdfs: {
+  };
+  pdf: {
     _id: string;
     id: string;
     title: string;
     description: string;
     fileType: string;
     length?: number;
-  }[];
+    link: string;
+  };
   duration?: number;
   published?: boolean;
   createdAt?: string;
@@ -44,11 +45,13 @@ export interface Course {
 }
 
 export interface CreateCourseRequest {
+  id?: string;
   package: string;
   videoID: string | null;
   pdf: string | null;
   title: string;
   description: string;
+  published: boolean;
 }
 
 const API_URL = "/api/course";
@@ -99,10 +102,49 @@ export const useSaveCourse = (
   return useMutation({
     mutationFn: async (courseData: CreateCourseRequest) => {
       // If `_id` exists, it's an update; otherwise, it's a creation
-      const { data } = await axios.put(API_URL, courseData, {
+      const { data } = await axios.post(API_URL, courseData, {
         withCredentials: true,
       });
       return data.data as Course;
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+// Create or Update a course
+export const useUpdateCourse = (
+  onSuccess?: (data?: Course) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (courseData: CreateCourseRequest) => {
+      // If `_id` exists, it's an update; otherwise, it's a creation
+      const { data } = await axios.put(
+        `${API_URL}/${courseData?.id}`,
+        courseData,
+        {
+          withCredentials: true,
+        }
+      );
+      return data.data as Course;
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+export const useDeleteCourse = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // If `_id` exists, it's an update; otherwise, it's a creation
+      const { data } = await axios.delete(`${API_URL}/${id}`, {
+        withCredentials: true,
+      });
+      return data.data as string;
     },
     onSuccess,
     onError,

@@ -1,7 +1,6 @@
 import Sidebar from '@/src/components/Sidebar'
 import { gilroyBold, gilroyRegular } from '..'
 import CourseCard from '@/src/components/CourseCard'
-import { Course } from '@/src/interfaces'
 import { useEffect, useState } from 'react'
 import Pagination from '@/src/components/Pagination'
 import { GetServerSidePropsContext } from 'next'
@@ -9,6 +8,7 @@ import { getSession } from 'next-auth/react'
 import { useGetUserCourses } from '@/src/hooks/course'
 import { FadeLoader } from 'react-spinners'
 import { useGetVideoPlaybackInfo } from '@/src/hooks/video'
+import { Course } from '@/src/interfaces'
 
 const PAGE_SIZE = 4
 
@@ -32,13 +32,12 @@ function Home () {
       const coursesData = Array.from(
         new Map(
           data
-            ?.flatMap(course => [
-              ...(course.videos ?? []),
-              ...(course.pdfs ?? [])
-            ])
-            .map(item => [item.id, item])
+            ?.map(course => course.video || course.pdf) // Extract either video or pdf
+            .filter(item => item !== null) // Filter out null values
+            .map(item => [item.id, item]) // Create unique entries based on id
         ).values()
       )
+
       setCourses(coursesData)
 
       setViewingCourses(coursesData?.slice(0, 0 + PAGE_SIZE))
@@ -53,6 +52,7 @@ function Home () {
   const { data: videoPlayBackInfo } = useGetVideoPlaybackInfo(
     selectedCourse?.id as string
   )
+
 
   return (
     <Sidebar>
@@ -72,7 +72,7 @@ function Home () {
               </p>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-[350px_1fr] gap-10'>
-              <div className='grid gap-2 order-2 md:order-1'>
+              <div className='grid min-h-[50vh] gap-2 order-2 md:order-1'>
                 {viewingCourses?.map((course, index) => (
                   <CourseCard
                     course={course}
@@ -86,17 +86,29 @@ function Home () {
               {selectedCourse && (
                 <div className='flex flex-col gap-3 order-1 md:order-2'>
                   <div className='w-full h-64 sm:h-96 md:h-full'>
-                    <iframe
-                      src={`https://player.vdocipher.com/v2/?otp=${videoPlayBackInfo?.otp}&playbackInfo=${videoPlayBackInfo?.playbackInfo}`}
-                      style={{
-                        border: 0,
-                        borderRadius: 32,
-                        width: '100%',
-                        height: '100%'
-                      }}
-                      allow='encrypted-media'
-                      allowFullScreen
-                    />
+                    {!selectedCourse?.link ? (
+                      <iframe
+                        src={`https://player.vdocipher.com/v2/?otp=${videoPlayBackInfo?.otp}&playbackInfo=${videoPlayBackInfo?.playbackInfo}`}
+                        style={{
+                          border: 0,
+                          borderRadius: 32,
+                          width: '100%',
+                          height: '100%'
+                        }}
+                        allow='encrypted-media'
+                        allowFullScreen
+                      />
+                    ) : (
+                      // <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
+                      //   <Viewer fileUrl={selectedCourse.link} />
+                      // </Worker>
+                      // <></>
+                      <iframe
+                        src={selectedCourse.link}
+                        width={'100%'}
+                        height={'100%'}
+                      />
+                    )}
                   </div>
                   <div>
                     <p
