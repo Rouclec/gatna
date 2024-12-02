@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useEffect, useState } from 'react'
 
 import DocumentVerified from '@/public/assets/icons/document-verified.svg'
 import Filter from '@/public/assets/icons/filter.svg'
-import Completed from '@/public/assets/icons/complete.svg'
+// import Completed from '@/public/assets/icons/complete.svg'
 // import Failed from '@/public/assets/icons/failed.svg'
 
 import { gilroyBold, gilroyMedium, gilroyRegular } from '@/src/pages/index'
