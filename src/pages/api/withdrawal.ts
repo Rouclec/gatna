@@ -26,7 +26,6 @@ export default async function handler(
     case "GET":
       try {
         const withdrawals = await Withdrawal.find({
-          status: "pending",
           user: userId,
         });
 

@@ -31,9 +31,7 @@ export default async function handler(
     // Retrieve admin statistics
     case "GET":
       try {
-        const withdrawals = await Withdrawal.find({
-          status: "pending",
-        });
+        const withdrawals = await Withdrawal.find().sort("-status").populate("user");
 
         return res.status(200).json({ data: withdrawals });
       } catch (error) {

@@ -1,5 +1,6 @@
 import React from 'react'
 import { CloseSquare } from 'react-iconly'
+import { ClipLoader } from 'react-spinners'
 
 interface ModalProps {
   type: 'success' | 'error' | 'info' // Modal type determines styles
@@ -10,6 +11,7 @@ interface ModalProps {
   onCancel?: () => void // Optional cancel action
   confirmTxt?: string
   cancelTxt?: string
+  isLoading?: boolean
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -20,7 +22,8 @@ const Modal: React.FC<ModalProps> = ({
   onConfirm,
   onCancel,
   confirmTxt = 'OK',
-  cancelTxt = 'Cancel'
+  cancelTxt = 'Cancel',
+  isLoading = false
 }) => {
   // Define styles based on modal type
   const typeStyles = {
@@ -67,6 +70,7 @@ const Modal: React.FC<ModalProps> = ({
           {!onConfirm && !onCancel && onClose && (
             <button
               onClick={onClose}
+              disabled={isLoading}
               className='text-gray-500 hover:text-gray-700 focus:outline-none'
             >
               <CloseSquare set='bold' size={24} />
@@ -81,17 +85,27 @@ const Modal: React.FC<ModalProps> = ({
             {onConfirm && (
               <button
                 onClick={onConfirm}
-                className={`px-4 py-2 ${styles.backgroundColor} text-white rounded hover:bg-blue-700 focus:outline-none`}
+                disabled={isLoading}
+                className={`flex gap-[10px] items-center justify-center px-4 py-2 ${
+                  styles.backgroundColor
+                } text-white rounded hover:bg-blue-700 focus:outline-none ${
+                  isLoading && 'opacity-60'
+                }`}
               >
                 {confirmTxt}
+                {isLoading && <ClipLoader size={10} color='white' />}
               </button>
             )}
             {onCancel && (
               <button
                 onClick={onCancel}
-                className='px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 focus:outline-none'
+                disabled={isLoading}
+                className={`flex gap-[10px] items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 focus:outline-none ${
+                  isLoading && 'opacity-60'
+                }`}
               >
                 {cancelTxt}
+                {isLoading && <ClipLoader size={10} color='white' />}
               </button>
             )}
           </div>

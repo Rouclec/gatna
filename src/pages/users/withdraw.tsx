@@ -83,7 +83,9 @@ function Withdraw () {
   }
 
   const { mutateAsync: initiateWithdrawal } = useInitiateWithdrawal(
-    () => {},
+    () => {
+      window.location.reload()
+    },
     error => {
       if (!!error?.response?.data?.message) {
         if (typeof error?.response?.data.message === 'string') {
