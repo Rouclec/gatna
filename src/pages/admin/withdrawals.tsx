@@ -42,6 +42,10 @@ function PendingActivation () {
   const [item, setItem] = useState<Withdrawal>()
   const [error, setError] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
+  const [filter, setFilter] = useState<string>()
+  const [filteredWithdrawals, setFilteredWithdrawals] = useState<Withdrawal[]>(
+    []
+  )
 
   const { data: withdrawals, isFetched } = useGetAdminWithdrawals()
   const { mutateAsync } = useUpdateWithdrawal(
@@ -60,6 +64,12 @@ function PendingActivation () {
       }
     }
   )
+
+  useEffect(() => {
+    if (isFetched && withdrawals) {
+      setFilteredWithdrawals(withdrawals)
+    }
+  }, [isFetched, withdrawals])
 
   const handleUpdateWithdrawal = async () => {
     try {
@@ -91,6 +101,27 @@ function PendingActivation () {
     }
   }, [isCopied])
 
+  useEffect(() => {
+    if (!filter) {
+      setFilteredWithdrawals(withdrawals ?? [])
+    } else {
+      const lowercasedValue = filter.toLowerCase()
+      const filtered =
+        withdrawals?.filter(({ user }) => {
+          const searchableObject = user
+          delete searchableObject.referredBy
+          return Object.values(searchableObject).some(field => {
+            return (
+              typeof field === 'string' &&
+              field.toLowerCase().includes(lowercasedValue)
+            )
+          })
+        }) ?? []
+
+      setFilteredWithdrawals(filtered)
+    }
+  }, [filter, withdrawals])
+
   return (
     <Sidebar>
       {!isFetched && (
@@ -118,6 +149,7 @@ function PendingActivation () {
               <input
                 className={`focus:ring-0 text-input focus:outline-none text-neutral-10 bg-transparent w-full ${gilroyMedium.className}`}
                 placeholder='Search'
+                onChange={e => setFilter(e.target.value)}
               />
               <div className='flex-shrink-0 w-5'>
                 <Filter className='w-full' />
@@ -339,7 +371,7 @@ function PendingActivation () {
               </tr>
             </thead>
             <tbody>
-              {withdrawals?.map((item, index) => {
+              {filteredWithdrawals?.map((item, index) => {
                 return (
                   <tr key={index}>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
@@ -432,7 +464,11 @@ function PendingActivation () {
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <div className='flex items-center gap-3'>
                         <button
-                          className={`w-8 h-8 rounded-md flex items-center justify-center ${item.status !== 'pending' ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                          className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                            item.status !== 'pending'
+                              ? 'opacity-60 cursor-not-allowed'
+                              : 'cursor-pointer'
+                          }`}
                           style={{
                             backgroundColor: '#14A42B33'
                           }}
@@ -445,7 +481,11 @@ function PendingActivation () {
                           <FaCheckCircle color='#14A42B' />
                         </button>
                         <button
-                          className={`w-8 h-8 rounded-md flex items-center justify-center ${item.status !== 'pending' ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                          className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                            item.status !== 'pending'
+                              ? 'opacity-60 cursor-not-allowed'
+                              : 'cursor-pointer'
+                          }`}
                           style={{
                             backgroundColor: '#D1416333'
                           }}
