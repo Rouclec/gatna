@@ -230,7 +230,7 @@ function Settings () {
     }
   }, [userProfile, isFetched])
 
-  console.log({ userProfile })
+  // console.log({ userProfile })
 
   return (
     <Sidebar>

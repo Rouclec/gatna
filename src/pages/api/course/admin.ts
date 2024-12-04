@@ -92,7 +92,7 @@ export default async function handler(
 
           return res.status(201).json({ data: course });
         } else {
-          console.log({ title, description, pdf });
+        //   console.log({ title, description, pdf });
           const course = new Course({
             package: pack,
             pdf: {

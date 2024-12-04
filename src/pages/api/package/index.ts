@@ -125,7 +125,7 @@ export default async function handler(
           },
         ]);
 
-        console.log(packages);
+        // console.log(packages);
 
         return res.status(200).json({ data: packages });
       } catch (error) {

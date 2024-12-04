@@ -107,7 +107,7 @@ export default async function handler(
 
           return res.status(200).json({ data: course });
         } else {
-          console.log({ title, description, pdf });
+          // console.log({ title, description, pdf });
           const course = await Course.findByIdAndUpdate(id, {
             package: pack,
             pdf: {
