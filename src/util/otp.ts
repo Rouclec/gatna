@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { Model, Document, Default__v, Require_id, IfAny } from "mongoose";
 import { encrypt, decrypt } from "./encryption";
-import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Account, Socials, Coinpayment, VideoServer } from "../models";
 import { sendEmailViaSMTP } from "./email";
