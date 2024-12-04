@@ -164,6 +164,12 @@ Resources:
                         ValueFrom: !Sub '${MailSecretArn}:emailFrom::'
                       - Name: CONTACT_EMAIL
                         ValueFrom: !Sub '${MailSecretArn}:contactEmail::'
+                      - Name: ELASTIC_EMAIL_SENDER_EMAIL
+                        ValueFrom: !Sub '${MailSecretArn}:elasticEmailSenderEmail::'
+                      - Name: ELASTIC_EMAIL_SMTP_USERNAME
+                        ValueFrom: !Sub '${MailSecretArn}:elasticEmailSmtpUsername::'
+                      - Name: ELASTIC_EMAIL_SMTP_PASSWORD
+                        ValueFrom: !Sub '${MailSecretArn}:elasticEmailSmtpPassword::'
                       
 
 

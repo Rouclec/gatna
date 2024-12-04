@@ -9,8 +9,9 @@ import {
   Notification,
 } from "@/src/models";
 import generateRandomPassword from "@/src/util/password";
-import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
+// import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
 import { IncomingMessage } from "http";
+import { sendEmailViaSMTP } from "@/src/util/email";
 
 // Transaction status mappings
 const TRANSACTION_STATUSES = {
@@ -104,7 +105,6 @@ export default async function handler(
 
     const { txn_id, status, status_text } = parsedBody;
 
-
     console.log("Finding transaction with ID:", txn_id);
     const transaction = await Transaction.findOne({ transactionId: txn_id });
     if (!transaction) {
@@ -158,7 +158,7 @@ export default async function handler(
       console.log("Updating user password...");
       await User.findByIdAndUpdate(userFound._id, {
         password: newPassword,
-        active: true
+        active: true,
       });
 
       console.log("Activating user package...");
@@ -174,22 +174,29 @@ export default async function handler(
       );
 
       console.log("Sending confirmation email...");
-      const mailerSend = new MailerSend({
-        apiKey: process.env.MAIL_API_KEY as string,
-      });
-      const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
-      const recipients = [new Recipient(userFound.email, userFound.firstName)];
-      const emailParams = new EmailParams()
-        .setFrom(sentFrom)
-        .setTo(recipients)
-        .setReplyTo(sentFrom)
-        .setSubject("Welcome to Gatna.io")
-        .setHtml(
-          `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`
-        )
-        .setText("Welcome to Gatna.io");
+      // const mailerSend = new MailerSend({
+      //   apiKey: process.env.MAIL_API_KEY as string,
+      // });
+      // const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
+      // const recipients = [new Recipient(userFound.email, userFound.firstName)];
+      // const emailParams = new EmailParams()
+      //   .setFrom(sentFrom)
+      //   .setTo(recipients)
+      //   .setReplyTo(sentFrom)
+      //   .setSubject("Welcome to Gatna.io")
+      //   .setHtml(
+      //     `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`
+      //   )
+      //   .setText("Welcome to Gatna.io");
 
-      await mailerSend.email.send(emailParams);
+      // await mailerSend.email.send(emailParams);
+
+      await sendEmailViaSMTP({
+        to: userFound.email,
+        subject: "Welcome to Gatna.io",
+        body: `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`,
+      });
+
       console.log("Confirmation email sent");
 
       console.log("Saving notification...");

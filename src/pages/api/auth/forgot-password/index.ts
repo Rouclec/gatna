@@ -1,9 +1,10 @@
 import { User } from "@/src/models";
 
 import dbConnect from "@/src/util/db";
+import { sendEmailViaSMTP } from "@/src/util/email";
 import { verifyEntityOTP } from "@/src/util/otp";
 import generateRandomPassword from "@/src/util/password";
-import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
+// import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -39,25 +40,31 @@ export default async function handler(
           password: newPassword,
         });
 
-        const mailerSend = new MailerSend({
-          apiKey: process.env.MAIL_API_KEY as string,
-        });
-        const sentFrom = new Sender(
-          process.env.EMAIL_FROM as string,
-          "Gatna.io"
-        );
-        const recipients = [new Recipient(user.email, user.firstName)];
-        const emailParams = new EmailParams()
-          .setFrom(sentFrom)
-          .setTo(recipients)
-          .setReplyTo(sentFrom)
-          .setSubject("Password Reset")
-          .setHtml(
-            `<p>Your new password for Gatna.io is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`
-          )
-          .setText("Password reset");
+        // const mailerSend = new MailerSend({
+        //   apiKey: process.env.MAIL_API_KEY as string,
+        // });
+        // const sentFrom = new Sender(
+        //   process.env.EMAIL_FROM as string,
+        //   "Gatna.io"
+        // );
+        // const recipients = [new Recipient(user.email, user.firstName)];
+        // const emailParams = new EmailParams()
+        //   .setFrom(sentFrom)
+        //   .setTo(recipients)
+        //   .setReplyTo(sentFrom)
+        //   .setSubject("Password Reset")
+        //   .setHtml(
+        //     `<p>Your new password for Gatna.io is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`
+        //   )
+        //   .setText("Password reset");
 
-        await mailerSend.email.send(emailParams);
+        // await mailerSend.email.send(emailParams);
+
+        await sendEmailViaSMTP({
+          to: email,
+          subject: "Password reset",
+          body: `<p>Your new password for Gatna.io is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`,
+        });
 
         return res.status(200).json({ message: "Password rest successfull" });
       } catch (error) {

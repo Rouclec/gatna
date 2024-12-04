@@ -5,6 +5,7 @@ import { encrypt, decrypt } from "./encryption";
 import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Account, Socials, Coinpayment, VideoServer } from "../models";
+import { sendEmailViaSMTP } from "./email";
 
 /**
  * Creates or updates an entity based on the provided userId.
@@ -22,27 +23,33 @@ export async function getEntityOTP<T extends Document>(
   _id?: string
 ): Promise<T | null> {
   try {
-    const mailerSend = new MailerSend({
-      apiKey: process.env.MAIL_API_KEY as string,
-    });
+    // const mailerSend = new MailerSend({
+    //   apiKey: process.env.MAIL_API_KEY as string,
+    // });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
+    // const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
 
-    const recipients = [new Recipient(email, name)];
+    // const recipients = [new Recipient(email, name)];
 
-    const emailParams = new EmailParams()
-      .setFrom(sentFrom)
-      .setTo(recipients)
-      .setReplyTo(sentFrom)
-      .setSubject("OTP Verification Code")
-      .setHtml(
-        `<p><strong>${otp}</strong> is your verification code for gatna.io. This will expire in <strong>5 minutes</strong><br/> If you didn't request for a verifcation code, please contact customer support</p>`
-      )
-      .setText("This is the text content");
+    // const emailParams = new EmailParams()
+    //   .setFrom(sentFrom)
+    //   .setTo(recipients)
+    //   .setReplyTo(sentFrom)
+    //   .setSubject("OTP Verification Code")
+    //   .setHtml(
+    //     `<p><strong>${otp}</strong> is your verification code for gatna.io. This will expire in <strong>5 minutes</strong><br/> If you didn't request for a verifcation code, please contact customer support</p>`
+    //   )
+    //   .setText("This is the text content");
 
-    await mailerSend.email.send(emailParams);
+    // await mailerSend.email.send(emailParams);
+
+    await sendEmailViaSMTP({
+      to: email,
+      subject: "OTP Verification Code",
+      body: `<p><strong>${otp}</strong> is your verification code for gatna.io. This will expire in <strong>5 minutes</strong><br/> If you didn't request for a verifcation code, please contact customer support</p>`,
+    });
 
     const now = new Date();
     const token = {
