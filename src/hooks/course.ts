@@ -67,6 +67,17 @@ export const useGetCourses = () => {
   });
 };
 
+// Fetch all courses
+export const useGetCoursesAdmin = () => {
+  return useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const { data } = await axios.get(`${API_URL}/admin`, { withCredentials: true });
+      return data.data as Course[];
+    },
+  });
+};
+
 // Get user's courses
 export const useGetUserCourses = () => {
   return useQuery({
@@ -102,7 +113,7 @@ export const useSaveCourse = (
   return useMutation({
     mutationFn: async (courseData: CreateCourseRequest) => {
       // If `_id` exists, it's an update; otherwise, it's a creation
-      const { data } = await axios.post(API_URL, courseData, {
+      const { data } = await axios.post(`${API_URL}/admin`, courseData, {
         withCredentials: true,
       });
       return data.data as Course;

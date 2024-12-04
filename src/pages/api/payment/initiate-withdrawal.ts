@@ -1,6 +1,6 @@
 import dbConnect from "@/src/util/db";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Notification, User, Withdrawal } from "@/src/models";
+import { Account, Notification, User, Withdrawal } from "@/src/models";
 import { getToken } from "next-auth/jwt";
 import { verifyEntityOTP } from "@/src/util/otp";
 
@@ -25,7 +25,6 @@ export default async function handler(
   switch (req.method) {
     case "POST": // Handle POST request to login
       try {
-        
         const { amount, walletId, password, pin, otp } = req.body;
 
         const validOTP = await verifyEntityOTP(User, otp, userId as string);
@@ -56,31 +55,23 @@ export default async function handler(
           return res.status(500).json({ message: "Incorrect pin" });
         }
 
-        // const coinPaymentInfo = await Coinpayment.findOne();
+        const adminInfo = await Account.findOne();
 
-        // if (!coinPaymentInfo) {
-        //   return res
-        //     .status(404)
-        //     .json({ message: "No coinpayment info found on server" });
-        // }
-
-        // const coinpaymentsClient = new Coinpayments({
-        //   key: coinPaymentInfo.getDecryptedPrivateKey() as string,
-        //   secret: coinPaymentInfo.getDecryptedSecretKey() as string,
-        // });
+        if (
+          adminInfo &&
+          adminInfo.minimumWithdrawalAmount &&
+          adminInfo.minimumWithdrawalAmount > amount
+        ) {
+          return res
+            .status(403)
+            .json({
+              message: `Minimum withdrawal amount is $${adminInfo.minimumWithdrawalAmount}`,
+            });
+        }
 
         if (userFound?.walletBalance < amount) {
           return res.status(500).json({ message: "Insufficient balance" });
         }
-
-        // const transaction = await coinpaymentsClient.createWithdrawal({
-        //   currency: "USDT.TRC20",
-        //   currency2: "USD",
-        //   // amount: Package.price, //TODO: revert this to use the Package's price
-        //   amount: 1,
-        //   address: walletId,
-        //   ipn_url,
-        // });
 
         const dbWithdrawal = new Withdrawal({
           user: userId,

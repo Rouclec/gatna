@@ -113,6 +113,37 @@ html {
   margin-bottom: 4px;
 }
 
+.radio-custom {
+  --radio-size: 24px; /* Set the desired size of the radio button */
+  appearance: none;
+  -webkit-appearance: none;
+  width: var(--radio-size);
+  height: var(--radio-size);
+  border: 2px solid #cfb4f133;
+  border-radius: 50%; /* Makes it circular */
+  background-color: #d9d9d91a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.radio-custom:checked {
+  border-color: #cfb4f1; /* Change border color on checked state */
+  background-color: #cfb4f133; /* Optional background color change */
+}
+
+.radio-custom:checked::before {
+  content: "";
+  width: 50%; /* Adjust size of the inner dot */
+  height: 50%;
+  background-color: #cfb4f1; /* Color of the inner dot */
+  border-radius: 50%;
+  display: block;
+}
+
+
 .circle-background,
 .circle-progress {
   fill: none;

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import dbConnect from "@/src/util/db";
-import { Withdrawal } from "@/src/models";
+import { User, Withdrawal } from "@/src/models";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -42,6 +42,19 @@ export default async function handler(
     case "PUT":
       try {
         const { status, id } = req.body;
+        const withdrawalFound = await Withdrawal.findById(id);
+
+        if(!withdrawalFound) {
+          return res.status(404).json({message: `Withdrawal with id ${id} not found`})
+        }
+
+        if(status === 'canceled'){
+          await User.findByIdAndUpdate(withdrawalFound.user, 
+            { $inc: { walletBalance: 10 } }, // Increment wallet balance by 10
+            { new: true } // Return the updated document
+          )
+        }
+
         const updatedWithdrawal = await Withdrawal.findByIdAndUpdate(
           id,
           {

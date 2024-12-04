@@ -3,8 +3,8 @@ import React, { ChangeEvent, FC, useEffect, useState } from 'react'
 
 import DocumentVerified from '@/public/assets/icons/document-verified.svg'
 import Filter from '@/public/assets/icons/filter.svg'
-// import Completed from '@/public/assets/icons/complete.svg'
-// import Failed from '@/public/assets/icons/failed.svg'
+import Completed from '@/public/assets/icons/complete.svg'
+import Failed from '@/public/assets/icons/failed.svg'
 
 import { gilroyBold, gilroyMedium, gilroyRegular } from '@/src/pages/index'
 import { ChevronDown, ChevronUp, EditSquare } from 'react-iconly'
@@ -19,7 +19,7 @@ import {
   Course,
   CreateCourseRequest,
   useDeleteCourse,
-  useGetCourses,
+  useGetCoursesAdmin,
   useSaveCourse,
   useUpdateCourse
 } from '@/src/hooks/course'
@@ -161,7 +161,8 @@ function CreateCourse () {
   }
 
   const { data: packages, isFetching: isPackagesFetching } = useGetPackages({})
-  const { data: coursesData, isFetching: isCoursesFetching } = useGetCourses()
+  const { data: coursesData, isFetching: isCoursesFetching } =
+    useGetCoursesAdmin()
 
   const handleCreate = async () => {
     try {
@@ -406,14 +407,27 @@ function CreateCourse () {
                     onChange={e => setDescripton(e.target.value)}
                   />
                 </div>
-                <div className='w-full flex gap-4 items-center'>
-                  <input
-                    className='checkbox-custom'
-                    type='checkbox'
-                    checked={published}
-                    onChange={() => setPublished(!published)}
-                  />
-                  <p>Publish</p>
+                <div className='w-full flex gap-12 items-center ml-1'>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      className='radio-custom'
+                      type='radio'
+                      name='publishStatus'
+                      checked={published}
+                      onChange={() => setPublished(true)}
+                    />
+                    <label>Publish</label>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      className='radio-custom'
+                      type='radio'
+                      name='publishStatus'
+                      checked={!published}
+                      onChange={() => setPublished(false)}
+                    />
+                    <label>Unpublish</label>
+                  </div>
                 </div>
               </div>
               <button
@@ -476,9 +490,6 @@ function CreateCourse () {
             <table className='min-w-full h-full w-full table-auto mt-7'>
               <thead className='bg-neutral-CF bg-opacity-10 rounded-lg'>
                 <tr>
-                  <th className='text-left px-3 py-5 whitespace-nowrap rounded-l-lg'>
-                    <input className='checkbox-custom' type='checkbox' />
-                  </th>
                   <th className='text-left px-3 py-5 whitespace-nowrap'>
                     <div className='flex gap-1 items-center'>
                       <p
@@ -588,6 +599,31 @@ function CreateCourse () {
                       </p>
                     </div>
                   </th>
+                  <th className='text-left px-3 py-5 whitespace-nowrap'>
+                    <div className='flex gap-1 items-center'>
+                      <div className='h-6 items-center gap-0 my-auto'>
+                        <ChevronUp
+                          size={12}
+                          primaryColor='#606060'
+                          style={{
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <ChevronDown
+                          size={12}
+                          primaryColor='#606060'
+                          style={{
+                            cursor: 'pointer'
+                          }}
+                        />
+                      </div>
+                      <p
+                        className={`${gilroyBold.className} text-sm text-neutral-50`}
+                      >
+                        Status
+                      </p>
+                    </div>
+                  </th>
                   <th className='text-left px-3 py-5 whitespace-nowrap rounded-r-lg'>
                     <div className='flex gap-1 items-center'>
                       <div className='h-6 items-center gap-0 my-auto'>
@@ -626,13 +662,6 @@ function CreateCourse () {
                       ?.map((item, index) => {
                         return (
                           <tr key={index}>
-                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                              <input
-                                className='checkbox-custom'
-                                type='checkbox'
-                                checked={item.published}
-                              />
-                            </td>
                             <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                               <p
                                 className={`${gilroyMedium.className} text-sm text-neutral-10`}
@@ -680,6 +709,31 @@ function CreateCourse () {
                                     )}:${Math.round(item.video.length / 60)}`
                                   : 'N/A'}
                               </p>
+                            </td>
+                            <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis w-32'>
+                              <div className='flex items-center gap-2'>
+                                <div
+                                  className={`w-6 h-6 rounded-md flex items-center justify-center`}
+                                  style={{
+                                    backgroundColor: item.published
+                                      ? '#14A42B33'
+                                      : '#D1416333'
+                                  }}
+                                >
+                                  {item.published ? (
+                                    <Completed className='w-3' />
+                                  ) : (
+                                    <Failed className='w-3' />
+                                  )}
+                                </div>
+                                <p
+                                  className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                                >
+                                  {item?.published
+                                    ? 'Published'
+                                    : 'Unpublished'}
+                                </p>
+                              </div>
                             </td>
                             <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                               <div className='flex items-center gap-3'>

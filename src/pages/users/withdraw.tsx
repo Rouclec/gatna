@@ -4,7 +4,7 @@ import { gilroyBold, gilroyRegular, gilroySemiBold } from '..'
 import { Hide, Send, Show } from 'react-iconly'
 import Crypto from '@/public/assets/icons/crypto.svg'
 
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { GetServerSidePropsContext } from 'next'
 import { getSession } from 'next-auth/react'
 import { useGetUser } from '@/src/hooks/user'
@@ -47,7 +47,7 @@ function Withdraw () {
     setIsWalletFocused(true)
   }
 
-  const { data: userData } = useGetUser()
+  const { data: userData, isFetched } = useGetUser()
 
   const { mutateAsync: getUserOTP } = useGetUserOTP(
     () => {},
@@ -81,6 +81,19 @@ function Withdraw () {
       setIsRequesting(false)
     }
   }
+
+  useEffect(() => {
+    if (isFetched && userData && userData?.walletId) {
+      const wallet = userData?.walletId
+      if (wallet.length > 10) {
+        const firstFive = wallet.substring(0, 8)
+        const lastFive = wallet.substring(wallet.length - 8)
+        setWalletDisplayValue(`${firstFive}....${lastFive}`)
+      } else {
+        setWalletDisplayValue(wallet)
+      }
+    }
+  }, [userData, isFetched])
 
   const { mutateAsync: initiateWithdrawal } = useInitiateWithdrawal(
     () => {
@@ -277,7 +290,7 @@ function Withdraw () {
         <Modal
           type='error'
           heading='Error initiating withdrawal'
-          body={serverError}
+          body={`<p>${serverError}</p><p>You will need to get another OTP code to try again.</p>`}
           onClose={() => setServerError(undefined)}
         />
       )}
