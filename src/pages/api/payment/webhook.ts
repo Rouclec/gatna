@@ -47,6 +47,8 @@ export default async function handler(
   const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
   const signin_url = `${protocol}://${host}/signin`;
 
+  console.log({ protocol, host, signin_url });
+
   console.log("Received request:", {
     method: req.method,
     headers: req.headers,

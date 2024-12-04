@@ -42,6 +42,8 @@ export default async function handler(
         const host = req.headers.host;
         const referralLink = `${protocol}://${host}?referral=${userFound.referalCode}`;
 
+        console.log({ protocol, host, referralLink });
+
         return res.status(200).json({
           data: {
             ...userFound._doc,

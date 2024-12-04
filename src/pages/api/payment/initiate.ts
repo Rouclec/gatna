@@ -23,6 +23,8 @@ export default async function handler(
         const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
         const successUrl = `${protocol}://${host}/payment-successful`;
 
+        console.log({ protocol, host, successUrl });
+
         const { userId, packageId } = req.body;
 
         const coinPaymentInfo = await Coinpayment.findOne();

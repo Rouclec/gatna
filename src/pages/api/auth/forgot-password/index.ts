@@ -20,7 +20,10 @@ export default async function handler(
 
         const protocol = req.headers["x-forwarded-proto"] || "https"; // Use "https" in production
         const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
+
         const signin_url = `${protocol}://${host}/signin?email=${email}`;
+
+        console.log({ protocol, host, signin_url });
 
         const user = await User.findOne({ email, active: true });
 
