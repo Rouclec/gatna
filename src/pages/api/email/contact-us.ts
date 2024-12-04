@@ -51,7 +51,7 @@ export default async function handler(
         //   await mailerSend.email.send(emailParams);
 
         await sendEmailViaSMTP({
-          to: "anyahasonganyi97@gmail.com",
+          to: process.env.ELASTIC_EMAIL_SENDER_EMAIL as string,
           subject: `New contact form submission ${name}`,
           body: `
           <h3>New Contact Form Submission</h3>
