@@ -24,7 +24,7 @@ export default async function handler(
 ) {
   const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
 
-  if (host !== ("localhost:3000" || "dev.gatna.io")) {
+  if (host !== "localhost:3000" && host !== "dev.gatna.io"){
     return res.status(500).json({ message: "Invalid request" });
   }
 
