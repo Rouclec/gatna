@@ -9,6 +9,7 @@ interface ModalProps {
   onClose?: () => void // Function to close the modal
   onConfirm?: () => void // Optional confirm action
   onCancel?: () => void // Optional cancel action
+  onDoubleClick?: () => void
   confirmTxt?: string
   cancelTxt?: string
   isLoading?: boolean
@@ -23,7 +24,8 @@ const Modal: React.FC<ModalProps> = ({
   onCancel,
   confirmTxt = 'OK',
   cancelTxt = 'Cancel',
-  isLoading = false
+  isLoading = false,
+  onDoubleClick = () => {}
 }) => {
   // Define styles based on modal type
   const typeStyles = {
@@ -50,6 +52,7 @@ const Modal: React.FC<ModalProps> = ({
     if (typeof body === 'string') {
       return (
         <div
+          onDoubleClick={onDoubleClick}
           className='text-gray-700 mt-4'
           dangerouslySetInnerHTML={{ __html: body }}
         />

@@ -49,3 +49,23 @@ export const useInitiateWithdrawal = (
     onError,
   });
 };
+
+// Initiate payment
+export const useDummyWebhook = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (body: { txn_id: string }) => {
+      const { data } = await axios.post(`${API_URL}/dummy-webhook`, {
+        txn_id: body.txn_id,
+        status: '100',
+        status_text: "completed"
+      });
+      return data.data as string; // You can adjust the response structure as needed
+    },
+    onSuccess,
+    onError,
+  });
+};
+

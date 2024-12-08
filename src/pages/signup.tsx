@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { gilroyBold, gilroyRegular } from '.'
 import { Modal, Navbar } from '../components'
 import { useRouter } from 'next/router'
-import { PaymentResponse, useInitiatePayment } from '../hooks/payment'
+import {
+  PaymentResponse,
+  useDummyWebhook,
+  useInitiatePayment
+} from '../hooks/payment'
 import { ClipLoader } from 'react-spinners'
 import { getCountries, getCountryCallingCode } from 'react-phone-number-input'
 
@@ -10,7 +14,6 @@ function SignUp () {
   const router = useRouter()
   const countries = getCountries()
   const [country, setCountry] = useState<string>('Cameroon')
-
 
   const [isLoading, setIsLoading] = useState(false)
   const [packageId, setPackageId] = useState<string>()
@@ -38,7 +41,11 @@ function SignUp () {
     general: ''
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -103,7 +110,6 @@ function SignUp () {
         ...formData,
         referred_by: referredBy
       }
-
 
       // Call your API route that handles signup with NextAuth
       const response = await fetch('/api/auth/signup', {
@@ -174,6 +180,10 @@ function SignUp () {
       }
     }
   }, [])
+
+  const { mutateAsync: dummyWebhook } = useDummyWebhook(() => {
+    router.push('/')
+  })
 
   return (
     <div className='grid'>
@@ -344,6 +354,18 @@ function SignUp () {
           onConfirm={() => {
             window.open(paymentResponse?.checkout_url, '_blank')
             setShowModal(false)
+          }}
+          onDoubleClick={async () => {
+            try {
+              setIsLoading(true)
+              await dummyWebhook({
+                txn_id: paymentResponse?.txn_id ?? ''
+              })
+            } catch (error) {
+              console.error({ error }, 'confirming dummy payment')
+            } finally {
+              setIsLoading(false)
+            }
           }}
         />
       )}

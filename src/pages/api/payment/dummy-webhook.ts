@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import crypto from "crypto";
 import dbConnect from "@/src/util/db";
 import {
   Coinpayment,
@@ -9,8 +8,6 @@ import {
   Notification,
 } from "@/src/models";
 import generateRandomPassword from "@/src/util/password";
-// import { EmailParams, MailerSend, Recipient, Sender } from "mailersend";
-import { IncomingMessage } from "http";
 import { sendEmailViaSMTP } from "@/src/util/email";
 
 // Transaction status mappings
@@ -21,32 +18,15 @@ const TRANSACTION_STATUSES = {
   "100": "completed",
 } as const;
 
-// Disable automatic body parsing for this route
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-/**
- * Helper function to capture raw request body
- */
-async function getRawBody(req: IncomingMessage): Promise<string> {
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks).toString("utf8");
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("Received request:", {
-    method: req.method,
-    headers: req.headers,
-  });
+  const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
+
+  if (host !== ("localhost:3000" || "dev.gatna.io")) {
+    return res.status(500).json({ message: "Invalid request" });
+  }
 
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
@@ -58,18 +38,6 @@ export default async function handler(
   console.log("Database connected");
 
   try {
-    console.log("Reading raw body...");
-    const rawBody = await getRawBody(req);
-    console.log("Raw body received:", rawBody);
-
-    const hmacHeader = req.headers["hmac"] as string;
-    if (!hmacHeader) {
-      console.log("HMAC header missing");
-      return res.status(400).json({ error: "HMAC header missing" });
-    }
-    console.log("HMAC header received:", hmacHeader);
-
-    console.log("Fetching CoinPayment info...");
     const coinPaymentInfo = await Coinpayment.findOne();
     if (!coinPaymentInfo) {
       console.log("No CoinPayment info found");
@@ -82,24 +50,7 @@ export default async function handler(
     const ipnSecret = coinPaymentInfo.getDecryptedIpnSecret();
     console.log("Decrypted IPN secret:", ipnSecret);
 
-    console.log("Computing HMAC...");
-    const computedHmac = crypto
-      .createHmac("sha512", ipnSecret)
-      .update(rawBody)
-      .digest("hex");
-    console.log("Computed HMAC:", computedHmac);
-
-    if (hmacHeader !== computedHmac) {
-      console.log("Invalid HMAC signature");
-      return res.status(400).json({ error: "Invalid HMAC signature" });
-    }
-    console.log("HMAC validation passed");
-
-    console.log("Parsing raw body...");
-    const parsedBody = Object.fromEntries(new URLSearchParams(rawBody));
-    console.log("Parsed body:", parsedBody);
-
-    const { txn_id, status, status_text } = parsedBody;
+    const { txn_id, status, status_text } = req.body;
 
     console.log("Finding transaction with ID:", txn_id);
     const transaction = await Transaction.findOne({ transactionId: txn_id });
@@ -170,25 +121,8 @@ export default async function handler(
       );
 
       console.log("Sending confirmation email...");
-      // const mailerSend = new MailerSend({
-      //   apiKey: process.env.MAIL_API_KEY as string,
-      // });
-      // const sentFrom = new Sender(process.env.EMAIL_FROM as string, "Gatna.io");
-      // const recipients = [new Recipient(userFound.email, userFound.firstName)];
-      // const emailParams = new EmailParams()
-      //   .setFrom(sentFrom)
-      //   .setTo(recipients)
-      //   .setReplyTo(sentFrom)
-      //   .setSubject("Welcome to Gatna.io")
-      //   .setHtml(
-      //     `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`
-      //   )
-      //   .setText("Welcome to Gatna.io");
-
-      // await mailerSend.email.send(emailParams);
 
       const protocol = req.headers["x-forwarded-proto"] || "https"; // Use "https" in production
-      const host = req.headers.host; // Get the host (e.g., localhost:3000 or my-domain.com)
       const signin_url = `${protocol}://${host}/signin?email=${userFound.email}`;
 
       await sendEmailViaSMTP({
