@@ -33,7 +33,6 @@ export default async function handler(
     // Retrieve admin statistics
     case "GET":
       try {
-
         // 1. Total users
         const totalUsers = await User.countDocuments();
 
@@ -42,13 +41,17 @@ export default async function handler(
           active: true,
         });
 
-        // 3. Total videos
-        const totalVideos = await Course.aggregate([
-          { $unwind: "$videos" }, // Flatten the videos array
-          { $count: "totalVideos" }, // Count the total number of videos
-        ]);
-        const videosCount =
-          totalVideos.length > 0 ? totalVideos[0].totalVideos : 0;
+        // // 3. Total videos
+        // const totalVideos = await Course.aggregate([
+        //   { $unwind: "$videos" }, // Flatten the videos array
+        //   { $count: "totalVideos" }, // Count the total number of videos
+        // ]);
+        // const videosCount =
+        //   totalVideos.length > 0 ? totalVideos[0].totalVideos : 0;
+
+        const totalVideos = await Course.countDocuments({
+          video: { $exists: true, $ne: null },
+        });
 
         // 4. Pending requests
         const pendingRequests = await Transaction.countDocuments({
@@ -68,7 +71,7 @@ export default async function handler(
           data: {
             users: totalUsers,
             subscribers: totalSubscribers,
-            videos: videosCount,
+            videos: totalVideos,
             pendingRequests,
             sales: totalSales,
           },
