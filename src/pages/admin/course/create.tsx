@@ -291,7 +291,7 @@ function CreateCourse () {
           <FadeLoader />
         </div>
       )}
-      <div className='container ml-12 mr-20 mt-8 grid grid-cols-11 gap-3 items-center justify-center'>
+      <div className='container lg:max-w-[1720px] mx-auto ml-12 mr-20 mt-8 grid grid-cols-11 gap-3 items-center justify-center'>
         <div className='flex flex-col h-full gap-8 col-span-11 lg:col-span-4'>
           <div className='w-full p-8 h-full rounded-3xl bg-grey-bg overflow-x-auto flex flex-col gap-12'>
             <div className='w-full flex items-center justify-between'>

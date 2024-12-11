@@ -269,7 +269,7 @@ export default function Home () {
           </div>
         </section>
         <section id='contact'>
-          <div className='flex flex-col gap-14 justify-center'>
+          <div className='flex flex-col gap-14 justify-center lg:container px-6 lg:px-36'>
             <div className='grid grid-cols-7 gap-4 md:gap-[72px] relative'>
               <div className='col-span-7 grid items-center md:justify-start justify-center md:col-span-3'>
                 <p

@@ -66,7 +66,7 @@ export default async function handler(
         await sendEmailViaSMTP({
           to: email,
           subject: "Password reset",
-          body: `<p>Your new password for Gatna.io is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`,
+          body: `<p>Your new password for Gatna.io is <strong>${newPassword}</strong> <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`,
         });
 
         return res.status(200).json({ message: "Password rest successfull" });

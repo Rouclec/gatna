@@ -20,7 +20,7 @@ const MainNav = () => {
   const { data } = useGetUserPackage()
 
   return (
-    <div className='lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 md:pl-0 right-2 md:left-[120px] md:right-20 border-neutral-1A items-end flex z-10 bg-background'>
+    <div className='lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 md:pl-0 right-2 md:left-[120px] md:right-20 border-neutral-1A items-end max-w-[1720px] mx-auto flex z-10 bg-background'>
       <div className='flex items-center gap-1 sm:gap-4'>
         <div className='w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] rounded-full bg-grey-9333 items-center justify-center flex'>
           <Image

@@ -246,7 +246,7 @@ const Sidebar: FC<Props> = ({ children }) => {
       </div>
 
       {/* Main Content */}
-      <main className='lg:container lg:mx-auto w-screen min-h-screen'>
+      <main className='lg:container lg:mx-auto w-screen min-h-screen relative'>
         {activeNav === ADMIN_NAV_ITEMS ? <AdminNav /> : <MainNav />}
         <div className='my-24 sm:my-40 md:ml-[108px]'>{children}</div>
         <div className='md:ml-[108px]'>

@@ -194,7 +194,7 @@ export default async function handler(
       await sendEmailViaSMTP({
         to: userFound.email,
         subject: "Welcome to Gatna.io",
-        body: `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong>. <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`,
+        body: `<p>Welcome to Gatna.io <br /> Your password is <strong>${newPassword}</strong> <a href=${signin_url}>Login here</a><br />Feel free to change the password in the settings section of your account</p>`,
       });
 
       console.log("Confirmation email sent");

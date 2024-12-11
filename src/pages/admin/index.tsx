@@ -12,7 +12,7 @@ import Filter from '@/public/assets/icons/filter.svg'
 import Loading from '@/public/assets/icons/loading.svg'
 import Completed from '@/public/assets/icons/complete.svg'
 import Failed from '@/public/assets/icons/failed.svg'
-import Copy from '@/public/assets/icons/copy.svg'
+// import Copy from '@/public/assets/icons/copy.svg'
 
 import { gilroyBold, gilroyMedium } from '@/src/pages/index'
 import AdminInfoCard from '@/src/components/AdminInfoCard'
@@ -23,6 +23,9 @@ import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next'
 import { useGetStats } from '@/src/hooks/stats'
 import { Transaction, useGetTransactions } from '@/src/hooks/transactions'
+import { FaSave } from 'react-icons/fa'
+import { Modal } from '@/src/components'
+import { useUpdateUser } from '@/src/hooks/user'
 
 const colors = {
   high: {
@@ -68,6 +71,16 @@ const initialStats = [
 ]
 
 function Index () {
+  const [isEditing, setIsEditing] = useState<string>()
+  const [confirmSave, setConfirmSave] = useState(false)
+  const [discardSave, setDiscardSave] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [error, setError] = useState<string>()
+  const [firstName, setFirstName] = useState<string>()
+  const [lastName, setLastName] = useState<string>()
+  const [email, setEmail] = useState<string>()
+
   const [stats, setStats] = useState<
     {
       title: string
@@ -111,7 +124,7 @@ function Index () {
 
   const { data: adminStats, isFetched } = useGetStats()
 
-  const { data: transactions } = useGetTransactions()
+  const { data: transactions, refetch } = useGetTransactions()
 
   useEffect(() => {
     if (adminStats && isFetched) {
@@ -170,6 +183,41 @@ function Index () {
       setFilteredTransactions(filtered)
     }
   }, [filter, transactions])
+
+  const { mutateAsync } = useUpdateUser(
+    async () => {
+      await refetch()
+    },
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setError(error?.response?.data.message)
+        } else {
+          setError('An unknown server error occured')
+        }
+      } else {
+        setError('An unknown server error occured')
+      }
+    }
+  )
+
+  const handleUpdateUser = async () => {
+    try {
+      setIsLoading(true)
+      await mutateAsync({
+        _id: isEditing!,
+        firstName: firstName!,
+        email: email!,
+        lastName: lastName!
+      })
+    } catch (error) {
+      console.error({ error })
+    } finally {
+      setIsLoading(false)
+      setIsEditing(undefined)
+      setConfirmSave(false)
+    }
+  }
 
   return (
     <Sidebar>
@@ -520,26 +568,59 @@ function Index () {
                         {moment(item?.updatedAt).format('DD-MM-YYYY')}
                       </p>
                     </td>
-                    <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                      <p
-                        className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                      >
-                        {item?.user?.firstName}
-                      </p>
+                    <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis relative max-w-28'>
+                      <div>
+                        {isEditing === item?.user?._id ? (
+                          <input
+                            className='bg-transparent border focus:outline-none max-w-24 rounded-md border-grey-bg'
+                            // defaultValue={item?.user?.firstName}
+                            onChange={e => setFirstName(e.target.value)}
+                            value={firstName}
+                          />
+                        ) : (
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item?.user?.firstName}
+                          </p>
+                        )}
+                      </div>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                      <p
-                        className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                      >
-                        {item?.user?.lastName}
-                      </p>
+                      <div>
+                        {isEditing === item?.user?._id ? (
+                          <input
+                            className='bg-transparent border focus:outline-none max-w-24 rounded-md border-grey-bg'
+                            // defaultValue={item?.user?.lastName}
+                            onChange={e => setLastName(e.target.value)}
+                            value={lastName}
+                          />
+                        ) : (
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item?.user?.lastName}
+                          </p>
+                        )}
+                      </div>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
-                      <p
-                        className={`${gilroyMedium.className} text-sm text-neutral-10`}
-                      >
-                        {item?.user?.email}
-                      </p>
+                      <div>
+                        {isEditing === item?.user?._id ? (
+                          <input
+                            className='bg-transparent border focus:outline-none max-w-24 rounded-md border-grey-bg'
+                            // defaultValue={item?.user?.email}
+                            onChange={e => setEmail(e.target.value)}
+                            value={email}
+                          />
+                        ) : (
+                          <p
+                            className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                          >
+                            {item?.user?.email}
+                          </p>
+                        )}
+                      </div>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <p
@@ -594,26 +675,28 @@ function Index () {
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
                       <div className='flex items-center gap-3'>
-                        <div
-                          className={`w-6 h-6 rounded-md flex items-center justify-center`}
-                          style={{
-                            backgroundColor:
-                              item.status === 'pending'
-                                ? '#E8B04433'
-                                : item.status === 'completed'
-                                ? '#14A42B33'
-                                : '#D1416333'
-                          }}
-                        >
-                          {item.status === 'pending' ? (
-                            <Loading className='w-3' />
-                          ) : item.status === 'completed' ? (
-                            <Completed className='w-3' />
-                          ) : (
-                            <Failed className='w-3' />
-                          )}
-                        </div>
-                        <div
+                        {isEditing !== item?.user?._id && (
+                          <div
+                            className={`w-6 h-6 rounded-md flex items-center justify-center`}
+                            style={{
+                              backgroundColor:
+                                item.status === 'pending'
+                                  ? '#E8B04433'
+                                  : item.status === 'completed'
+                                  ? '#14A42B33'
+                                  : '#D1416333'
+                            }}
+                          >
+                            {item.status === 'pending' ? (
+                              <Loading className='w-3' />
+                            ) : item.status === 'completed' ? (
+                              <Completed className='w-3' />
+                            ) : (
+                              <Failed className='w-3' />
+                            )}
+                          </div>
+                        )}
+                        {/* <div
                           className={`w-6 h-6 rounded-md flex items-center justify-center ${
                             item.status === 'completed'
                               ? 'cursor-pointer'
@@ -634,12 +717,36 @@ function Index () {
                             }
                             className={'w-4 h-4'}
                           />
-                        </div>
-                        <div
-                          className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-info`}
-                        >
-                          <EditSquare primaryColor='#ffffff' size={12} />
-                        </div>
+                        </div> */}
+                        {isEditing === item?.user?._id && (
+                          <div
+                            className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-error bg-opacity-40 hover:scale-125 transition-transform duration-500`}
+                            onClick={() => setDiscardSave(true)}
+                          >
+                            <Failed className='w-3' />
+                          </div>
+                        )}
+                        {isEditing === item?.user?._id && (
+                          <div
+                            className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-[#14A42B33] hover:scale-125 transition-transform duration-500`}
+                            onClick={() => setConfirmSave(true)}
+                          >
+                            <FaSave color='#14A42B' size={12} />
+                          </div>
+                        )}
+                        {isEditing !== item?.user?._id && (
+                          <div
+                            className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-info hover:scale-125 transition-transform duration-500`}
+                            onClick={() => {
+                              setIsEditing(item.user?._id)
+                              setFirstName(item.user?.firstName)
+                              setLastName(item?.user?.lastName)
+                              setEmail(item?.user?.email)
+                            }}
+                          >
+                            <EditSquare primaryColor='#ffffff' size={12} />
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -649,6 +756,44 @@ function Index () {
           </table>
         </div>
       </div>
+      {confirmSave && (
+        <Modal
+          type='info'
+          heading='Confirm save'
+          body='Are you sure you want to save these changes?'
+          confirmTxt='Yes'
+          cancelTxt='No, Cancel'
+          isLoading={isLoading}
+          onConfirm={handleUpdateUser}
+          onCancel={() => {
+            setConfirmSave(false)
+          }}
+        />
+      )}
+      {discardSave && (
+        <Modal
+          type='error'
+          heading='Discard changes'
+          body='Are you sure you want to discard these changes?'
+          confirmTxt='Yes, Discard'
+          cancelTxt='Continue editing'
+          onConfirm={() => {
+            setIsEditing(undefined)
+            setDiscardSave(false)
+          }}
+          onCancel={() => {
+            setDiscardSave(false)
+          }}
+        />
+      )}
+      {error && (
+        <Modal
+          type='error'
+          heading='Error updating user'
+          body={error}
+          onClose={() => setError(undefined)}
+        />
+      )}
     </Sidebar>
   )
 }

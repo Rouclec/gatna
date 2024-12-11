@@ -37,7 +37,7 @@ function getCurrencySymbol (currency: string | undefined): string {
 }
 
 function PendingActivation () {
-  const [isCopied, setIsCopied] = useState(false)
+  const [isCopied, setIsCopied] = useState(-1)
   const [status, setStatus] = useState<'completed' | 'canceled'>()
   const [item, setItem] = useState<Withdrawal>()
   const [error, setError] = useState<string>()
@@ -90,9 +90,9 @@ function PendingActivation () {
   useEffect(() => {
     let timer: NodeJS.Timeout
 
-    if (isCopied) {
+    if (isCopied != -1) {
       timer = setTimeout(() => {
-        setIsCopied(false)
+        setIsCopied(-1)
       }, 2000)
     }
 
@@ -417,17 +417,17 @@ function PendingActivation () {
                       className='px-3 py-5 whitespace-nowrap overflow-hidden'
                       onClick={async () => {
                         await navigator.clipboard.writeText(item.walletId ?? '')
-                        setIsCopied(true)
+                        setIsCopied(index)
                       }}
                     >
                       <div className='gap-4 relative'>
                         <p className='whitespace-nowrap overflow-hidden text-ellipsis max-w-28 underline text-success cursor-pointer'>
                           {item.walletId}
                         </p>
-                        {isCopied && (
+                        {isCopied === index && (
                           <p
                             className={`text-grey-500 absolute text-center no-underline transition-opacity duration-3000 ease-out opacity-100`}
-                            style={{ opacity: isCopied ? 1 : 0 }}
+                            style={{ opacity: isCopied === index ? 1 : 0 }}
                           >
                             Copied
                           </p>

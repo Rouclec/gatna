@@ -7,6 +7,7 @@ import { Package } from "./package";
 
 export interface Transaction {
   user: {
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;

@@ -83,7 +83,7 @@ const AdminNav = () => {
   }, [isModalOpen, notifications, markAsRead, refetch]);
 
   return (
-    <div className="lg:container lg:mx-auto fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 right-2 md:left-[120px] md:pl-0 md:right-20 border-neutral-1A items-end flex z-40 bg-background">
+    <div className="fixed h-20 sm:h-[120px] pb-2 sm:pb-6 border-b-[1px] left-0 pl-20 right-2 md:left-36 md:pl-0 md:right-12  border-neutral-1A items-end max-w-[1720px] mx-auto flex z-40 bg-background">
       <div className="flex w-full items-center justify-between">
         {/* Welcome Message */}
         <div className="flex flex-col gap-1 sm:gap-2">

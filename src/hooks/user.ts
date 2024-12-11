@@ -57,3 +57,30 @@ export const useUpdateMe = (
     onError,
   });
 };
+
+export const useUpdateUser = (
+  onSuccess?: (data?: User) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (
+      body: Omit<
+        User,
+        | "createdAt"
+        | "updatedAt"
+        | "walletBalance"
+        | "referalCode"
+        | "referralLink"
+        | "referredBy"
+        | "phoneNumber"
+        | "countryCode"
+        | "walletId"
+      >
+    ) => {
+      const { data } = await axios.put("/api/admin/user", body);
+      return data.data as User;
+    },
+    onSuccess,
+    onError,
+  });
+};
