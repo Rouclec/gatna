@@ -114,7 +114,7 @@ export default async function handler(
       }
     case "GET":
       try {
-        const courses = await Course.find().populate("package");
+        const courses = await Course.find().populate("package").sort("-createdAt");
 
         return res.status(200).json({ data: courses });
       } catch (error) {

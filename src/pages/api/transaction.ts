@@ -33,7 +33,8 @@ export default async function handler(
         // Fetch all transactions and populate user and package
         const transactions = await Transaction.find()
           .populate("package")
-          .populate("user");
+          .populate("user")
+          .sort("-createdAt");
 
         // Filter out transactions where user or package is null
         const validTransactions = transactions.filter(
@@ -48,7 +49,6 @@ export default async function handler(
               user: transaction.user._id, // Match user ID
               package: transaction.package._id, // Match package ID
             });
-
 
             // Extract expiryDate (if it exists) or set it to null
             const expiryDate = userCourse?.expiration || null;

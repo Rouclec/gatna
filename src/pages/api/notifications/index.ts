@@ -30,7 +30,7 @@ export default async function handler(
   switch (req.method) {
     case "GET":
       try {
-        const notifications = await Notification.find().sort("createdAt");
+        const notifications = await Notification.find().sort("-createdAt");
 
         return res.status(200).json({ data: notifications });
       } catch (error) {

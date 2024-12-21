@@ -74,7 +74,7 @@ export default async function handler(
           expiration: { $gt: now },
         };
 
-        const userPackage = await UserPackage.findOne(query);
+        const userPackage = await UserPackage.findOne(query).sort("-createdAt");
 
         if (!userPackage) {
           return res.status(404).json({

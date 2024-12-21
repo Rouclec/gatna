@@ -287,7 +287,7 @@ function Index () {
                     <p
                       className={`${gilroyBold.className} text-sm text-neutral-50`}
                     >
-                      ID
+                      Referral Code
                     </p>
                   </div>
                 </th>
@@ -388,6 +388,31 @@ function Index () {
                       className={`${gilroyBold.className} text-sm text-neutral-50`}
                     >
                       Email
+                    </p>
+                  </div>
+                </th>
+                <th className='text-left px-3 py-5 whitespace-nowrap'>
+                  <div className='flex gap-1 items-center'>
+                    <div className='h-6 items-center gap-0 my-auto'>
+                      <ChevronUp
+                        size={12}
+                        primaryColor='#606060'
+                        style={{
+                          cursor: 'pointer'
+                        }}
+                      />
+                      <ChevronDown
+                        size={12}
+                        primaryColor='#606060'
+                        style={{
+                          cursor: 'pointer'
+                        }}
+                      />
+                    </div>
+                    <p
+                      className={`${gilroyBold.className} text-sm text-neutral-50`}
+                    >
+                      Phone number
                     </p>
                   </div>
                 </th>
@@ -620,6 +645,16 @@ function Index () {
                             {item?.user?.email}
                           </p>
                         )}
+                      </div>
+                    </td>
+                    <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>
+                      <div>
+                        <p
+                          className={`${gilroyMedium.className} text-sm text-neutral-10`}
+                        >
+                          {item?.user?.countryCode}
+                          {item?.user?.phoneNumber}
+                        </p>
                       </div>
                     </td>
                     <td className='px-3 py-5 whitespace-nowrap overflow-hidden text-ellipsis max-w-28'>

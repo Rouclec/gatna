@@ -146,7 +146,6 @@ export default function Home () {
 
   const { query } = router
 
-
   const { data: packages, isFetched: isPackagesFetched } = useGetPackages({})
 
   const handleContactUs = async () => {
@@ -194,20 +193,26 @@ export default function Home () {
                   en staking pouvant vous générer jusqu&apos;à 20% de ROI.
                 </p>
                 <div className='flex flex-col md:flex-row gap-4'>
-                  <div className='flex h-[60px] w-full  items-center justify-center bg-gradient rounded-[10px]'>
+                  <Link
+                    href={'#courses'}
+                    className='flex h-[60px] w-full  items-center justify-center bg-gradient rounded-[10px]'
+                  >
                     <p
                       className={`${gilroyBold.className} text-base text-neutral-10`}
                     >
                       Acheter ma formation
                     </p>
-                  </div>
-                  <div className='flex h-[60px] w-full items-center justify-center bg-neutral-24 rounded-[10px]'>
+                  </Link>
+                  <Link
+                    href='/signin'
+                    className='flex h-[60px] w-full items-center justify-center bg-neutral-24 rounded-[10px]'
+                  >
                     <p
                       className={`${gilroyBold.className} text-base text-neutral-10`}
                     >
                       J&apos;ai déjà un compte
                     </p>
-                  </div>
+                  </Link>
                 </div>
                 <div className='relative flex flex-col md:flex-row mt-4 gap-4 items-center w-full'>
                   <SpiralArrow className='absolute w-36 h-40 right-full mr-4 -bottom-4' />

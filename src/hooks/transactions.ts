@@ -10,6 +10,8 @@ export interface Transaction {
     _id: string;
     firstName: string;
     lastName: string;
+    phoneNumber: string;
+    countryCode: string;
     email: string;
     referalCode: string;
     referredBy?: string;
