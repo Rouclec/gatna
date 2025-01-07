@@ -80,8 +80,12 @@ export default async function handler(
         const now = new Date();
 
         // Query
+        const userIdObjectId = new mongoose.Types.ObjectId(userId as string);
+
+        console.log(userIdObjectId, "::: user id object");
+
         const query = {
-          user: userId,
+          user: userIdObjectId,
           active: true,
           expiration: { $gt: now },
         };
