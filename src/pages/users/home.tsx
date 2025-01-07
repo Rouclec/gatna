@@ -27,12 +27,22 @@ function Home () {
     if (!!viewingCourses) setSelectedCourse(viewingCourses[0])
   }
 
+
   useEffect(() => {
     if (isFetched) {
       const coursesData = Array.from(
         new Map(
           data
-            ?.map(course => course.video || course.pdf) // Extract either video or pdf
+            ?.map(course => {
+              const file = course.video || course.pdf // Extract either video or pdf
+
+              if (!file) return null // Skip if neither video nor pdf exists
+
+              return {
+                package: course.package,
+                ...file
+              }
+            })
             .filter(item => item !== null) // Filter out null values
             .map(item => [item.id, item]) // Create unique entries based on id
         ).values()
@@ -42,7 +52,7 @@ function Home () {
 
       setViewingCourses(coursesData?.slice(0, 0 + PAGE_SIZE))
 
-      if (!!coursesData) setSelectedCourse(coursesData[0])
+      if (coursesData.length > 0) setSelectedCourse(coursesData[0])
 
       const totalItems = coursesData.length
       setTotalPages(Math.ceil(totalItems / PAGE_SIZE))

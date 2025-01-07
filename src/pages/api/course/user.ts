@@ -38,7 +38,19 @@ async function getCoursesForUser(userId: string, packageId: string) {
   const courses = await Course.find({
     package: { $in: allPackageIds }, // Match any of the retrieved package IDs
     published: true, // Only fetch active courses
-  }).populate("package"); // Optional: populate the package details
+  }).populate("package"); // Populate the package details to access names
+
+  // Step 3: Sort courses by package name
+  courses.sort((a, b) => {
+    const nameA = a.package?.name || "";
+    const nameB = b.package?.name || "";
+
+    // Extract the numeric part after "Gatna " and compare
+    const numA = parseInt(nameA.replace(/\D/g, ""), 10) || 0;
+    const numB = parseInt(nameB.replace(/\D/g, ""), 10) || 0;
+
+    return numA - numB;
+  });
 
   return courses;
 }
