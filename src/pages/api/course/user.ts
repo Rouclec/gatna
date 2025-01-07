@@ -86,7 +86,11 @@ export default async function handler(
           expiration: { $gt: now },
         };
 
+        console.log(query, "::: request query");
+
         const userPackage = await UserPackage.findOne(query).sort("-createdAt");
+
+        console.log(userPackage, "::: user package");
 
         if (!userPackage) {
           return res.status(404).json({
@@ -95,6 +99,12 @@ export default async function handler(
         }
 
         const packageFound = await Package.findById(userPackage.package);
+
+        console.log(
+          packageFound,
+          "::: package found for user ::: ",
+          query.user
+        );
 
         if (!packageFound) {
           return res.status(404).json({
@@ -106,6 +116,8 @@ export default async function handler(
           userId as string,
           packageFound._id
         );
+
+        console.log(userCourses, "::: user courses");
 
         return res.status(200).json({ data: userCourses });
       } catch (error) {
