@@ -84,3 +84,17 @@ export const useUpdateUser = (
     onError,
   });
 };
+
+export const useDeleteUser = (
+  onSuccess?: (data?: string) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await axios.delete(`/api/admin/user/${id}`);
+      return data.data as string;
+    },
+    onSuccess,
+    onError,
+  });
+};

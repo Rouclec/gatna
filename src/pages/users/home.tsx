@@ -70,8 +70,6 @@ function Home () {
           const numA = parseInt(nameA.replace(/\D/g, ''), 10) || 0
           const numB = parseInt(nameB.replace(/\D/g, ''), 10) || 0
 
-          console.log({ numA, numB })
-
           return numA - numB
         })
 

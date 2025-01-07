@@ -25,7 +25,8 @@ import { useGetStats } from '@/src/hooks/stats'
 import { Transaction, useGetTransactions } from '@/src/hooks/transactions'
 import { FaSave } from 'react-icons/fa'
 import { Modal } from '@/src/components'
-import { useUpdateUser } from '@/src/hooks/user'
+import { useDeleteUser, useUpdateUser } from '@/src/hooks/user'
+import { FaTrash } from 'react-icons/fa'
 
 const colors = {
   high: {
@@ -80,6 +81,10 @@ function Index () {
   const [firstName, setFirstName] = useState<string>()
   const [lastName, setLastName] = useState<string>()
   const [email, setEmail] = useState<string>()
+  const [deletingItem, setDeletingItem] = useState<{
+    _id: string
+    email: string
+  }>()
 
   const [stats, setStats] = useState<
     {
@@ -201,6 +206,23 @@ function Index () {
     }
   )
 
+  const { mutateAsync: deleteUser } = useDeleteUser(
+    async () => {
+      await refetch()
+    },
+    error => {
+      if (!!error?.response?.data?.message) {
+        if (typeof error?.response?.data.message === 'string') {
+          setError(error?.response?.data.message)
+        } else {
+          setError('An unknown server error occured')
+        }
+      } else {
+        setError('An unknown server error occured')
+      }
+    }
+  )
+
   const handleUpdateUser = async () => {
     try {
       setIsLoading(true)
@@ -216,6 +238,18 @@ function Index () {
       setIsLoading(false)
       setIsEditing(undefined)
       setConfirmSave(false)
+    }
+  }
+
+  const handleDeleteUser = async () => {
+    try {
+      setIsLoading(true)
+      await deleteUser(deletingItem?._id ?? '')
+    } catch (error) {
+      console.error({ error })
+    } finally {
+      setIsLoading(false)
+      setDeletingItem(undefined)
     }
   }
 
@@ -731,28 +765,6 @@ function Index () {
                             )}
                           </div>
                         )}
-                        {/* <div
-                          className={`w-6 h-6 rounded-md flex items-center justify-center ${
-                            item.status === 'completed'
-                              ? 'cursor-pointer'
-                              : 'cursor-not-allowed'
-                          }`}
-                          style={{
-                            backgroundColor:
-                              item.status === 'completed'
-                                ? '#3FA247'
-                                : '#A6A6A61A'
-                          }}
-                        >
-                          <Copy
-                            stroke={
-                              item.status === 'completed'
-                                ? '#ffffff'
-                                : '#606060'
-                            }
-                            className={'w-4 h-4'}
-                          />
-                        </div> */}
                         {isEditing === item?.user?._id && (
                           <div
                             className={`w-6 h-6 rounded-md flex items-center justify-center cursor-pointer bg-error bg-opacity-40 hover:scale-125 transition-transform duration-500`}
@@ -782,6 +794,17 @@ function Index () {
                             <EditSquare primaryColor='#ffffff' size={12} />
                           </div>
                         )}
+                        <div
+                          className={`w-6 h-6 rounded-md flex items-center bg-error bg-opacity-40 justify-center cursor-pointer hover:scale-125 transition-transform duration-500`}
+                          onClick={() => {
+                            setDeletingItem({
+                              _id: item.user?._id ?? '',
+                              email: item.user?.email
+                            })
+                          }}
+                        >
+                          <FaTrash className='w-[10px]' color='#E03A31' />
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -819,6 +842,15 @@ function Index () {
           onCancel={() => {
             setDiscardSave(false)
           }}
+        />
+      )}
+      {deletingItem && (
+        <Modal
+          type='error'
+          heading='Confirm delete user'
+          body={`Are you sure you want to delete the user with email ${deletingItem.email}`}
+          onConfirm={handleDeleteUser}
+          onCancel={() => setDeletingItem(undefined)}
         />
       )}
       {error && (
