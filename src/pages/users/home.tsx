@@ -27,12 +27,24 @@ function Home () {
     if (!!viewingCourses) setSelectedCourse(viewingCourses[0])
   }
 
-
   useEffect(() => {
     if (isFetched) {
+      const sortedData = data
+        ?.filter(course => course.package && course.package.name) // Ensure package and name exist
+        .sort((a, b) => {
+          const nameA = a.package.name || ''
+          const nameB = b.package.name || ''
+
+          // Extract the numeric part after "Gatna" and compare
+          const numA = parseInt(nameA.replace(/\D/g, ''), 10) || 0
+          const numB = parseInt(nameB.replace(/\D/g, ''), 10) || 0
+
+          return numA - numB
+        })
+
       const coursesData = Array.from(
         new Map(
-          data
+          sortedData
             ?.map(course => {
               const file = course.video || course.pdf // Extract either video or pdf
 
@@ -49,7 +61,6 @@ function Home () {
       )
 
       setCourses(coursesData)
-
       setViewingCourses(coursesData?.slice(0, 0 + PAGE_SIZE))
 
       if (coursesData.length > 0) setSelectedCourse(coursesData[0])
@@ -62,7 +73,6 @@ function Home () {
   const { data: videoPlayBackInfo } = useGetVideoPlaybackInfo(
     selectedCourse?.id as string
   )
-
 
   return (
     <Sidebar>
