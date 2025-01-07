@@ -39,6 +39,8 @@ function Home () {
           const numA = parseInt(nameA.replace(/\D/g, ''), 10) || 0
           const numB = parseInt(nameB.replace(/\D/g, ''), 10) || 0
 
+          console.log({ numA, numB })
+
           return numA - numB
         })
 
@@ -59,6 +61,19 @@ function Home () {
             .map(item => [item.id, item]) // Create unique entries based on id
         ).values()
       )
+        ?.filter(course => course.package && course.package.name) // Ensure package and name exist
+        .sort((a, b) => {
+          const nameA = a.package.name || ''
+          const nameB = b.package.name || ''
+
+          // Extract the numeric part after "Gatna" and compare
+          const numA = parseInt(nameA.replace(/\D/g, ''), 10) || 0
+          const numB = parseInt(nameB.replace(/\D/g, ''), 10) || 0
+
+          console.log({ numA, numB })
+
+          return numA - numB
+        })
 
       setCourses(coursesData)
       setViewingCourses(coursesData?.slice(0, 0 + PAGE_SIZE))
