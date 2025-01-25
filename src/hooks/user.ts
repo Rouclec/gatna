@@ -72,8 +72,6 @@ export const useUpdateUser = (
         | "referalCode"
         | "referralLink"
         | "referredBy"
-        | "phoneNumber"
-        | "countryCode"
         | "walletId"
       >
     ) => {

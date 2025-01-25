@@ -30,7 +30,7 @@ export default async function handler(
   switch (req.method) {
     case "PUT":
       try {
-        const { firstName, lastName, email, _id } = req.body;
+        const { firstName, lastName, email, _id, countryCode, phoneNumber } = req.body;
 
         const userFound = await User.findById(_id);
 
@@ -46,6 +46,8 @@ export default async function handler(
             firstName,
             lastName,
             email,
+            countryCode, 
+            phoneNumber
           },
           { new: true }
         );

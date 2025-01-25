@@ -23,6 +23,7 @@
     "firebase": "^11.0.2",
     "formidable": "^3.5.2",
     "googleapis": "^144.0.0",
+    "libphonenumber-js": "^1.11.18",
     "lodash": "^4.17.21",
     "mailersend": "^2.3.0",
     "moment": "^2.30.1",
