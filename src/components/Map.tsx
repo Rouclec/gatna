@@ -16,9 +16,10 @@ export const defaultMapContainerStyle = {
 
 const MapComponent = () => {
   const defaultMapCenter = {
-    lat: 35.8799866,
-    lng: 76.5048004,
+    lat:  7.3697,
+    lng: 12.3547,
   };
+
 
   const defaultMapOptions = {
     zoomControl: false,

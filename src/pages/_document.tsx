@@ -27,6 +27,7 @@ export default function Document () {
           href='/apple-touch-icon.png'
         />
         <link rel='manifest' href='/site.webmanifest' />
+        <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}&libraries=places&callback=initMap`} async></script>
       </Head>
       <body className='antialiased'>
         <Main />

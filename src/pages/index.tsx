@@ -520,10 +520,10 @@ export default function Home() {
                 <div className="flex flex-row gap-2 items-center">
                   <Message size={20} primaryColor="#8250ED" />
                   <Link
-                    href={`mailto:info@gatna.io`}
+                    href={`mailto:gatna.io@gmail.com`}
                     className={`${gilroyRegular.className} text-base text-white opacity-90 underline`}
                   >
-                    info@gatna.io
+                    gatna.io@gmail.com
                   </Link>
                 </div>
                 <div className="flex flex-row gap-2 items-start">
