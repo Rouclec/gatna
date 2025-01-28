@@ -1,6 +1,5 @@
 import Sidebar from '@/src/components/Sidebar'
 import { gilroyBold, gilroyRegular } from '..'
-import { MapProvider } from '@/src/providers/map-provider'
 import { MapComponent } from '@/src/components/Map'
 
 import Facebook from '@/public/assets/icons/facebook.svg'
@@ -90,9 +89,9 @@ function Message () {
               </p>
             </div>
             <div className='w-full md:w-[438px]'>
-              <MapProvider>
+   
                 <MapComponent />
-              </MapProvider>
+         
             </div>
             <div className='flex gap-3 items-center'>
               <Link

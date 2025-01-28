@@ -13,7 +13,6 @@ import landingimage from "@/public/assets/images/landing-page-image.png";
 import { CourseDetails, Navbar } from "../components";
 
 import Image from "next/image";
-import { MapProvider } from "../providers/map-provider";
 import { MapComponent } from "../components/Map";
 import { Call, Message, Send } from "react-iconly";
 import { useEffect, useState } from "react";
@@ -347,9 +346,7 @@ export default function Home() {
                     </Link>
                   </div>
                 </div>
-                <MapProvider>
-                  <MapComponent />
-                </MapProvider>
+                <MapComponent />
               </div>
               <div className="col-span-7 md:col-span-4">
                 <p
@@ -492,7 +489,7 @@ export default function Home() {
                 <p
                   className={`pl-8 text-opacity-90 ${gilroyRegular.className}`}
                 >
-                  Situé à gauche du 
+                  Situé à gauche du
                   <br />
                   lycée mongo Joseph à Bonapriso
                 </p>

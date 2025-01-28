@@ -92,7 +92,7 @@ export default async function handler(
 
           return res.status(201).json({ data: course });
         } else {
-        //   console.log({ title, description, pdf });
+          //   console.log({ title, description, pdf });
           const course = new Course({
             package: pack,
             pdf: {
@@ -114,7 +114,19 @@ export default async function handler(
       }
     case "GET":
       try {
-        const courses = await Course.find().populate("package").sort("-createdAt");
+        const courses = await Course.find().populate("package");
+
+        // Now sort by title of either pdf or video
+        courses.sort((a, b) => {
+          const titleA = a.pdf?.title || a.video?.title;
+          const titleB = b.pdf?.title || b.video?.title;
+
+          if (titleA && titleB) {
+            // Use localeCompare with numeric option for natural sorting
+            return titleA.localeCompare(titleB, undefined, { numeric: true });
+          }
+          return 0;
+        });
 
         return res.status(200).json({ data: courses });
       } catch (error) {

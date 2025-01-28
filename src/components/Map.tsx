@@ -5,7 +5,10 @@ we need to make this component client rendered as well else error occurs
 "use client";
 
 //Map component Component from library
-import { GoogleMap } from "@react-google-maps/api";
+import { GoogleMap, Libraries, useJsApiLoader } from "@react-google-maps/api";
+
+// Define a list of libraries to load from the Google Maps API
+const libraries = ["places", "drawing", "geometry"];
 
 //Map's styling
 export const defaultMapContainerStyle = {
@@ -16,10 +19,9 @@ export const defaultMapContainerStyle = {
 
 const MapComponent = () => {
   const defaultMapCenter = {
-    lat:  7.3697,
+    lat: 7.3697,
     lng: 12.3547,
   };
-
 
   const defaultMapOptions = {
     zoomControl: false,
@@ -28,7 +30,20 @@ const MapComponent = () => {
     mapTypeId: "roadmap",
   };
 
-  const defaultMapZoom = 5;
+  const defaultMapZoom = 6;
+
+  // Load the Google Maps JavaScript API asynchronously
+  const { isLoaded: scriptLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API!,
+    libraries: libraries as Libraries,
+  });
+
+  if (loadError) {
+    console.log({ loadError }, "script loading error");
+    return <p>Encountered error while loading google maps</p>;
+  }
+
+  if (!scriptLoaded) return <p>Map Script is loading ...</p>;
 
   return (
     <div className="w-full">
