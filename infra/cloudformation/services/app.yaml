@@ -151,7 +151,7 @@ Resources:
                       - Name: NEXT_PUBLIC_MEASUREMENT_ID
                         ValueFrom: !Sub '${FirebaseSecretArn}:measurementId::'
                       - Name: NEXT_PUBLIC_GOOGLE_MAP_API
-                        ValueFrom: !Sub '${GeneralSecretArn}:nextPublicGoogleMapApi::'
+                        ValueFrom: !Sub '${GeneralSecretArn}:googleMapApi::'
                       - Name: MONGODB_URI
                         ValueFrom: !Sub '${GeneralSecretArn}:mongoDbUri::'
                       - Name: NEXTAUTH_SECRET
