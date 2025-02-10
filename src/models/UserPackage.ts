@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, model } from "mongoose";
 
+
 interface IUserCourses extends Document {
   user: Schema.Types.ObjectId; // Reference to the user
   package: Schema.Types.ObjectId; // course id
   active: boolean; // Whether the user's access is active
+  assignedByAdmin: boolean;
   expiration: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +27,10 @@ const UserCoursesSchema: Schema<IUserCourses> = new Schema(
       type: Boolean,
       default: false, // Default value is false
     },
+    assignedByAdmin: {
+      type: Boolean,
+      default: false,
+    },
     expiration: Date,
   },
   {
@@ -43,16 +49,15 @@ UserCoursesSchema.pre(/^find/, async function (next) {
   await query.model.updateMany(
     {
       expiration: { $lt: now }, // Expired records
-      active: true,             // Only update active ones
+      active: true, // Only update active ones
     },
     {
-      active: false,            // Set active to false
+      active: false, // Set active to false
     }
   );
 
   next();
 });
-
 
 export default mongoose.models.UserCourses ||
   model<IUserCourses>("UserCourses", UserCoursesSchema);

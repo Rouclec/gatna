@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Course } from "./course";
 
 interface User {
   _id: string;
@@ -17,6 +18,11 @@ interface User {
   profilePic?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+interface AssignUserCourseRequest {
+  email: string;
+  packageId: string;
 }
 
 const API_URL = "/api/user";
@@ -50,7 +56,9 @@ export const useUpdateMe = (
         | "referredBy"
       >
     ) => {
-      const { data } = await axios.put(API_URL, body);
+      const { data } = await axios.put(API_URL, body, {
+        withCredentials: true,
+      });
       return data.data as User;
     },
     onSuccess,
@@ -75,8 +83,26 @@ export const useUpdateUser = (
         | "walletId"
       >
     ) => {
-      const { data } = await axios.put("/api/admin/user", body);
+      const { data } = await axios.put("/api/admin/user", body, {
+        withCredentials: true,
+      });
       return data.data as User;
+    },
+    onSuccess,
+    onError,
+  });
+};
+
+export const useAssignCourseToUser = (
+  onSuccess?: (data: Course) => void,
+  onError?: (error?: any) => void
+) => {
+  return useMutation({
+    mutationFn: async (body: AssignUserCourseRequest) => {
+      const { data } = await axios.post("/api/admin/user", body, {
+        withCredentials: true,
+      });
+      return data.data as Course;
     },
     onSuccess,
     onError,
@@ -89,7 +115,9 @@ export const useDeleteUser = (
 ) => {
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await axios.delete(`/api/admin/user/${id}`);
+      const { data } = await axios.delete(`/api/admin/user/${id}`, {
+        withCredentials: true,
+      });
       return data.data as string;
     },
     onSuccess,

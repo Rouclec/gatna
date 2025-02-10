@@ -6,6 +6,7 @@ interface ITransaction extends Document {
   user: Schema.Types.ObjectId; // Reference to the user making the purchase
   status: string; // Transaction status (pending, completed, failed, etc.)
   amount: number; // Amount paid in USD
+  assignedByAdmin: boolean;
   currency1: string; // Original currency (e.g., USD)
   currency2: string; // Cryptocurrency used for payment (e.g., BTC)
   type?: string;
@@ -51,6 +52,10 @@ const TransactionSchema: Schema<ITransaction> = new Schema(
     currency2: {
       type: String, // Cryptocurrency used
       default: "USDT.TRC20",
+    },
+    assignedByAdmin: {
+      type: Boolean,
+      default: false,
     },
   },
   {

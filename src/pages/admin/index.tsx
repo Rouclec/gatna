@@ -7,7 +7,7 @@ import AddUser from "@/public/assets/icons/add-user.svg";
 import Airplay from "@/public/assets/icons/airplay.svg";
 import CalenderDone from "@/public/assets/icons/calendar-done.svg";
 import BankCard from "@/public/assets/icons/bank-card.svg";
-// import Plus from '@/public/assets/icons/plus.svg'
+import Plus from "@/public/assets/icons/plus.svg";
 import DocumentVerified from "@/public/assets/icons/document-verified.svg";
 import Filter from "@/public/assets/icons/filter.svg";
 import Loading from "@/public/assets/icons/loading.svg";
@@ -25,9 +25,10 @@ import { GetServerSidePropsContext } from "next";
 import { useGetStats } from "@/src/hooks/stats";
 import { Transaction, useGetTransactions } from "@/src/hooks/transactions";
 import { FaSave } from "react-icons/fa";
-import { Modal } from "@/src/components";
+import { CreateUserModal, Modal } from "@/src/components";
 import { useDeleteUser, useUpdateUser } from "@/src/hooks/user";
 import { FaTrash } from "react-icons/fa";
+import { useGetPackages } from "@/src/hooks/package";
 
 const colors = {
   high: {
@@ -101,6 +102,7 @@ function Index() {
     Transaction[]
   >([]);
   const [filter, setFilter] = useState<string>();
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 
   function calculateProgress(
     startDate: string,
@@ -134,6 +136,8 @@ function Index() {
   const { data: adminStats, isFetched } = useGetStats();
 
   const { data: transactions, refetch } = useGetTransactions();
+
+  const { data: packages } = useGetPackages({});
 
   useEffect(() => {
     if (adminStats && isFetched) {
@@ -201,6 +205,13 @@ function Index() {
       if (!!error?.response?.data?.message) {
         if (typeof error?.response?.data.message === "string") {
           setError(error?.response?.data.message);
+        } else if (typeof error?.response?.data.message?.message === "string") {
+          setError(error?.response?.data.message?.message);
+        } else if (
+          typeof error?.response?.data?.message?.errorResponse?.errmsg ==
+          "string"
+        ) {
+          setError(error?.response?.data?.message?.errorResponse?.errmsg);
         } else {
           setError("An unknown server error occured");
         }
@@ -218,6 +229,13 @@ function Index() {
       if (!!error?.response?.data?.message) {
         if (typeof error?.response?.data.message === "string") {
           setError(error?.response?.data.message);
+        } else if (typeof error?.response?.data.message?.message === "string") {
+          setError(error?.response?.data.message?.message);
+        } else if (
+          typeof error?.response?.data?.message?.errorResponse?.errmsg ==
+          "string"
+        ) {
+          setError(error?.response?.data?.message?.errorResponse?.errmsg);
         } else {
           setError("An unknown server error occured");
         }
@@ -311,12 +329,15 @@ function Index() {
                 <Filter className="w-full" />
               </div>
             </div>
-            {/* <div className='button-primary px-4 py-3 gap-4'>
-              <Plus className={'w-5'} />
+            <div
+              className="button-primary px-4 py-3 gap-4"
+              onClick={() => setShowCreateUserModal(true)}
+            >
+              <Plus className={"w-5"} />
               <p className={`${gilroyBold.className} text-sm text-white`}>
                 Add new
               </p>
-            </div> */}
+            </div>
           </div>
           <table className="min-w-full w-full table-auto mt-7">
             <thead className="bg-neutral-CF bg-opacity-10 rounded-lg">
@@ -890,6 +911,11 @@ function Index() {
           onClose={() => setError(undefined)}
         />
       )}
+      <CreateUserModal
+        visible={showCreateUserModal}
+        onClose={() => setShowCreateUserModal(false)}
+        packages={packages}
+      />
     </Sidebar>
   );
 }

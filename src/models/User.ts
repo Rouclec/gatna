@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { decrypt, encrypt, maskKey } from "../util/encryption";
 
+import uniqueValidator from "mongoose-unique-validator";
+
 interface IUser extends Document {
   firstName: string;
   lastName: string;
@@ -131,5 +133,9 @@ UserSchema.methods.compareWithdrawalPin = async function (
 ): Promise<boolean> {
   return bcrypt.compare(pin, this.withdrawalPin);
 };
+
+UserSchema.plugin(uniqueValidator, {
+  message: "{PATH} {VALUE} is already in use, please try another!",
+});
 
 export default mongoose.models.User || model<IUser>("User", UserSchema);

@@ -49,7 +49,7 @@ interface InputProps {
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
   ) => void
 }
-const Input: FC<InputProps> = ({
+export const Input: FC<InputProps> = ({
   placeholder,
   options,
   value,

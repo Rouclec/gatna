@@ -71,7 +71,7 @@ export default async function handler(
         const transaction = await coinpaymentsClient.createTransaction({
           currency1: pack.currency,
           currency2: "USDT.TRC20",
-          amount: pack.price, //TODO: revert this to use the Package's price
+          amount: pack.price,
           // amount: 12,
           buyer_email: user.email,
           item_name: user.firstName,

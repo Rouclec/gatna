@@ -165,7 +165,7 @@ export default async function handler(
 
       await User.findOneAndUpdate(
         { referalCode: userFound.referredBy },
-        { $inc: { walletBalance: 10 } }, // Increment wallet balance by 10
+        { $inc: { walletBalance: 0.1 * (transaction?.amount ?? 0) } }, // Increment wallet balance by 10% of the course bought
         { new: true } // Return the updated document
       );
 

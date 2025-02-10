@@ -60,7 +60,7 @@ export default async function handler(
 
         // 5. Total sales
         const totalSalesData = await Transaction.aggregate([
-          { $match: { status: "completed" } }, // Match only completed transactions
+          { $match: { status: "completed", assignedByAdmin: { $ne: true } } }, // Match only completed transactions
           { $group: { _id: null, totalAmount: { $sum: "$amount" } } }, // Sum up the amounts
         ]);
         const totalSales =
