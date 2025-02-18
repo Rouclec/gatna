@@ -295,7 +295,7 @@ export default function Home() {
               </div>
             </div>
             <div className="grid grid-cols-7 gap-4 md:gap-[72px]">
-              <div className="col-span-7 md:col-span-3 grid gap-12">
+              <div className="col-span-7 order-2 md:order-1 md:col-span-3 grid gap-12">
                 <div className="grid grid-cols-1  md:grid-cols-2 gap-6">
                   <div className="h-[190px] bg-grey-bg rounded-3xl flex flex-col p-[18px] justify-between">
                     <div className="flex gap-[6px] items-center">
@@ -348,7 +348,7 @@ export default function Home() {
                 </div>
                 <MapComponent />
               </div>
-              <div className="col-span-7 md:col-span-4">
+              <div className="col-span-7 order-1 md:order-2 md:col-span-4">
                 <p
                   className={`text-4xl md:hidden text-center text-white text-opacity-[2%] ${gilroyHeavy.className}`}
                 >

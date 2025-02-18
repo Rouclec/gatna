@@ -900,6 +900,7 @@ function Index() {
           heading="Confirm delete user"
           body={`Are you sure you want to delete the user with email ${deletingItem.email}`}
           onConfirm={handleDeleteUser}
+          isLoading={isLoading}
           onCancel={() => setDeletingItem(undefined)}
         />
       )}

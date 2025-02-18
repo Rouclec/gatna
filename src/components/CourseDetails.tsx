@@ -134,7 +134,7 @@ const CourseDetails: FC<Props> = ({ pack, inverted, pinColor }) => {
               <div className='w-full order-1 md:order-2 flex items-center justify-center md:justify-start'>
                 <div
                   className={`w-fit md:w-[526px] h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex ${
-                    inverted ? 'mr-10' : 'ml-10'
+                    inverted ? 'mr-0 md:mr-10' : 'ml-0 md:ml-10'
                   }`}
                 >
                   {isLoading ? (
@@ -195,7 +195,9 @@ const CourseDetails: FC<Props> = ({ pack, inverted, pinColor }) => {
             <div className='grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 lg:gap-16'>
               <div className='w-full flex items-center justify-center md:justify-end'>
                 <div
-                  className={`w-fit md:w-[526px] h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex mr-10`}
+                   className={`w-fit md:w-[526px] h-full min-h-48 bg-neutral-24 rounded-[40px] col-span-1 items-center justify-center flex ${
+                    inverted ? 'mr-0 md:mr-10' : 'ml-0 md:ml-10'
+                  }`}
                 >
                   {isLoading ? (
                     <ClipLoader color='#fff' />
