@@ -926,6 +926,7 @@ export default Index;
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
 
+  console.log({ session }, "in admin page");
   // Check if the user is authenticated
   if (!session) {
     return {
