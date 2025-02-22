@@ -4,6 +4,8 @@ import dbConnect from "@/src/util/db";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+export const config = { runtime: "nodejs" };
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -75,7 +77,8 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: process.env.NODE_ENV === "production",
+        // secure: process.env.NODE_ENV === "production",
+        secure: false, // Temporary hack to see if auth will work on vercel
       },
     },
   },
